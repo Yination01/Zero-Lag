@@ -1,0 +1,826 @@
+{
+  "_comment": "REFERENCE ONLY. This is how Poise is built. It is not Zero-Lag project law. CLAUDE.md wins. Rewrite every poise_specific field before copying a procedure into this repo.",
+  "reference_of": "Yination01/Poise",
+  "installed": "2026-08-29",
+  "poise": {
+    "id": "poise-architecture-and-procedures",
+    "version": "1.0.0",
+    "sourced_from": {
+      "repo": "Yination01/Poise",
+      "private": true,
+      "date": "2026-08-29",
+      "tip_of_main": "1b1fafa",
+      "last_apk": {
+        "number": 39,
+        "cut": "155a0ba8ca11b316ad588b5701122850cc454164",
+        "tag": "preview-39",
+        "run_id": "33268297661",
+        "asset": "poise.apk"
+      },
+      "app_version": "2.1.0",
+      "package": "com.yination.poise"
+    },
+    "what_this_is": [
+      "A portable dump of how Poise is built, how it is released, and what accounts, secrets, and checks a clone would need.",
+      "Keep the method. Rewrite every poise_specific field for the new app.",
+      "This is not legal advice and not a substitute for CLAUDE.md in the live Poise repo.",
+      "Do not paste this file into Yination01/Poise. Poise already has the live copy of its law."
+    ],
+    "companion_files": {
+      "agent_law_pack": "/home/user/agent-instruction-pack/agent-pack.json",
+      "skills": "/home/user/agent-instruction-pack/skills.json",
+      "quality_bar": "/home/user/agent-instruction-pack/quality-bar.json",
+      "note": "The pack is standing AI law. This file is product architecture plus ops. A new app usually wants both."
+    },
+    "product": {
+      "name": "Poise",
+      "one_line": "Android app that drafts replies to chat notifications. The user approves every send.",
+      "brand_place": "Nigeria, never Built in Lagos, except a deliberate jurisdiction clause",
+      "viewer_word": "Admin, never superuser",
+      "support_email": "admin.poise@gmail.com",
+      "support_email_note": "Support and sender address. Not a GitHub account. Do not commit as this address.",
+      "live_host": "https://poise-app.vercel.app",
+      "legacy_host": "https://silent-mode.vercel.app",
+      "legacy_host_rule": "307-redirects to the live host and must stay.",
+      "dead_host": "getpoise.vercel.app does not exist. poise.app is an unrelated macOS app.",
+      "scheme": "poise",
+      "orientation": "portrait",
+      "ios": "Present in the repo, not shipped.",
+      "play": {
+        "decision": "Free tier only on Play under the reader-app carve-out. Paid stays on the direct APK.",
+        "status": "Not implemented. No Play Console account yet. Screenshots and demo video still missing."
+      }
+    },
+    "stack": {
+      "client": {
+        "expo": "~51.0.28",
+        "react_native": "0.74.5",
+        "react": "18.2.0",
+        "navigation": "@react-navigation native + native-stack + bottom-tabs v6",
+        "state": "zustand 4.5.5, src/store/appStore.js",
+        "firebase_client": "firebase ^10.12.0",
+        "node_engines_root": "20.x",
+        "apk_job_node": "22",
+        "apk_job_node_why": "eas-cli 23 refuses Node 20. CI ci.yml is still Node 20."
+      },
+      "backend": {
+        "host": "Vercel Hobby",
+        "root_directory": "backend/",
+        "functions": 12,
+        "function_cap": 12,
+        "cap_rule": "Adding a thirteenth function breaks the deploy. New endpoints fold into an existing file.",
+        "firebase_admin": "pinned 11.11.1. Do not bump to v14. v14 500ed production.",
+        "backend_engines": "24.x (sandbox may be 20.x; the suite still runs)",
+        "mail": "Google Apps Script, not Resend. Resend is a leftover dependency.",
+        "ai": "Groq primary. Optional OpenAI-compatible backup. Voice is Groq Whisper. HF_API_KEY is dead."
+      },
+      "native_android": {
+        "android_dir": "generated and gitignored",
+        "edit": "plugins/withPoiseNative.js and plugins/native/",
+        "never": "Never edit android/ by hand. Never bump versionCode on push. expo prebuild mutates package.json; diff it afterwards."
+      },
+      "budget": "Zero. No paid tiers, no domain purchases, no Blaze plan. Propose the free alternative."
+    },
+    "accounts_the_app_needs": [
+      {
+        "id": "github",
+        "what": "Private repo, Actions enabled, contents:write on the APK job",
+        "owner": "A real GitHub user. Vercel Hobby blocks commits it cannot attribute.",
+        "poise": "Yination01"
+      },
+      {
+        "id": "expo",
+        "what": "Expo account, EAS project, access token named EXPO_TOKEN in GitHub Actions secrets",
+        "poise": "owner yination, eas.projectId 4dcc8810-0479-4420-a40d-2d5c5490b56d"
+      },
+      {
+        "id": "firebase",
+        "what": "Auth (email/password, Google, email-link), Firestore, Android app with google-services.json",
+        "poise": "project silentmode-1c193, public-facing name Poise",
+        "console_must": [
+          "Authorized domain = live host",
+          "Release SHA-1 on the Android OAuth client or Google sign-in breaks",
+          "Password reset still uses Firebase mail"
+        ]
+      },
+      {
+        "id": "vercel",
+        "what": "Hobby project, Git integration on main, Root Directory = backend/",
+        "poise": "poise-app.vercel.app, 12 functions at the cap"
+      },
+      {
+        "id": "groq",
+        "what": "API key starting gsk_. This is the only required AI key.",
+        "models_default": {
+          "primary": "openai/gpt-oss-120b",
+          "fallback": "qwen/qwen3.6-27b"
+        },
+        "check_before_blaming_outages": "https://console.groq.com/docs/deprecations"
+      },
+      {
+        "id": "paystack",
+        "what": "Live keys if you take cards in Nigeria. Webhook URL on the live host /api/paystack.",
+        "poise_amounts_ngn": {
+          "vip": 2400,
+          "premium": 3500
+        },
+        "vip_why_2400": "Paystack waives the flat NGN 100 fee under 2500."
+      },
+      {
+        "id": "gmail_apps_script",
+        "what": "Mail transport. GAS_MAIL_URL + GAS_MAIL_TOKEN. Sender is a real inbox you own.",
+        "poise": "admin.poise@gmail.com"
+      },
+      {
+        "id": "google_cloud_oauth",
+        "what": "Web client id in the app (identifier, not a secret). Native Google still needs the release SHA-1."
+      }
+    ],
+    "secrets": {
+      "rule": "No secrets client-side. Never write a secret into a file, a commit, or .git/config. Push via GIT_ASKPASS.",
+      "client_identifiers_ok_in_app_json": [
+        "Firebase web apiKey (identifier, not a credential)",
+        "GOOGLE_WEB_CLIENT_ID",
+        "expo extra.eas.projectId"
+      ],
+      "vercel_env": [
+        "GROQ_API_KEY",
+        "GROQ_MODEL",
+        "GROQ_MODEL_FALLBACK",
+        "BACKUP_AI_BASE_URL",
+        "BACKUP_AI_API_KEY",
+        "BACKUP_AI_MODEL",
+        "PAYSTACK_SECRET_KEY",
+        "PAYSTACK_PUBLIC_KEY",
+        "DOWNLOAD_KEY",
+        "GITHUB_TOKEN",
+        "EXPO_TOKEN",
+        "GAS_MAIL_URL",
+        "GAS_MAIL_TOKEN",
+        "FROM_EMAIL",
+        "REPLY_TO",
+        "MAIL_FROM_NAME",
+        "CRON_SECRET",
+        "CONFIRM_SECRET",
+        "SITE_URL",
+        "FIREBASE_SERVICE_ACCOUNT",
+        "ANDROID_CERT_SHA256",
+        "ANDROID_PACKAGE_NAME"
+      ],
+      "github_actions_secrets": [
+        {
+          "name": "EXPO_TOKEN",
+          "required_for": "apk.yml. Job fails fast if missing."
+        },
+        {
+          "name": "VERCEL_TOKEN",
+          "required_for": "optional. ci.yml skips manual Vercel deploy if absent. Git integration already deploys."
+        },
+        {
+          "name": "VERCEL_ORG_ID",
+          "required_for": "optional, with VERCEL_TOKEN"
+        },
+        {
+          "name": "VERCEL_PROJECT_ID",
+          "required_for": "optional, with VERCEL_TOKEN"
+        }
+      ],
+      "never": [
+        "HF_API_KEY (dead)",
+        "ADMIN_PIN in the client bundle",
+        "A live payment key in chat or the repo",
+        "A GitHub PAT in the remote URL or .git/config"
+      ]
+    },
+    "architecture": {
+      "layers": [
+        {
+          "name": "App.js",
+          "does": "Auth restore, remote-config load, maintenance gate, AppState listeners, mode scheduler effect, RootNavigator. Launch starts here."
+        },
+        {
+          "name": "screens",
+          "does": "UI only. Do not fetch Firebase from a screen."
+        },
+        {
+          "name": "services",
+          "does": "The layer between screens and the outside world."
+        },
+        {
+          "name": "backend/api",
+          "does": "All authorisation. There is no deployed firestore.rules. firestore.rules.js is a .js file, not rules."
+        },
+        {
+          "name": "plugins/native",
+          "does": "Android notification listener, overlay, scheduler FGS, Quick Settings tile, DND, broadcast receiver."
+        }
+      ],
+      "client_tree": {
+        "src/screens/onboarding": [
+          "WelcomeScreen",
+          "PermissionScreen",
+          "PickVibeScreen",
+          "TextLengthScreen",
+          "LinkAppsScreen"
+        ],
+        "src/screens/auth": [
+          "LoginScreen (password, Google, email-link). Welcome Get started opens signup mode."
+        ],
+        "src/screens/main": [
+          "HomeScreen (inbox and draft cards: the product)",
+          "ModeScreen",
+          "ModeEditor",
+          "ScheduleScreen",
+          "PeopleScreen",
+          "AutoSendScreen",
+          "SettingsScreen",
+          "PermissionsScreen",
+          "ProfileScreen",
+          "DataScreen",
+          "PrivacyScreen",
+          "TermsScreen",
+          "VipScreen",
+          "CheckoutScreen",
+          "ReferralScreen",
+          "CustomVibeScreen",
+          "VibeIntensityScreen",
+          "WritingStyleScreen",
+          "TemplatesScreen",
+          "ActivityScreen",
+          "AnalyticsScreen",
+          "NoticesScreen",
+          "SupportScreen",
+          "ChooseUsernameScreen"
+        ],
+        "src/screens/admin": [
+          "AdminLoginScreen (passwordless)",
+          "AdminDashboardScreen"
+        ],
+        "root_gate": "MaintenanceScreen when the server says maintenance or build is below minBuild",
+        "src/services_groups": {
+          "auth_and_account": [
+            "authService",
+            "accountService",
+            "accountSync",
+            "sessionService",
+            "googleAuth",
+            "magicLinkService",
+            "emailVerifyService",
+            "usernameService",
+            "userService"
+          ],
+          "drafting": [
+            "aiService",
+            "incomingMessage",
+            "draftGuard",
+            "replySender",
+            "styleProfile",
+            "skipTeach",
+            "mockAIService",
+            "customVibes",
+            "conversation"
+          ],
+          "money": [
+            "paymentService",
+            "subscriptionService",
+            "tierSync",
+            "tierArgs",
+            "vipService",
+            "promoCodeService",
+            "codeRedeem",
+            "referralService",
+            "usageService",
+            "planCalendar",
+            "renewalReminderService"
+          ],
+          "device": [
+            "notificationListener",
+            "permissionBridge",
+            "permissionService",
+            "dndBridge",
+            "modeScheduler",
+            "schedulerService",
+            "shareIntent",
+            "contactService",
+            "persistentStore",
+            "offlineQueueService"
+          ],
+          "admin_and_ops": [
+            "serverAdmin",
+            "adminService",
+            "noticeService",
+            "diagnostics",
+            "crashService",
+            "cleanupService",
+            "dataInventory",
+            "supportService"
+          ],
+          "consent": [
+            "consentService",
+            "collectionConsent"
+          ]
+        },
+        "src/config": [
+          "constants.js (plans, tones, modes, SPACE/TYPE/RADIUS)",
+          "changelog.js",
+          "remoteConfig.js",
+          "firebase.js",
+          "legal.js",
+          "linkableApps.js",
+          "api.js"
+        ],
+        "src/store": "appStore.js. updateSettings takes a patch object, not a full state. showToast is the only toast entry point.",
+        "uid_in_a_screen": "useUserId() from src/hooks/useUserId.js"
+      },
+      "backend_functions_12": [
+        {
+          "file": "backend/api/admin.js",
+          "does": "Sign-in wall, isSuper, then blanket 403. lookup, user_list, user_hide, tester_create, beta_revoke, app_config, promo, notices, waitlist, paystack_init."
+        },
+        {
+          "file": "backend/api/draft-reply.js",
+          "does": "Drafting. Tier gates for style, custom vibes, styleHint. Called over the network, not in the APK."
+        },
+        {
+          "file": "backend/api/paystack.js",
+          "does": "Checkout webhook. HMAC-SHA512 of raw body, then re-verify, then grant. Init is in admin.js."
+        },
+        {
+          "file": "backend/api/sync.js",
+          "does": "Account sync, settings up and down. Writes users/{uid}/sync/state."
+        },
+        {
+          "file": "backend/api/waitlist.js",
+          "does": "Signup, confirm, purge, username lookup (folded in to stay under the cap). Also serves the public page."
+        },
+        {
+          "file": "backend/api/signin-link.js",
+          "does": "Email sign-in links through Apps Script. The app redeems the link, not the browser."
+        },
+        {
+          "file": "backend/api/referral.js",
+          "does": "Referral claims. Cannot be farmed."
+        },
+        {
+          "file": "backend/api/transcribe.js",
+          "does": "Groq Whisper voice."
+        },
+        {
+          "file": "backend/api/download.js",
+          "does": "Gated APK download. 404 without ?key=DOWNLOAD_KEY."
+        },
+        {
+          "file": "backend/api/cron-subscriptions.js",
+          "does": "Expiry sweep. Vercel cron 0 9 * * *."
+        },
+        {
+          "file": "backend/api/send-waitlist-emails.js",
+          "does": "Mail blast."
+        },
+        {
+          "file": "backend/api/assetlinks.js",
+          "does": "Android app links at /.well-known/assetlinks.json."
+        }
+      ],
+      "backend_utils": [
+        {
+          "file": "grants.js",
+          "does": "Single source of grant maths. Same tier extends. Lower under a live higher pauses. Higher over lower pushes the lower clock out. Never reimplement inline."
+        },
+        {
+          "file": "beta.js",
+          "does": "Beta and tester identity. Every gate fails closed."
+        },
+        {
+          "file": "security.js",
+          "does": "Rate limit per endpoint per 60 seconds. Catch path fails open deliberately."
+        },
+        {
+          "file": "firebaseAdmin.js",
+          "does": "Admin SDK init. Pin 11.11.1."
+        },
+        {
+          "file": "email.js",
+          "does": "Apps Script transport and HTML newsletter shell."
+        },
+        {
+          "file": "aiProviders.js",
+          "does": "Model routing. Ids overridable by env."
+        },
+        {
+          "file": "prompts.js",
+          "does": "Prompt assembly. Keep client and server copies aligned."
+        },
+        {
+          "file": "fallbackEngine.js",
+          "does": "Offline canned replies when AI is down."
+        },
+        {
+          "file": "username.js",
+          "does": "Normalisation, shared by claim and lookup."
+        },
+        {
+          "file": "hideLookup.js",
+          "does": "Hide-from-list prefers body.uid. Unique Auth displayName fallback. 409 if two match. Never deletes."
+        }
+      ],
+      "native": {
+        "config_plugin": "plugins/withPoiseNative.js",
+        "bridges": [
+          "NotificationBridge",
+          "OverlayBridge",
+          "SchedulerBridge",
+          "DndBridge"
+        ],
+        "services": [
+          {
+            "file": "NotificationListenerService.kt",
+            "does": "Reads notifications. EXTRA_TEXT then MessagingStyle EXTRA_MESSAGES. Journals then emits to JS. Empty text is dropped before JS."
+          },
+          {
+            "file": "ModeSchedulerService.kt",
+            "does": "Foreground service. Prefs key poise_scheduler. Keeps the process for mode ticks. Does not draft. JS is suspended when the activity leaves the foreground. Ready to draft in the shade is this service, not the writer."
+          },
+          {
+            "file": "ModeTileService.kt",
+            "does": "Quick Settings tile."
+          },
+          {
+            "file": "OverlayService.kt",
+            "does": "SYSTEM_ALERT_WINDOW popup. Title is Poise draft."
+          },
+          {
+            "file": "SilentModeAccessibilityService.kt",
+            "does": "Accessibility service. Class name is a leftover, not the product name."
+          }
+        ],
+        "receiver": "ModeCommandReceiver.kt ACTION_SET_MODE EXTRA_MODE_ID for automation apps.",
+        "permissions": [
+          "RECORD_AUDIO",
+          "READ_CONTACTS",
+          "SYSTEM_ALERT_WINDOW",
+          "POST_NOTIFICATIONS",
+          "INTERNET",
+          "VIBRATE",
+          "FOREGROUND_SERVICE",
+          "FOREGROUND_SERVICE_DATA_SYNC",
+          "ACCESS_NOTIFICATION_POLICY",
+          "notification listener",
+          "battery optimisation exemption (optional)"
+        ]
+      },
+      "data": {
+        "authorisation": "Server-side only.",
+        "collections_and_docs": [
+          "users/{uid}",
+          "users/{uid}/sync/state (modes live on device in mockFirestore, sync ships them here, not users/{uid}/modes)",
+          "usernames/{lowercase}",
+          "testers/{uid} (pin. Absent means not a tester.)",
+          "config/appConfig (kill switch, minBuild, latestBuild, paymentsLive, downloadUrl)",
+          "config/beta (enrolmentOpen. Missing document means shut.)",
+          "checkouts/{reference}",
+          "waitlist",
+          "hiddenFromUserList (hide, never delete)"
+        ],
+        "remote_config_flags": {
+          "paymentsLive": "Must be boolean true or the Pay button is hidden.",
+          "downloadUrl": "Keyed https URL. Empty means no Get it button. Must be https.",
+          "minBuild": "Locks older APKs behind MaintenanceScreen.",
+          "latestBuild": "Drives the update banner."
+        }
+      },
+      "plans": {
+        "currency": "NGN",
+        "unlimited_sentinel": -1,
+        "unlimited_why": "Do not use Infinity. JSON.stringify(Infinity) is null and used < null is false.",
+        "free": {
+          "price": 0,
+          "draftsPerDay": 20,
+          "linkedApps": 2
+        },
+        "vip": {
+          "price": 2400,
+          "draftsPerDay": 40,
+          "linkedApps": 3
+        },
+        "premium": {
+          "price": 3500,
+          "draftsPerDay": -1,
+          "linkedApps": -1
+        },
+        "legacy_vip": "VIP grants started before 2026-08-19 keep the old higher limits until they expire.",
+        "abuse_guard_per_day": 1000,
+        "recurring": "None. One charge grants days. The plan ends on that date."
+      },
+      "linkable_apps": {
+        "source_of_truth_for_packages": "src/config/linkableApps.js",
+        "default": [
+          "whatsapp"
+        ],
+        "whatsapp_package": "com.whatsapp",
+        "whatsapp_business_not_linked": "com.whatsapp.w4b is not in LINKABLE_APPS",
+        "catalogue": [
+          "whatsapp",
+          "sms",
+          "telegram",
+          "messenger",
+          "signal",
+          "gmail",
+          "outlook",
+          "instagram",
+          "x",
+          "tiktok",
+          "slack",
+          "teams",
+          "discord",
+          "linkedin"
+        ]
+      }
+    },
+    "runtime_paths": {
+      "launch": [
+        "index.js registers App.js",
+        "Auth restore, then remote config",
+        "Maintenance or minBuild gate",
+        "Onboarding if notification access is missing",
+        "subscribeNotifications + drainCaptureJournal on start and on foreground"
+      ],
+      "draft": [
+        "NotificationListenerService captures a notification",
+        "extractNotificationText: EXTRA_TEXT, then EXTRA_MESSAGES (MessagingStyle)",
+        "If title is WhatsApp or WhatsApp Business, sender is lastMessagingStyleSender, not the app name",
+        "Native journals, then emits to JS",
+        "draftGuard: skip OTP, skip automated senders (apple, meta). whatsapp is NOT an automated sender name as of build 39",
+        "If skip, Activity shows the reason. No draft.",
+        "incomingMessage builds the request including activeMode.auto_message",
+        "aiService POST /api/draft-reply, or fallbackEngine if offline / AI down",
+        "Home shows DraftCard labelled AI draft. User approves every send."
+      ],
+      "auto_send": [
+        "Master switch autoSendEnabled AND peopleRules[name].autoSend",
+        "replySender needs a live notificationKey and RemoteInput",
+        "If the WhatsApp notification is gone, auto-send cannot fire",
+        "Foreground JS sleep: when the activity is gone, JS does not draft. FGS keepAlive does not run the writer."
+      ],
+      "pay": [
+        "paymentsLive must be true",
+        "Client calls admin.js paystack_init. Server names the amount.",
+        "Paystack opens authorization_url",
+        "Webhook POST /api/paystack, HMAC-SHA512 of raw body",
+        "Reject underpayment. Reject synthetic_email @testers.poise-app.vercel.app",
+        "Do not send NGN 100 as a live test. Test cards do not work on live keys.",
+        "Admin accounts are forced Premium. Test with Control As Free (8 hours) or a second Free real-email account."
+      ]
+    },
+    "github": {
+      "identity": {
+        "user_name": "Yination01",
+        "user_email": "johnpaulonovo@gmail.com",
+        "copy_exactly": true,
+        "recreate_each_turn": "Workspace snapshots drop .git/config.",
+        "check_after_commit": "git log -1 --format='%an <%ae>'",
+        "blocked_author_example": "Yination <admin.poise@gmail.com> produced five Vercel Hobby deploys marked Blocked, GitHub user not found."
+      },
+      "origin": "https://github.com/Yination01/Poise.git",
+      "default_branch": "main",
+      "workflows": {
+        "ci.yml": {
+          "name": "SilentMode CI/CD",
+          "on": [
+            "push main/develop",
+            "pull_request main"
+          ],
+          "node": "20",
+          "does": [
+            "npm install",
+            "npm install --prefix backend",
+            "npm run test:all",
+            "npm audit advisory",
+            "eslint || true",
+            "jest || true"
+          ],
+          "build_android_job": "Skips unless android/gradlew exists. Expo managed: the real APK is apk.yml.",
+          "deploy_backend_job": "Optional Vercel action. Git integration already deploys."
+        },
+        "apk.yml": {
+          "name": "Preview APK",
+          "trigger": "workflow_dispatch only. Input build_number, digits only.",
+          "never_on_push": true,
+          "runs_on": "ubuntu-latest",
+          "permissions": "contents: write",
+          "node": "22",
+          "required_secret": "EXPO_TOKEN",
+          "steps_in_order": [
+            "checkout fetch-depth 0",
+            "setup-node 22 with npm cache on both lockfiles",
+            "fail if EXPO_TOKEN empty",
+            "validate build_number: digits, strip leading zeros, N >= 11, tag preview-N must not exist",
+            "expo/expo-github-action@v8 eas-version latest",
+            "npm ci",
+            "npm ci --prefix backend || npm install --prefix backend",
+            "npm run test:all (BEFORE stamp)",
+            "stamp app.json extra.buildNumber = BUILD_N (AFTER audits, never commit that stamp)",
+            "cache ~/.gradle/caches and wrapper, key lockfile+app.json",
+            "gradle.properties: caching, parallel, -Xmx4g",
+            "npx eas-cli@latest build --platform android --profile preview --local --non-interactive --output poise.apk",
+            "upload-artifact poise-apk",
+            "softprops/action-gh-release prerelease tag preview-N files poise.apk"
+          ],
+          "stamp_ordering_scar": "Stamping before audits made build 21 fail because fixes.cjs asserts in-repo buildNumber is still dev.",
+          "eas_profile": "eas.json build.preview, android.buildType apk, distribution internal",
+          "does_not_use": "EAS cloud quota. Local EAS on the GitHub Ubuntu runner.",
+          "install_path_for_testers": "https://LIVE_HOST/download?key=DOWNLOAD_KEY. Never send the private GitHub release URL."
+        }
+      },
+      "apk_dispatch_ritual": {
+        "hard_rule": "Never start an APK / EAS / Actions build unless the build number appears in the user's own message this turn. Start the next build authorises exactly one, the next one, once.",
+        "when_work_is_ready_and_no_number": "Say: the work is on main, the suite is green, name the build number and I will dispatch. Then wait.",
+        "steps": [
+          "Confirm the number is in the user's own message this turn.",
+          "Exactly one changelog entry in src/config/changelog.js with build: N. audience may be all, testers, beta, or admin. Admin notes do not go in Notices.",
+          "npm run test:all, exit 0.",
+          "Commit as Yination01 <johnpaulonovo@gmail.com>. Push via GIT_ASKPASS. Do not bump Android versionCode.",
+          "Confirm tag preview-N does not already exist (404).",
+          "POST workflow_dispatch apk.yml with build_number=N. Expect HTTP 204.",
+          "At dispatch, write .build-state.json lastBuild { number, commit (the cut SHA), dispatchedAt, runId, tag }.",
+          "Watch the run to success. Tag preview-N. Asset poise.apk uploaded.",
+          "Docs-only record and SITEMAP map commits after, they are not on the APK."
+        ],
+        "changelog_contract": {
+          "BUILD_N_requires_exactly_one_entry_with_build_N": true,
+          "audiences": [
+            "all",
+            "beta",
+            "testers",
+            "admin"
+          ],
+          "admin": "Renders on Admin, Control, Admin notes. canSeeNotice(admin) is false for every Notices reader.",
+          "testers": "Still Notices.",
+          "no_SilentMode_in_user_facing_src": "suite.cjs scans src/*.js. Do not write SilentMode in changelog copy."
+        },
+        "mirror_rule": "Work that lands after a build is not on anyone's phone. Say so, and say whether it changes the APK or only the docs. npm run test:all prints the pending list from .build-state.json.",
+        "last_authorized_poise_build": 39,
+        "do_not_dispatch_next_unless_named": 40
+      }
+    },
+    "procedures": {
+      "every_turn": [
+        "Read AGENTS.md then CLAUDE.md before editing. CLAUDE.md wins ties.",
+        "Recreate git user.name and user.email. Re-add origin if missing.",
+        "Be concise. Use the domain's words.",
+        "If unsure, ask. Questionnaire with discrete options. Every question has RECOMMENDED plus reasoning.",
+        "Failing check first, then the fix.",
+        "Mutation-test every new check. Restore from a copied backup, never git checkout, then diff.",
+        "Assert the guarantee, not one spelling of a string.",
+        "No done claim without a fresh full test command and an explicit unverified list.",
+        "No em-dash (U+2014) and no en-dash (U+2013) in code, copy, comments, docs, or agent replies about the product.",
+        "Double-check search-replace actually landed. It has dropped JSX bodies, and has written literal \\n into JS string concatenations.",
+        "Parallel edits to the same file overwrite each other."
+      ],
+      "new_feature": [
+        "Questionnaire first.",
+        "Skills: brainstorming, then writing-plans, then test-driven-development, then implement.",
+        "Confirm the approach. Do not guess a product decision onto main."
+      ],
+      "phone_bug": [
+        "A bug report is about the build on that device, not HEAD.",
+        "Root cause, add or extend an audit, ship, commit, push.",
+        "Say whether the fix is on anyone's phone."
+      ],
+      "testing": {
+        "command": "npm run test:all",
+        "before": "Snapshots drop node_modules. npm install and npm install --prefix backend first.",
+        "bar": "A passing test proves nothing until a mutant kills it.",
+        "unverified_must_be_named": [
+          "real device",
+          "live Firestore",
+          "cold-start race",
+          "live Paystack charge"
+        ]
+      },
+      "security": [
+        "No secrets client-side.",
+        "Every public endpoint gets a rate limit.",
+        "Authentication is not authorisation (CWE-639).",
+        "Schema-validate bodies. Reject unknown fields.",
+        "Never interpolate a value into innerHTML. textContent or DOM nodes.",
+        "safeError to clients. Log the stack server-side.",
+        "Parameterised queries only.",
+        "Verify webhook signatures before trusting any payment event."
+      ],
+      "ui": [
+        "DESIGN.md and src/config/constants.js scales. No hardcoded hex in screens.",
+        "Red is a budget: destruction and warnings only.",
+        "Four states on every screen: loading, empty, error, success.",
+        "Async buttons disable for the round-trip. Irreversible actions never optimistic.",
+        "WCAG 2.1 AA. 44 pt minimum. accessibilityRole on Pressable. State never by colour alone.",
+        "No emoji as feature icons. No AI-default purple."
+      ],
+      "beta_and_testers": {
+        "rule": "Beta is admin-granted only. Tester is identity, not entitlement. Badge carries no tier.",
+        "fail_closed": "Missing config/beta means shut. Firestore read error means shut. Only enrolmentOpen === true opens it. Same for testers/{uid}.",
+        "no_migration_sweep": true,
+        "general_form": "A rule that lives only in conversation memory is not enforced and will be violated. Write it down the same day, with a check."
+      },
+      "git_push": [
+        "Commit and push when a fix pass is done.",
+        "Do not bump Android versionCode on push.",
+        "Never write a token into the repo, a commit, or .git/config."
+      ]
+    },
+    "agent_law_short": {
+      "priority": [
+        "1 user instruction this turn",
+        "2 CLAUDE.md project law",
+        "3 .agent/master-skills.json (v1.3.0, 60 skills)",
+        "4 .agent/quality-bar.json (v40.0, 181 items). stack_exclusions are not open work.",
+        "5 DESIGN.md",
+        "6 SITEMAP.md"
+      ],
+      "applies_to_poise_counts": {
+        "yes": 22,
+        "on-request": 23,
+        "n-a-this-stack": 15
+      },
+      "on_request_how": "When the trigger fits, recommend it in the questionnaire with reasoning and wait for yes. Do not invoke silently. Do not wait for the user to name the skill.",
+      "n_a_never_invoke": [
+        "figma-use",
+        "tailwind-design-system",
+        "sleek-design-mobile-apps",
+        "ads",
+        "ad-creative",
+        "notion-research-documentation",
+        "resume-ats-optimizer",
+        "interview-prep-generator",
+        "desktop-pet",
+        "qwen-code-claw",
+        "openwork-desktop-sync",
+        "just-scrape",
+        "arena-ai-agents",
+        "internal-comms",
+        "extract-design-system"
+      ],
+      "hard_rules_one_line": [
+        "No APK/EAS/Actions build unless the build number is in the user's own message this turn.",
+        "Questionnaire with discrete options. Every question has RECOMMENDED plus reasoning. If unsure, ask.",
+        "Failing check first, then the fix.",
+        "Mutation-test every new check. Restore from a copied backup, never git checkout, then diff.",
+        "Assert the guarantee, not one spelling of a string.",
+        "No done claim without a fresh full test command and an explicit unverified list.",
+        "Copy fixed values exactly: commit identity, Nigeria not Lagos, Admin not superuser, no em-dash or en-dash.",
+        "Beta is admin-granted only. Fail closed. A rule only in chat will be violated; write it down the same day."
+      ]
+    },
+    "what_a_new_app_copies": {
+      "keep_the_method": [
+        "Eight hard rules, generalised (release named this turn, questionnaire, test first, mutants, assert the guarantee, verify before done, copy fixed values, write decisions down).",
+        "Thin stubs in every agent runtime pointing at AGENTS.md and CLAUDE.md.",
+        "A check that the rules stay stated.",
+        "workflow_dispatch APK job that stamps AFTER the suite, tags preview-N, refuses a reused tag.",
+        ".build-state.json plus an unshipped reporter.",
+        "Vercel root = backend/, function folding under the Hobby cap.",
+        "Server-side authorisation. Rate limits. Schema validation. Webhook HMAC.",
+        "Semantic colour scales. No hardcoded hex in screens.",
+        "Git identity that Vercel can attribute."
+      ],
+      "rewrite_for_the_new_product": [
+        "Name, package, scheme, live host, support inbox",
+        "Plans and currency",
+        "Native plugins (Poise's notification listener is the product, not a template you drop in blindly)",
+        "The 12 function list",
+        "Beta/tester gates if the new product has no such badge",
+        "Paystack amounts and Nigeria brand line unless it is also Nigeria-first",
+        "firebase-admin pin, only if you hit the same scar",
+        "applies_to_poise flags: retag as applies_to_project for the new stack"
+      ]
+    },
+    "new_app_bootstrap_checklist": [
+      "Create the GitHub repo. Owner must be a real GitHub user.",
+      "Set git user.name and user.email to that GitHub account, not a support inbox.",
+      "Expo account + EXPO_TOKEN in Actions secrets.",
+      "Firebase project: Auth, Firestore, Android app, google-services.json, authorised domain = live host, SHA-1 for Google sign-in.",
+      "Vercel project, Root Directory backend/, env vars from secrets.vercel_env (values only in Vercel).",
+      "Groq key. Confirm current model ids on the deprecations page.",
+      "If cards: Paystack live keys, webhook https://LIVE/api/paystack, amounts from server only.",
+      "If mail: Apps Script web app + token. A real From inbox.",
+      "Copy agent-pack.json, skills.json, quality-bar.json into .agent/. Retag skills. Fill stack_exclusions.",
+      "Write CLAUDE.md and AGENTS.md. Thin stubs. agent-docs and agent-rules checks. Do not start feature work until those pass.",
+      "eas.json preview profile, apk.yml on workflow_dispatch, ci.yml running the full suite including backend install.",
+      "env.example.txt with names and no values.",
+      "DESIGN.md once tokens exist. SITEMAP.md from day one.",
+      "Do not dispatch a numbered build until the user names the number in that turn."
+    ],
+    "poise_current_state_not_a_template": {
+      "last_apk_on_phones_until_they_install_39": 38,
+      "build_39_shipped": "WhatsApp chats no longer skipped as junk mail. MessagingStyle EXTRA_MESSAGES read. APK job on Node 22.",
+      "build_39_device_verified": false,
+      "do_not_dispatch_40_unless_named": true,
+      "open_product_work": [
+        "Live VIP NGN 2400 charge never run",
+        "Play Console, screenshots, demo video, free-only Play variant flag",
+        "Background JS wake while the activity is gone (not the nothing-when-open bug; that was the WhatsApp skip)",
+        "WhatsApp Business package not in LINKABLE_APPS"
+      ]
+    }
+  }
+}

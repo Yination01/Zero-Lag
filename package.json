@@ -1,0 +1,10 @@
+{
+  "name": "zero-lag",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Zero-Lag. Expo / React Native Android. App scaffold not started.",
+  "scripts": {
+    "test": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs",
+    "test:agent-docs": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs"
+  }
+}

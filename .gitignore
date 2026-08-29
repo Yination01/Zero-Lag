@@ -1,17 +1,8 @@
-# Android / Gradle
-*.iml
-.gradle/
-/local.properties
-/.idea/
-.DS_Store
-/build/
-/captures/
-.externalNativeBuild/
-.cxx/
-local.properties
-/app/build/
-build/
-*.apk
-*.aab
-*.keystore
-!debug.keystore
+node_modules/
+.env
+.expo/
+.expo-shared/
+/android/
+/ios/
+.audit/shots/
+.audit/*.png

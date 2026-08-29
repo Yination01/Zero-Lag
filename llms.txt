@@ -1,0 +1,17 @@
+# Zero-Lag
+
+Zero-Lag is an Expo / React Native Android app. The product is not
+scaffolded yet. Budget zero. No live host has been named.
+
+## For agents
+
+- Project law: CLAUDE.md
+- How to work: AGENTS.md
+- Skills catalog: .agent/master-skills.json
+- Quality bar: .agent/quality-bar.json (v40.0)
+- Design: DESIGN.md
+- Map: SITEMAP.md
+- Decisions: docs/DECISIONS.md
+
+Do not start an APK / EAS / Actions build unless the human names the
+number. No secrets in the client.

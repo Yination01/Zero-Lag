@@ -1,0 +1,16 @@
+# Zero-Lag - Cursor rules
+
+Read `AGENTS.md` then `CLAUDE.md` before editing. Both bind, and this file
+adds nothing of its own. Everything lives in one place so the rules cannot
+drift apart.
+
+- Project law: `CLAUDE.md`
+- How to work: `AGENTS.md`
+- Skills catalog: `.agent/master-skills.json`
+- Quality bar: `.agent/quality-bar.json`
+- Locked design: `DESIGN.md`
+
+If a skill or a quality-bar item fights `CLAUDE.md`, `CLAUDE.md` wins.
+
+Never start an APK / EAS / Actions build unless the user names the number.
+Run `npm test` before claiming done.
