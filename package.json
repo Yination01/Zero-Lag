@@ -5,7 +5,7 @@
   "main": "index.ts",
   "description": "Zero-Lag. Expo / React Native Android. Network lag tool for mobile gamers.",
   "scripts": {
-    "test": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs && node --experimental-strip-types --test 'src/**/*.test.ts'",
+    "test": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs && node .audit/legal.cjs && node --experimental-strip-types --test 'src/**/*.test.ts'",
     "test:app": "node --experimental-strip-types --test 'src/**/*.test.ts'",
     "test:agent-docs": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs",
     "start": "expo start",

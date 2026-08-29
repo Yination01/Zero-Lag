@@ -18,7 +18,7 @@ export function LegalScreen({ onAccept, onDecline }: { onAccept: () => void; onD
             <Text style={styles.body}>{d.body}</Text>
           </View>
         ))}
-        <Muted text="This is a summary shown in-app. The full documents are in the repo under docs/legal/ and will ship as screens before Play launch. Not a substitute for legal review." />
+        <Muted text="Full documents ship as TERMS.md, PRIVACY.md, COPYRIGHT.md, COMPLIANCE.md and PLAY_DATA_SAFETY.md in the app and on the Play listing. These are product drafts, not legal advice. A working contact inbox will replace the placeholder before launch." />
       </ScrollView>
       <View style={styles.actions}>
         <PrimaryButton label="ACCEPT AND CONTINUE" onPress={onAccept} accessibilityLabel="Accept legal terms" />
