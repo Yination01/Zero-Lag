@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base theme; Compose drives the actual colors. NoActionBar because
+         Compose renders its own UI. -->
+    <style name="Theme.ZeroLag" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#FF0A0F14</item>
+        <item name="android:navigationBarColor">#FF0A0F14</item>
+        <item name="android:windowBackground">#FF0A0F14</item>
+    </style>
+</resources>

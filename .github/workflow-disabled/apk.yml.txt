@@ -1,0 +1,70 @@
+name: Build Zero-Lag APK
+
+# Builds an Android test APK with EAS. Gated by project law (CLAUDE.md rule 1):
+# 1. It is triggered manually and REQUIRES a build number typed into the
+#    "Build number" field. No number, no build.
+# 2. It fails closed when EXPO_TOKEN is missing. Add EXPO_TOKEN as a GitHub
+#    Actions secret before this can succeed. Budget zero until then.
+# To dispatch: Actions tab -> Build Zero-Lag APK -> Run workflow ->
+# set the build number (e.g. build-2) and branch -> Run.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: 'Build number (required, e.g. build-2). Leave blank to abort.'
+        required: false
+        default: ''
+        type: string
+      profile:
+        description: 'EAS profile'
+        required: false
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - development
+
+jobs:
+  build:
+    name: Build APK (named dispatch only)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Fail closed if no build number was named
+        run: |
+          if [ -z "${{ github.event.inputs.build_number }}" ]; then
+            echo "No build number supplied. A named number is required (rule 1). Aborting."
+            exit 1
+          fi
+          echo "Dispatching ${{ github.event.inputs.build_number }}"
+
+      - name: Fail closed if EXPO_TOKEN is not configured
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "EXPO_TOKEN secret is missing. Gates fail closed. Add the secret in repo settings."
+            exit 1
+          fi
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run the gate
+        run: npm test
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      - name: Build on EAS (Android APK)
+        run: eas build --platform android --profile "${{ github.event.inputs.profile }}" --non-interactive --no-wait
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}

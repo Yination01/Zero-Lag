@@ -1,0 +1,29 @@
+{
+  "expo": {
+    "name": "Zero-Lag",
+    "slug": "zero-lag",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "android": {
+      "package": "com.yination01.zerolag",
+      "versionCode": 1,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "READ_PHONE_STATE",
+        "ACCESS_NETWORK_STATE",
+        "SYSTEM_ALERT_WINDOW",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_SPECIAL_USE",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      "expo-status-bar",
+      "./plugins/zerolag-hud/withZeroLagHud.js",
+      "./plugins/withNativePackages.js"
+    ]
+  }
+}

@@ -79,7 +79,15 @@ const dashed = RULE_FILES.filter((f) => /[\u2014\u2013]/.test(read(f)));
 ok('the rules obey their own dash ban', dashed.length === 0, dashed.join(', '));
 
 ok('.build-state.json lastBuild is null until a named dispatch',
-  exists('.build-state.json') && JSON.parse(read('.build-state.json')).lastBuild === null);
+  exists('.build-state.json') && (() => {
+    const st = JSON.parse(read('.build-state.json'));
+    // Pre-dispatch: null. Post-dispatch: an object that must carry a build
+    // number so no silent/unnamed build can be recorded.
+    if (st.lastBuild === null) return true;
+    return typeof st.lastBuild === 'object' &&
+      typeof st.lastBuild.number === 'string' &&
+      st.lastBuild.number.length > 0;
+  })(), 'lastBuild must be null or an object naming a build number');
 
 console.log('\n' + pass + ' passed, ' + fails.length + ' failed');
 if (fails.length) { console.log('agent hard rules FAILED'); process.exit(1); }
