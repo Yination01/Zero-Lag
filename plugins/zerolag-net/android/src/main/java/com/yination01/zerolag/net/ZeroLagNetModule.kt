@@ -30,6 +30,60 @@ class ZeroLagNetModule(context: ReactApplicationContext) : ReactContextBaseJavaM
 
     override fun getName(): String = "ZeroLagNet"
 
+    // Foreground app for game detection. Requires Usage Access (a special
+    // settings permission, not a runtime grant). Returns "PERMISSION_DENIED"
+    // so JS shows the grant screen instead of fabricating a game.
+    @ReactMethod
+    fun getForegroundPackage(promise: Promise) {
+        try {
+            if (!hasUsageAccess()) {
+                promise.resolve("PERMISSION_DENIED")
+                return
+            }
+            val usm = appContext.getSystemService(Context.USAGE_STATS_SERVICE)
+                as android.app.usage.UsageStatsManager
+            val now = System.currentTimeMillis()
+            val events = usm.queryEvents(now - 10_000, now)
+            var lastPkg: String? = null
+            val e = android.app.usage.UsageEvents()
+            while (events.hasNextEvent()) {
+                events.getNextEvent(e)
+                if (e.eventType == android.app.usage.UsageEvents.Event.ACTIVITY_RESUMED ||
+                    e.eventType == android.app.usage.UsageEvents.Event.MOVE_TO_FOREGROUND
+                ) {
+                    lastPkg = e.packageName
+                }
+            }
+            promise.resolve(lastPkg ?: "PERMISSION_DENIED")
+        } catch (ex: Exception) {
+            promise.resolve("PERMISSION_DENIED")
+        }
+    }
+
+    private fun hasUsageAccess(): Boolean {
+        return try {
+            val appOps = appContext.getSystemService(Context.APP_OPS_SERVICE)
+                as android.app.AppOpsManager
+            val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                appOps.unsafeCheckOpNoThrow(
+                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    appContext.packageName
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                appOps.checkOpNoThrow(
+                    android.app.AppOpsManager.OPSTR_GET_USAGE_STATS,
+                    android.os.Process.myUid(),
+                    appContext.packageName
+                )
+            }
+            mode == android.app.AppOpsManager.MODE_ALLOWED
+        } catch (e: Exception) {
+            false
+        }
+    }
+
     @ReactMethod
     fun getSnapshot(promise: Promise) {
         try {

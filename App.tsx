@@ -1,11 +1,11 @@
 import { StatusBar } from 'expo-status-bar';
-import { HomeScreen } from './src/ui/HomeScreen';
+import { Root } from './src/ui/Root';
 
 export default function App() {
   return (
     <>
       <StatusBar style="light" />
-      <HomeScreen />
+      <Root />
     </>
   );
 }

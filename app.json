@@ -22,7 +22,8 @@
     },
     "plugins": [
       "expo-status-bar",
-      "./plugins/zerolag-hud/withZeroLagHud.js"
+      "./plugins/zerolag-hud/withZeroLagHud.js",
+      "./plugins/withNativePackages.js"
     ]
   }
 }

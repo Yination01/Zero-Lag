@@ -25,9 +25,12 @@ State at the last update of this document:
 | `app.json` / `eas.json` | Expo config and EAS Android build profiles. |
 | `App.tsx`, `index.ts` | Expo root component and entry. |
 | `src/net/` | Readiness math, RTT probe, signal and refresh logic. |
-| `src/ui/` | Home screen and locked design tokens (`theme.ts`). |
-| `src/state/` | React hooks. |
-| `plugins/` | Native Android modules: `zerolag-net` (telephony dBm), `zerolag-hud` (overlay service). |
+| `src/game/` | Game catalog and per-game headline metric. |
+| `src/device/` | Device tier classifier and performance tuning profiles. |
+| `src/boost/` | Boost action catalog and permission gating. |
+| `src/ui/` | Tab shell, Home/Game/Boost/Device screens, design tokens. |
+| `src/state/` | React hooks (readiness, game detection, device). |
+| `plugins/` | Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud`. |
 
 ## `.agent/`
 

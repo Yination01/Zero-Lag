@@ -16,7 +16,7 @@ import { REFRESH_INSTRUCTIONS, openAirplaneModeSettings } from '../net/refresh';
 
 const c = tokens.color;
 
-export function HomeScreen() {
+export function HomeScreen({ onGoGame }: { onGoGame?: () => void } = {}) {
   const { state, result, error, run } = useReadiness();
   const [hudRequested, setHudRequested] = useState(false);
 
@@ -151,6 +151,17 @@ export function HomeScreen() {
       <Text style={[styles.muted, { color: c.warn }]}>
         Use refresh before matchmaking, never during a live match.
       </Text>
+
+      {onGoGame && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Go to per-game analysis"
+          onPress={onGoGame}
+          style={({ pressed }) => [styles.secondaryButton, { opacity: pressed ? 0.85 : 1 }]}
+        >
+          <Text style={styles.secondaryButtonText}>PER-GAME ANALYSIS AND BOOST</Text>
+        </Pressable>
+      )}
     </ScrollView>
   );
 }

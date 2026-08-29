@@ -12,6 +12,22 @@ column. Gates fail closed and Play policy is a hard limit.
 - Telephony dBm reader and floating ping HUD. Drafted as native plugins,
   NOT verified on a device until a build runs them.
 
+## Added after scope confirmation (tested logic, pending device verify)
+
+- Game catalog and detection map (COD, eFootball, PUBG, Free Fire, MLBB)
+  with per-game headline metric. Engine tested; foreground detection runs
+  in the native plugin via Usage Access.
+- Device recognition and performance-tier engine (entry, mid-range,
+  flagship) with battery, balanced, performance profiles. Logic tested;
+  RAM/cores come from the native device plugin.
+- Boost action catalog: guided hog force-stop, Game Mode DND, wakelock,
+  brightness, storage, refresh, gaming DNS pending. Gating is enforced in
+  code from permissions, nothing is faked.
+- Four-tab app shell: Home, Game, Boost, Device.
+- Native sources: foreground package query, device facts module, package
+  registration and config plugins. These compile only at prebuild and are
+  NOT verified until a build runs on a phone.
+
 ## Confirmed feature set and truth table
 
 | Capability | Ship status | How it actually works |

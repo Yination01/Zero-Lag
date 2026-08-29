@@ -59,3 +59,19 @@ Check: `npm test` (agent-docs 52, agent-rules 34, app tests 15, all green).
   Compilation and device behaviour are NOT verified here.
 
 Check: `npm test` after this edit.
+
+## 2026-08-29: scope confirmed, game and boost and device engines built
+
+- Maintainer confirmed the full feature set. Truth table lives in
+  docs/SCOPE.md. Android blocks silent background-app killing, overclocking
+  and signal boosting, so those ship as guided/estimated equivalents only.
+- Built and tested: game catalog with per-game headline metric, device
+  tier and tuning profiles, boost action catalog with permission gating.
+  35 app tests green, mutation kills confirmed.
+- Added Game, Boost, Device screens and a four-tab shell. Native sources
+  for foreground detection and device facts added plus a native-package
+  config plugin. All native code compiles only at prebuild and is NOT
+  verified until a device build runs.
+- Background analytics stay local until a host is named. No host named.
+
+Check: npm test (agent-docs 52, agent-rules 34, app tests 35, all green).
