@@ -29,3 +29,20 @@ Check: `.audit/agent-rules.cjs` and `.audit/agent-docs.cjs`.
   until a build number is named in the turn that dispatches it.
 
 Check: `npm test` (agent-docs and agent-rules both green this turn).
+
+## 2026-08-29: Expo app scaffolded, engine TDD, native plugins drafted
+
+- The user named the scaffold work. Expo / React Native Android source now
+  exists: `App.tsx`, `src/net`, `src/ui`, `src/state`, `app.json`, `eas.json`.
+- Design tokens are locked in `DESIGN.md` and `src/ui/theme.ts`. No hardcoded
+  hex in screens.
+- Readiness math and the RTT probe are pure TS, written failing test first,
+  with a mutation kill confirmed. 15 app tests green.
+- Native telephony (`plugins/zerolag-net`) and the floating HUD
+  (`plugins/zerolag-hud`) are drafted as Kotlin plus an Expo config plugin.
+  They compile only during a prebuild / EAS build and are NOT verified until
+  a build runs on a device.
+- No APK / EAS / Actions build was dispatched. `.build-state.json`
+  lastBuild stays null until the user names a build number in that turn.
+
+Check: `npm test` (agent-docs 52, agent-rules 34, app tests 15, all green).

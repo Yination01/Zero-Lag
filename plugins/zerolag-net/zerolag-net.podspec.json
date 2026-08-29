@@ -1,0 +1,7 @@
+{
+  "name": "zerolag-net",
+  "version": "0.1.0",
+  "description": "Zero-Lag native telephony signal reader (Android). Reads carrier, network type and RSRP dBm.",
+  "main": "index.js",
+  "platforms": { "android": {} }
+}

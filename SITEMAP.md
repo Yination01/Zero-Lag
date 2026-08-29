@@ -6,11 +6,11 @@ State at the last update of this document:
 
 | Thing | Value |
 |---|---|
-| Tip of this branch | agent-pack law merged, native prototype archived, Expo plan drafted |
-| App scaffold | not started. Stack intent is Expo / React Native Android. |
+| Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
+| App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
 | Live host | none named |
-| Last APK | none. `.build-state.json` lastBuild is null |
-| Suite | `npm test` (agent-docs + agent-rules, both green) |
+| Last APK | none. `.build-state.json` lastBuild is null. No build number named yet. |
+| Suite | `npm test` (agent-docs + agent-rules + 15 TS app tests, all green) |
 
 ## Top level
 
@@ -21,7 +21,13 @@ State at the last update of this document:
 | `DESIGN.md` | Locked tokens, once they exist. Empty on purpose. |
 | `SITEMAP.md` | This file. |
 | `.build-state.json` | The APK a tester is actually running. Null until a named dispatch. |
-| `package.json` | `npm test` runs the two agent audits. |
+| `package.json` | Expo app deps and `npm test` (audits plus TS app tests). |
+| `app.json` / `eas.json` | Expo config and EAS Android build profiles. |
+| `App.tsx`, `index.ts` | Expo root component and entry. |
+| `src/net/` | Readiness math, RTT probe, signal and refresh logic. |
+| `src/ui/` | Home screen and locked design tokens (`theme.ts`). |
+| `src/state/` | React hooks. |
+| `plugins/` | Native Android modules: `zerolag-net` (telephony dBm), `zerolag-hud` (overlay service). |
 
 ## `.agent/`
 
@@ -49,5 +55,6 @@ State at the last update of this document:
 
 ## Not here yet
 
-Expo app, `src/`, `backend/`, `plugins/`, `.github/workflows/apk.yml`.
-Do not scaffold them unless the user names that work. Do not dispatch an APK.
+`backend/`, `.github/workflows/apk.yml`, a generated `android/` folder, and
+a dispatched APK. Do not run prebuild in git and do not dispatch an APK
+unless the maintainer names the build number in that turn.
