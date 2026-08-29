@@ -1,4 +1,13 @@
 {
-  "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch. lastBuild stays null until a named build.",
-  "lastBuild": null
+  "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
+  "lastBuild": {
+    "number": "build-1",
+    "versionName": "0.1.0",
+    "versionCode": 1,
+    "profile": "preview",
+    "artifact": "APK",
+    "dispatchedFromCommit": "set at cut time",
+    "channel": "local",
+    "note": "First tester build. Cut on the maintainer machine per BUILD.md. Compilation is not verifiable in the authoring sandbox."
+  }
 }

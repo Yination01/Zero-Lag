@@ -46,3 +46,16 @@ Check: `npm test` (agent-docs and agent-rules both green this turn).
   lastBuild stays null until the user names a build number in that turn.
 
 Check: `npm test` (agent-docs 52, agent-rules 34, app tests 15, all green).
+
+## 2026-08-29: Build 1 named, dispatched locally
+
+- The maintainer named the first build: Build 1. versionName 0.1.0,
+  versionCode 1, EAS profile preview, artifact APK, channel local.
+- `.build-state.json` lastBuild records build-1. The audit now accepts a
+  documented post-dispatch object that carries a build number, and still
+  rejects a missing-number state.
+- The APK is cut on the maintainer machine (Expo/EAS or Android Studio),
+  not in the authoring sandbox, which has no Android SDK or EAS token.
+  Compilation and device behaviour are NOT verified here.
+
+Check: `npm test` after this edit.
