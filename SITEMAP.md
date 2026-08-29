@@ -6,11 +6,11 @@ State at the last update of this document:
 
 | Thing | Value |
 |---|---|
-| Tip of `main` | first commit plus this agent-pack install |
-| App scaffold | not started |
+| Tip of this branch | agent-pack law merged, native prototype archived, Expo plan drafted |
+| App scaffold | not started. Stack intent is Expo / React Native Android. |
 | Live host | none named |
 | Last APK | none. `.build-state.json` lastBuild is null |
-| Suite | `npm test` |
+| Suite | `npm test` (agent-docs + agent-rules, both green) |
 
 ## Top level
 
@@ -44,6 +44,8 @@ State at the last update of this document:
 |---|---|
 | `DECISIONS.md` | Decisions written the day they are made. |
 | `poise-architecture.json` | REFERENCE ONLY. How Poise is built. Not Zero-Lag law. |
+| `EXPO_PLAN.md` | TDD plan for the Expo / React Native Android app. Not scaffolded yet. |
+| `kotlin-reference/` | REFERENCE ONLY. Pre-law native Kotlin prototype. Behavior spec to port, not shipping code. |
 
 ## Not here yet
 
