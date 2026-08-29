@@ -1,213 +1,156 @@
-# Zero-Lag — Product & Technical Plan
+# ZeroLag — Product & Technical Plan
 
-> Mobile app that **measures network lag in real time** and **boosts device
-> performance**, aimed at mobile gamers and users on slow networks / low-end
-> devices.
+> **ZeroLag** is an Android app that helps Nigerian mobile gamers (and anyone
+> on a bad network) get the best possible connection out of their phone:
+> measure lag before a match, watch ping live in-game, and apply safe
+> pre-match network optimizations.
 >
-> Status: **planning** — this document is the source of truth for v1 scope.
+> Status: **M0–M1 scaffold built** (native Android project in this repo).
 
 ---
 
-## 1. What Zero-Lag is
+## 1. Vision
 
-A single-tap "make my phone faster for this game" app with two engines:
+Nigerians pay for data but suffer slow/unstable networks. An app **cannot
+make a tower broadcast a stronger signal** — radio coverage is physics. But
+software *can*:
 
-1. **Network intelligence** — measures latency, jitter, packet loss and
-   throughput; watches the connection *while you play* and warns you before
-   lag spikes hit; optionally routes traffic through an optimized local-VPN
-   profile (fast DNS, ad/tracker blocking that frees bandwidth).
-2. **Performance boost** — monitors RAM, CPU, thermal state, battery and
-   storage; frees memory where the OS allows, detects background hogs, and
-   applies a "Game Mode" profile (Do-Not-Disturb, brightness/performance
-   settings, stop background sync).
+- measure what's wrong (signal bars lie; dBm/ping/jitter don't),
+- tell the gamer **when it's safe to start a ranked match**,
+- force a fresh tower lock via a guided quick airplane-mode toggle,
+- route DNS through fast resolvers (gaming VPN profile) to cut matchmaking
+  lag,
+- show a floating ping HUD over games like **eFootball**, COD Mobile, PUBG,
+  MLBB, Free Fire,
+- and (later) map which carrier is best where, from crowdsourced data.
 
-**Tagline direction:** *See the lag. Kill the lag.*
+**Honesty principle:** every action must do something real. No fake progress
+bars, no root-only shell commands dressed up as features, no "200% faster"
+claims. This keeps us on the Play Store and builds trust with gamers.
 
-### Target users
-- Mobile gamers (COD Mobile, FIFA, MLBB, Free Fire, etc. — huge audience in
-  West Africa / NG market on budget Android phones and patchy networks).
-- Users on 3G/4G with unstable connections who want to know *why* their
-  network feels slow.
-- People with entry-level devices (2–4 GB RAM) that stutter under load.
+## 2. Platform
 
----
+**Android only, native Kotlin + Jetpack Compose** (minSdk 26 / Android 8.0+).
+Rationale vs cross-platform: the core features are deep Android APIs
+(TelephonyManager cell metrics, VpnService, overlay foreground service,
+usage stats) — native Kotlin is the most reliable path and matches the
+target market (budget Android phones in Nigeria). iOS is out of scope.
 
-## 2. Platform reality check (read this before scoping)
+## 3. Target users & market
 
-Modern mobile OSes heavily restrict what "booster" apps can do. We must
-build features that actually work and market honestly — Google Play and Apple
-both reject apps with deceptive "RAM cleaner / 200% faster" claims.
+- **Primary:** mobile gamers, especially eFootball players (one frame of
+  lag = one conceded goal), on MTN / Airtel / Glo / 9mobile.
+- **Secondary:** anyone frustrated with slow 3G/4G who wants to know *why*
+  and what to do (switch SIM? move? toggle radio?).
 
-| Capability | Android | iOS |
-|---|---|---|
-| Ping / jitter / packet loss test | ✅ Full | ✅ Full |
-| Speed test (down/up) | ✅ Full | ✅ Full |
-| Continuous background connection monitor | ✅ Foreground service | ⚠️ Limited (short background windows) |
-| Local VPN for DNS optimization / ad-block | ✅ VpnService | ✅ NEPacketTunnelProvider (Network Extension) |
-| Read RAM / CPU / thermal / battery stats | ✅ Via `ActivityManager` / `proc` / native module | ⚠️ Only memory footprint of *this* app; no system-wide CPU/RAM |
-| Detect other apps' usage | ✅ Usage Access permission (`UsageStatsManager`) | ❌ Not possible |
-| Kill background apps / free system RAM | ⚠️ Only own background tasks; system kills others automatically. Can show "hogs" and deep-link settings | ❌ Impossible |
-| Clear app caches | ⚠️ Can only clear *own* cache; can deep-link users to settings | ❌ Impossible |
-| Toggle DND / brightness / game mode | ✅ Do Not Disturb access + settings writes | ⚠️ Focus mode suggestions only; no programmatic toggles |
-| Home-screen widget / overlay meter | ✅ Overlay + widgets | ⚠️ Widgets only (Live Activity possible on iOS 16+) |
+## 4. The golden rule for gamers: two modes
 
-**Consequence:** v1 is **Android-first**, with iOS shipping the network
-toolset (ping/speed/VPN-DNS/widgets) and the dashboard. Android gets the deep
-performance features. This matches the target market (budget Android).
+ZeroLag must **never** reset a connection while a match is live (instant
+forfeit). So:
 
-**Honesty principle:** Every "boost" action must do something real or clearly
-frame itself as guidance ("Tap to stop these apps yourself"). No fake
-progress bars, no invented percentages.
+| **Pre-Match Mode** (aggressive fixes) | **In-Game Mode** (passive only) |
+|---|---|
+| Guided radio/airplane refresh | Floating ping HUD (read-only) |
+| Gaming DNS activation (VpnService) | Silent lag-spike logging |
+| Match-readiness test (ping/jitter/loss) | Zero resets, zero VPN changes |
+| SIM/network recommendation | Post-match lag report |
 
----
+## 5. Feature roadmap
 
-## 3. Feature pillars
+### M0 — Foundation ✅ (this scaffold)
+- Native Gradle project, Jetpack Compose, dark neon theme (#00FF88),
+  single dashboard screen, permission flow skeleton.
 
-### Pillar A — Network (works on both OSes)
-- **Quick Lag Test:** one tap → latency + jitter + packet loss + loss burst
-  detection against regional targets (and later, game-server hosts).
-- **Speed Test:** download/upload/throughput with a live graph.
-- **Live Monitor (Android foreground service):** ping every second while
-  gaming; overlay/HUD shows current ping; alerts on spike ("Network unstable
-  320 ms — switch network?").
-- **Connection history:** per-session stats, best/worst ping, reliability
-  score per Wi-Fi network / SIM.
-- **Smart DNS / Ad-block "Network Boost":** local VPN profile that uses
-  fast resolvers (e.g. Cloudflare/Google) and blocks ad/tracker hosts —
-  reduces bandwidth use and connection setup time. User explicitly consents;
-  one tap to enable/disable; no traffic leaves the device to our servers.
-- **Wi-Fi vs cellular comparison** and recommendation.
+### M1 — Diagnostics ✅ (in this scaffold)
+- **Match-readiness test:** real RTT samples (TCP-connect probe to
+  1.1.1.1/8.8.8.8:443 — no root, works on all devices) → avg ping, jitter,
+  packet loss %, verdict: **MATCH READY** (<80ms, <15ms jitter, 0% loss)
+  vs **RISKY**.
+- **Signal card:** carrier name, network tech (5G/4G/3G/Wi-Fi), real RSRP
+  in dBm from `TelephonyManager.allCellInfo`, quality label.
+- **Floating ping HUD:** foreground service + `TYPE_APPLICATION_OVERLAY`
+  window that sits over games, updates every 2s, color-coded.
+- **One-tap network refresh (honest):** Android forbids apps toggling
+  airplane mode/radio directly, so ZeroLag opens the right settings screen
+  with a clear 5-second instruction (ON → wait → OFF) which forces the
+  phone to re-register on the strongest nearby tower.
 
-### Pillar B — Device performance (Android-deep, iOS-dashboard)
-- **Device vitals dashboard:** RAM used/available, CPU load, battery temp &
-  level, thermal throttling state, storage free.
-- **Memory boost:** release our own caches + list top background apps (via
-  Usage Access) with a one-tap deep link to App Info so the user force-stops;
-  show real before/after *available RAM* numbers.
-- **Storage finder:** flag big files, duplicate/junk, old downloads
-(Android: MediaStore access; iOS: limited to own container + open Settings).
-- **Game Mode profile:** with user-granted permissions — DND on, sync paused,
-  screen stays awake, performance/brightness set; auto-ends when the game
-  closes (Android Usage Events).
-- **Boost report card:** after each session: avg ping, packet loss, RAM
-  freed, thermal headroom, stability score 0–100.
+### M2 — Gaming DNS "Network Boost"
+- Local `VpnService` that routes **only DNS queries** (zero payload
+  overhead) through Cloudflare/Google resolvers + blocks ad/tracker hosts;
+  big explicit consent screen; Play Console VpnService justification form.
+- Toggle lives in **pre-match** only; HUD shows "DNS boost active".
 
-### Pillar C — Product shell
-- Onboarding + permission flow with clear "why we ask" screens.
-- Home dashboard: big **BOOST** button, live ping ring, vitals strip.
-- History/insights tab, settings (VPN, themes, units, servers).
-- Local-first: everything works offline / without an account.
+### M3 — Lag intelligence
+- Continuous background logging (WorkManager, battery-friendly) of drops &
+  spikes; post-match report card ("Airtel lost 12 packets at 12:04").
+- Per-game / per-region ping targets (eFootball EU/ME servers, etc.).
 
----
+### M4 — Crowdsourced coverage map
+- Anonymous (lat/lng rounded, carrier, tech, dBm, speed) telemetry upload
+  with explicit opt-in.
+- Backend: Node/Go + PostgreSQL/PostGIS; heatmap per carrier
+  (MTN/Airtel/Glo/9mobile). Privacy-first, no personal identifiers.
 
-## 4. Tech stack (chosen)
+### M5 — Dual-SIM assistant
+- Monitor both SIMs; notify "MTN is 3x faster here — switch data SIM"
+  (deep-link to settings; Android blocks silent data-SIM switching).
 
-**Mobile:** React Native + **Expo (dev client)**, TypeScript.
-- Rationale: one codebase for Android + iOS, fast iteration, Expo Router for
-  navigation, EAS Build for store binaries; native gaps (RAM/CPU/thermal,
-  VpnService, UsageStats, foreground service, overlay) covered via small
-  custom native modules through an Expo dev build + config plugins.
-- State: **Zustand**; navigation: **Expo Router**; charts: react-native-svg
-  + victory-native (or skia).
-- Background work: Android foreground service (native module); iOS relies on
-  in-app sessions + Live Activity/widget.
+### M6 — Polish, launch & monetization
+- Onboarding with permission education, OEM autostart guides (Tecno,
+  Infinix, Xiaomi, Samsung kill background services aggressively),
+  widgets, crash reporting, Play Store listing & internal testing.
 
-**Backend (thin, optional at launch):**
-- Ping/speed **target endpoints** are just public anycast hosts + our own
-  small reflector if needed. No account required for v1.
-- Later: lightweight server (Node/Fastify or FastAPI) for leaderboards,
-  server-region ping matrix, sync of history. Not in MVP.
+## 6. Monetization (from the Gemini strategy, adopted)
 
-**Testing/QA:** Jest + React Native Testing Library; Detox or Maestro for
-on-device flows; manual test matrix on a low-end Android device.
+- **Free tier:** manual refresh guide, signal reader, basic readiness test,
+  public coverage map.
+- **Pro Gamer (~₦1,000–1,500/month):** gaming DNS profiles per game,
+  floating HUD, auto-advisor, history/insights.
+- **Rewarded ads:** "Watch 10s to run a deep DNS/socket refresh session."
+- **B2B telemetry (later):** sell anonymized coverage intelligence to
+  tower companies / ISPs.
+- **Affiliate:** contextual SIM offers ("MTN is 95% 4G here — order a
+  SIM").
 
----
+## 7. Technical notes / corrections to early sketches
 
-## 5. App architecture
+- ❌ `Runtime.exec("ip neighbor flush all")` — needs **root**, silently
+  fails on normal phones. Removed. ZeroLag uses guided airplane toggle +
+  (M2) DNS-level optimization instead.
+- ❌ Apps **cannot** toggle airplane mode / re-register radio directly on
+  modern Android (only system apps). We deep-link the user — takes 5
+  seconds and genuinely works.
+- ❌ Raw ICMP via `ping` shell command is blocked/unreliable on many OEM
+  builds. ✅ We measure RTT with TCP-connect timing to well-known anycast
+  endpoints — no root, deterministic.
+- Android 14+ requires a declared foreground-service type — the HUD uses
+  `specialUse` with a Play-justified subtype, plus POST_NOTIFICATIONS.
+- Cell metrics (`allCellInfo`) require **location permission** granted;
+  degrade gracefully when denied.
+
+## 8. Project layout (native Android)
 
 ```
-app/                        # Expo Router screens
-  (tabs)/index.tsx          # Home dashboard: BOOST button + ping ring
-  (tabs)/network.tsx        # Lag/speed tests, live monitor
-  (tabs)/boost.tsx          # Memory/storage/game-mode actions
-  (tabs)/history.tsx        # Session history & scores
-  (tabs)/settings.tsx
-  onboarding/               # Permissions + education
-
-src/
-  net/                      # Network engine
-    ping.ts                 # ICMP-like / TCP-connect / UDP probe abstraction
-    jitter.ts, loss.ts
-    speedtest.ts            # Download/upload sampling
-    vpn.ts                  # Local VPN lifecycle (Android VpnService / iOS NE)
-    monitor.ts              # Foreground sampling loop + spike detection
-  perf/                     # Device engine (native-module backed)
-    vitals.ts               # RAM/CPU/thermal/battery
-    memoryBoost.ts
-    storage.ts
-    gameMode.ts             # DND, brightness, wakelock, usage events
-  store/                    # Zustand stores
-  components/               # Gauges, rings, cards, charts
-  lib/                      # Formatters, scoring, logging
-
-modules/android/            # Custom native code (Kotlin)
-  zerolag-vitals/           # ActivityManager / proc stat / thermal
-  zerolag-vpn/              # VpnService wrapper
-  zerolag-usage/            # UsageStatsManager
-  zerolag-boost/            # DND access, settings, foreground svc
-modules/ios/                # Swift (later phase)
+app/src/main/java/com/zerolag/app/
+  MainActivity.kt          # Compose host + permission flow
+  ZeroLagApplication.kt    # notification channels
+  ui/        HomeScreen.kt, theme/ (Color, Theme, Type)
+  net/       PingProbe.kt, ReadinessChecker.kt, SignalMonitor.kt
+  boost/     NetworkRefresher.kt        # honest guided refresh
+  hud/       PingOverlayService.kt      # floating in-game ping
+  (M2) vpn/  GamingDnsVpnService.kt     # not yet built
 ```
 
-**Key data model (local, SQLite/WatermelonDB or MMKV):**
-- `Session { id, startedAt, networkType, avgPing, jitterMs, lossPct,
-  downMbps, upMbps, ramBefore, ramAfter, thermalState, score }`
-- `NetworkSample { t, pingMs, lost }` — time-series for charts.
-- `BoostAction { type, result, timestamp }`.
+## 9. Build & run
 
----
+Open the repo root in **Android Studio (Jellyfish or newer)**, JDK 17, let
+Gradle sync, plug in an Android phone with USB debugging, press Run.
+See [BUILD.md](BUILD.md) for details.
 
-## 6. Milestones
+## 10. Open questions
 
-| # | Milestone | Deliverable |
-|---|---|---|
-| **M0** | Foundation | Expo + TS project, Expo Router, design system (dark, gamer aesthetic), tab navigation, Zustand, CI lint/test, this plan |
-| **M1** | Network core | Quick lag test (ping/jitter/loss), speed test with live graph, results card + history stored locally |
-| **M2** | Live monitor (Android) | Foreground service + ping HUD/overlay, spike notifications, session recording; iOS in-app version |
-| **M3** | Device vitals | Native module: RAM/CPU/temp/battery dashboard with real numbers |
-| **M4** | Boost actions | Memory boost w/ usage stats, Game Mode (DND + wakelock), storage finder; boost report card |
-| **M5** | Network Boost VPN | Android VpnService: fast DNS + host blocklist; consent UI; iOS NE later |
-| **M6** | Polish & launch | Onboarding/permission education, widgets, scores/insights, crash reporting, store assets, Play Store internal testing |
-
-**MVP definition (M0–M4):** a user can open Zero-Lag, run a lag test, watch
-live ping over a game session, see device vitals, tap BOOST, and get a real
-before/after report — on Android.
-
----
-
-## 7. Risks & constraints
-- **Store policy:** Google Play restricts VpnService usage (must be
-  purpose-justified), task-killer claims, and accessibility abuse. Apple
-  restricts performance claims. Mitigation: honest copy, consent-first
-  permissions, real measured numbers only.
-- **OS variance:** Android OEM skins (Xiaomi, Tecno, Samsung, Infinix —
-  common in NG) kill background services aggressively; need OEM-specific
-  autostart instructions in onboarding.
-- **Ping accuracy:** true ICMP needs raw sockets (restricted); use TCP-connect
-  / HTTP-based probes with clear methodology; offer ICMP via VPN on Android.
-- **Thermal/CPU APIs** differ by API level; degrade gracefully.
-
----
-
-## 8. Open questions for you
-1. **Launch region first?** Nigeria/Africa-only at start (cheaper servers,
-   relevant targets) or global?
-2. **Monetization:** free + ads? one-time Pro? subscription for VPN/boost?
-3. **Game-specific targeting:** should we hardcode popular game server hosts
-   (COD, MLBB, Free Fire…) for per-game ping?
-4. **Brand look:** dark neon "gamer" style, or clean/light utility style?
-5. App name confirmed as **Zero-Lag** for the Play Store listing?
-
----
-
-*Next step after sign-off: build **M0** (project scaffold + design system) and
-then **M1** (working lag test).*
+1. Confirmed pricing ~₦1,000–1,500/mo for Pro? Any preferred Paystack/
+   Flutterwave/Google Play billing split?
+2. Ship English-only first, or Pidgin mode for fun ("Network dey kampe")?
+3. Which game server hosts should M3 ping for eFootball in Africa/EU?

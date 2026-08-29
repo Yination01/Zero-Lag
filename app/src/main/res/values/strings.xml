@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ZeroLag</string>
+    <string name="hud_channel_name">Ping HUD</string>
+    <string name="hud_channel_desc">Shows the floating real-time ping meter over games.</string>
+    <string name="hud_notification_title">ZeroLag ping HUD is running</string>
+    <string name="hud_notification_text">Monitoring network stability. Tap to return to ZeroLag.</string>
+</resources>
