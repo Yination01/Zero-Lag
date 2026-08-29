@@ -30,7 +30,11 @@ State at the last update of this document:
 | `src/boost/` | Boost action catalog and permission gating. |
 | `src/ui/` | Tab shell, Home/Game/Boost/Device screens, design tokens. |
 | `src/state/` | React hooks (readiness, game detection, device). |
-| `plugins/` | Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud`. |
+| `src/onboarding/` | First-launch flow: legal consent, guest/account, permissions. |
+| `src/legal/`, `src/auth/`, `src/permissions/` | Consent, session (guests equal to accounts), permission catalog with reasons. |
+| `plugins/` | Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud` (game bar overlay). |
+| `.github/workflows/apk.yml` | Manual EAS APK build. Requires a typed build number and an EXPO_TOKEN secret; fails closed otherwise. |
+| `docs/legal/` | Terms, privacy, EULA drafts shown in-app. Review before Play launch. |
 
 ## `.agent/`
 

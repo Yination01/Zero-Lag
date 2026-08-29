@@ -75,3 +75,21 @@ Check: `npm test` after this edit.
 - Background analytics stay local until a host is named. No host named.
 
 Check: npm test (agent-docs 52, agent-rules 34, app tests 35, all green).
+
+## 2026-08-29: onboarding, legal, accounts/guests, game bar, EAS workflow
+
+- First launch flow added: legal consent (terms, privacy, EULA), then guest
+  or account, then permissions. Guests have full unrestricted access. An
+  account is optional and local only until a backend host is named; cloud
+  sync is off (CLOUD_SYNC_AVAILABLE false).
+- Legal documents added under docs/legal/ and shown in-app. Drafts, not a
+  substitute for legal review before Play launch.
+- Every Boost action now states exactly what it does and why it works, and
+  an honesty test fails the build on claims Android cannot deliver.
+- Game bar overlay upgraded to show live ping and used RAM on the floating
+  pill and in the ongoing notification. Native, verified only at a device build.
+- GitHub Actions workflow .github/workflows/apk.yml added. It is manual
+  only, requires a build number typed at dispatch, and fails closed without
+  EXPO_TOKEN. No workflow run dispatched this turn.
+
+Check: npm test (agent-docs 52, agent-rules 34, app tests 56, all green).

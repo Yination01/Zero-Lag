@@ -1,13 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { tokens } from './theme';
-import { Card, SectionLabel, Muted, GhostButton } from './components';
+import { Card, SectionLabel, Muted, GhostButton, PrimaryButton } from './components';
 import { buildBoostActions, type BoostAction } from '../boost/actions';
+import { hud } from '../plugins/hud';
 
 const c = tokens.color;
 
-// Real permission/device state is supplied by native plugins at runtime.
-// This starts from a safe, denied default so nothing is faked.
 const DEFAULT_CTX = { tier: 'entry' as const, usagePermission: false, overlayPermission: false };
 
 export function BoostScreen({
@@ -23,40 +22,75 @@ export function BoostScreen({
     () => buildBoostActions({ ...DEFAULT_CTX, tier, usagePermission }),
     [tier, usagePermission],
   );
+  const [barOn, setBarOn] = useState(false);
+
+  async function toggleGameBar() {
+    if (!hud.isSupported()) {
+      Alert.alert('Game bar', 'Available after the app is built to your phone. The overlay is a native feature.');
+      return;
+    }
+    const can = await hud.canDrawOverlays();
+    if (!can) {
+      Linking.openURL('android.settings.action.MANAGE_OVERLAY_PERMISSION').catch(() => undefined);
+      Alert.alert('Display over other apps', 'Grant overlay permission, then tap the game bar button again.');
+      return;
+    }
+    if (barOn) {
+      await hud.stop();
+      setBarOn(false);
+    } else {
+      await hud.start();
+      setBarOn(true);
+    }
+  }
 
   function run(action: BoostAction) {
     if (action.gated) {
       if (action.requiresPermission === 'usage') {
         Alert.alert(
           action.label,
-          'This needs Usage Access so Zero-Lag can list background hogs. It never closes them for you, it opens the stop screen.',
-          [{ text: 'Grant access', onPress: onRequestUsage }, { text: 'Cancel', style: 'cancel' }],
+          `${action.doesWhat}\n\nWhy: ${action.whyItWorks}`,
+          [{ text: 'Grant usage access', onPress: onRequestUsage }, { text: 'Cancel', style: 'cancel' }],
         );
         return;
       }
-      Alert.alert(action.label, 'Coming in a later build.');
+      Alert.alert(action.label, `${action.doesWhat}\n\nWhy: ${action.whyItWorks}`);
       return;
     }
     if (action.kind === 'toggle' && action.id === 'wakelock') {
-      // keep-awake is applied by the app itself while the HUD session runs
-      Alert.alert(action.label, 'Screen stay-awake applies during an active HUD session.');
+      Alert.alert(action.label, `${action.doesWhat}\n\nWhy: ${action.whyItWorks}`);
       return;
     }
     if (action.target) {
-      Linking.openURL(action.target).catch(() => Alert.alert('Could not open settings', 'Open Settings manually and look for the matching option.'));
+      Linking.openURL(action.target).catch(() =>
+        Alert.alert('Open settings', 'Could not open that screen directly. Open Settings and find the matching option.'),
+      );
     }
   }
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
       <Text style={styles.title}>Boost</Text>
-      <Muted text="Real, safe optimizations. Zero-Lag never kills apps silently or overclocks the phone." />
+
+      <Card testID="game-bar-card">
+        <SectionLabel text="GAME BAR (ALWAYS-VISIBLE OVERLAY)" />
+        <Text style={styles.name}>Floating ping and RAM bar</Text>
+        <Muted text="Shows live ping and used RAM as a small pill over games and apps, plus the same line in the notifications shade so it is always visible. It only reads, it never resets your connection." />
+        <PrimaryButton
+          label={barOn ? 'STOP GAME BAR' : 'START GAME BAR'}
+          onPress={toggleGameBar}
+          accessibilityLabel="Toggle the floating game bar"
+        />
+      </Card>
+
+      <Muted text="Each action below states exactly what happens and why it works. Zero-Lag never silently closes apps, overclocks, or boosts tower signal, because Android does not allow it." />
 
       {actions.map((a) => (
         <Card key={a.id} testID={`boost-${a.id}`}>
           <SectionLabel text={a.gated ? 'NEEDS PERMISSION / PENDING' : 'AVAILABLE'} />
           <Text style={styles.name}>{a.label}</Text>
-          <Muted text={a.description} />
+          <Text style={styles.body}>What it does: {a.doesWhat}</Text>
+          <Text style={styles.why}>Why it works: {a.whyItWorks}</Text>
           <GhostButton
             label={a.gated && a.requiresPermission === 'usage' ? 'GRANT USAGE ACCESS' : 'OPEN'}
             onPress={() => run(a)}
@@ -68,7 +102,7 @@ export function BoostScreen({
       <View>
         <Muted
           color={c.warn}
-          text="Android blocks apps from force-stopping other apps. The hog list opens each app's info screen so you stop it yourself. Do any refresh before matchmaking, never during a match."
+          text="Always do network refresh before matchmaking, never during a live match."
         />
       </View>
     </ScrollView>
@@ -80,4 +114,6 @@ const styles = StyleSheet.create({
   content: { padding: tokens.space.lg, gap: tokens.space.md, paddingTop: 48, paddingBottom: 96 },
   title: { color: c.good, fontSize: tokens.font.display, fontWeight: '800' },
   name: { color: c.onSurface, fontSize: tokens.font.title, fontWeight: '700' },
+  body: { color: c.onSurface, fontSize: tokens.font.body, lineHeight: 21 },
+  why: { color: c.muted, fontSize: tokens.font.secondary, lineHeight: 20 },
 });

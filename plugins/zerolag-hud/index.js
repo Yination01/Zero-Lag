@@ -1,6 +1,6 @@
-// Bridge to the overlay service. The native ReactContextBaseJavaModule
-// (start/stop) is compiled from plugins/zerolag-hud/android during prebuild.
-// Here we tolerate its absence so JS code and node tests never crash.
+// Bridge to the floating game bar service. The native module compiles from
+// plugins/zerolag-hud/android during prebuild. Outside a build we no-op so
+// JS and node tests never crash.
 const { NativeModules, Platform } = require('react-native');
 
 const native = NativeModules && NativeModules.ZeroLagHud ? NativeModules.ZeroLagHud : null;
@@ -8,6 +8,16 @@ const native = NativeModules && NativeModules.ZeroLagHud ? NativeModules.ZeroLag
 module.exports = {
   isSupported() {
     return Platform.OS === 'android' && !!native;
+  },
+  async canDrawOverlays() {
+    if (native && native.canDrawOverlays) {
+      try {
+        return await native.canDrawOverlays();
+      } catch {
+        return false;
+      }
+    }
+    return false;
   },
   async start() {
     if (native && native.start) await native.start();
