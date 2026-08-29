@@ -21,9 +21,14 @@
       ]
     },
     "plugins": [
-      "expo-status-bar",
       "./plugins/zerolag-hud/withZeroLagHud.js",
       "./plugins/withNativePackages.js"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "aca8aecf-ee68-413c-a362-80da8033c24c"
+      }
+    },
+    "owner": "yination"
   }
 }
