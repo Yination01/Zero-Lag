@@ -31,6 +31,7 @@ State at the last update of this document:
 | `src/boost/` | Boost action catalog and permission gating. |
 | `src/ui/` | Tab shell, Home/Game/Boost/Device screens, design tokens. |
 | `src/state/` | React hooks (readiness, game detection, device). |
+| `src/plugins/` | Typed bridges from React Native native modules to app source. They validate unavailable or malformed native values conservatively. |
 | `src/onboarding/` | First-launch flow: legal consent, guest/account, permissions. |
 | `src/legal/`, `src/auth/`, `src/permissions/` | Consent, session (guests equal to accounts), permission catalog with reasons. |
 | `plugins/` | Local React Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud` (game bar overlay). Their `file:` dependencies let React Native autolink them. |

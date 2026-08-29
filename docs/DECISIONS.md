@@ -121,3 +121,19 @@ Check: `npm test` including `.audit/legal.cjs`.
   behavior remain unverified until a named build runs.
 
 Check: `npm test`, including `src/native/autolinking.test.ts`.
+
+## 2026-08-29: typed native bridges and compile gate
+
+- App source uses typed bridge modules in `src/plugins/`, not unresolved paths
+  into the native-plugin directory. The bridges treat absent, denied, malformed,
+  and failed native reads conservatively.
+- The HUD bridge now exports the `hud` controller consumed by Boost, so the
+  game-bar controls resolve at bundle time and do not dereference an absent
+  named export.
+- `npm test` now runs `tsc --noEmit` before its runtime tests. This prevents
+  unresolved source imports and unsafe storage-driver shapes from reaching an
+  Android build.
+- No APK / EAS / Actions build was dispatched. Native behavior still needs a
+  named Android build and real-device check.
+
+Check: `npm test`, `npx expo export --platform android`, and bridge tests.
