@@ -106,3 +106,18 @@ Check: npm test (agent-docs 52, agent-rules 34, app tests 56, all green).
   lies, a fake inbox, or em-dashes return.
 
 Check: `npm test` including `.audit/legal.cjs`.
+
+## 2026-08-29: local native packages use React Native autolinking
+
+- `@zerolag/net`, `@zerolag/device`, and `@zerolag/hud` are root `file:`
+  dependencies. Each provides an Android library, manifest, and standard
+  React Native autolinking metadata.
+- The generated Android app receives the three `ReactPackage` classes from
+  React Native autolinking. The old hand-written MainApplication injector is
+  removed, preventing duplicate registration and unresolved local sources.
+- The HUD manifest plugin remains, because its overlay service and special-use
+  foreground-service declaration are app configuration, not package discovery.
+- No APK / EAS / Actions build was dispatched. Native compilation and device
+  behavior remain unverified until a named build runs.
+
+Check: `npm test`, including `src/native/autolinking.test.ts`.

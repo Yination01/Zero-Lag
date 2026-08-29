@@ -1,0 +1,16 @@
+{
+  "name": "@zerolag/device",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Zero-Lag Android device-facts native module.",
+  "main": "index.js",
+  "react-native": "index.js",
+  "files": [
+    "android",
+    "index.js",
+    "react-native.config.js"
+  ],
+  "peerDependencies": {
+    "react-native": ">=0.74.0"
+  }
+}

@@ -33,7 +33,7 @@ State at the last update of this document:
 | `src/state/` | React hooks (readiness, game detection, device). |
 | `src/onboarding/` | First-launch flow: legal consent, guest/account, permissions. |
 | `src/legal/`, `src/auth/`, `src/permissions/` | Consent, session (guests equal to accounts), permission catalog with reasons. |
-| `plugins/` | Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud` (game bar overlay). |
+| `plugins/` | Local React Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud` (game bar overlay). Their `file:` dependencies let React Native autolink them. |
 | `.github/workflows/apk.yml` | Manual EAS APK build. Requires a typed build number and an EXPO_TOKEN secret; fails closed otherwise. |
 | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` | Official legal pack, enforced by `.audit/legal.cjs`. Not legal advice. |
 

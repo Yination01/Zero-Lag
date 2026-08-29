@@ -21,8 +21,7 @@
       ]
     },
     "plugins": [
-      "./plugins/zerolag-hud/withZeroLagHud.js",
-      "./plugins/withNativePackages.js"
+      "./plugins/zerolag-hud/withZeroLagHud.js"
     ],
     "extra": {
       "eas": {
