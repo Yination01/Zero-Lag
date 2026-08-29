@@ -9,8 +9,9 @@ State at the last update of this document:
 | Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
 | App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
 | Live host | none named |
-| Last APK | none. `.build-state.json` lastBuild is null. No build number named yet. |
-| Suite | `npm test` (agent-docs + agent-rules + 15 TS app tests, all green) |
+| Last APK | `build-1` recorded in `.build-state.json`. Cut on the maintainer machine. Not verified in this sandbox. |
+| Suite | `npm test` (agent-docs + agent-rules + legal + TS app tests) |
+| Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` |
 
 ## Top level
 
@@ -20,7 +21,7 @@ State at the last update of this document:
 | `CLAUDE.md` | Project law. Wins ties. |
 | `DESIGN.md` | Locked tokens, once they exist. Empty on purpose. |
 | `SITEMAP.md` | This file. |
-| `.build-state.json` | The APK a tester is actually running. Null until a named dispatch. |
+| `.build-state.json` | The APK a tester is actually running. This branch records `build-1`. |
 | `package.json` | Expo app deps and `npm test` (audits plus TS app tests). |
 | `app.json` / `eas.json` | Expo config and EAS Android build profiles. |
 | `App.tsx`, `index.ts` | Expo root component and entry. |
@@ -46,6 +47,7 @@ State at the last update of this document:
 |---|---|
 | `agent-docs.cjs` | Catalog parses, stubs delegate, no em-dash. |
 | `agent-rules.cjs` | The eight hard rules stay stated. |
+| `legal.cjs` | Honest booster claims, Nigeria courts, 13+, placeholder contact. |
 
 ## `docs/`
 

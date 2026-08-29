@@ -75,3 +75,17 @@ Check: `npm test` after this edit.
 - Background analytics stay local until a host is named. No host named.
 
 Check: npm test (agent-docs 52, agent-rules 34, app tests 35, all green).
+
+## 2026-08-29: legal pack, Nigeria courts, placeholder contact
+
+- TERMS.md, PRIVACY.md, COPYRIGHT.md, COMPLIANCE.md, PLAY_DATA_SAFETY.md
+  and LICENSE land on this branch. They describe the built app (ping,
+  HUD, Usage Access, guided boosts), not Poise.
+- Governing law is Nigeria. Disputes go to courts. No arbitration.
+- Age floor is 13. Licence is all rights reserved, not MIT.
+- Legal contact is the placeholder `legal-contact-placeholder@example.com`
+  until a real inbox is named. Do not invent a domain we do not own.
+- This pack is not legal advice. `.audit/legal.cjs` fails if booster
+  lies, a fake inbox, or em-dashes return.
+
+Check: `npm test` including `.audit/legal.cjs`.

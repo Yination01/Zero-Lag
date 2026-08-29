@@ -1,6 +1,6 @@
 # Zero-Lag
 
-Expo / React Native Android. The app is not scaffolded yet.
+Expo / React Native Android. Game-network companion: ping, HUD, guided boosts.
 
 Standing rules for anyone (human or AI) working here:
 
@@ -15,6 +15,9 @@ Standing rules for anyone (human or AI) working here:
 ```bash
 npm test
 ```
+
+Legal: `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`. Not legal advice.
+Contact inbox is still a placeholder.
 
 Do not start an APK build unless a build number is named in that turn.
 There is no live host yet.
