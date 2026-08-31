@@ -137,3 +137,18 @@ Check: `npm test`, including `src/native/autolinking.test.ts`.
   named Android build and real-device check.
 
 Check: `npm test`, `npx expo export --platform android`, and bridge tests.
+
+## 2026-09-01: Build 3 dispatched to EAS preview
+
+- The maintainer named Build 3 in the dispatch turn. The GitHub Actions
+  preview APK workflow was dispatched from commit `c9e97f8` with input
+  `build-3`.
+- The workflow run is `33451734687`. It runs the full gate, then submits the
+  APK to EAS with the preview profile. Its result is not assumed until the
+  GitHub Actions and EAS jobs finish.
+- `.build-state.json` records the build number, source commit, UTC dispatch
+  time, and workflow URL. The Android versionCode remains unchanged.
+- A real Android device still must verify telephony, Usage Access, overlay,
+  foreground service, notifications, and game detection after the APK exists.
+
+Check: GitHub Actions run `33451734687`, then the EAS build result and device test.

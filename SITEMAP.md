@@ -9,7 +9,7 @@ State at the last update of this document:
 | Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
 | App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
 | Live host | none named |
-| Last APK | `build-1` recorded in `.build-state.json`. Cut on the maintainer machine. Not verified in this sandbox. |
+| Last APK | `build-3` dispatched through the EAS preview APK workflow from `c9e97f8`. Completion and real-device verification are pending. |
 | Suite | `npm test` (agent-docs + agent-rules + legal + TS app tests) |
 | Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` |
 

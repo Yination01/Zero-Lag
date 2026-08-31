@@ -1,13 +1,16 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-1",
+    "number": "build-3",
     "versionName": "0.1.0",
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "set at cut time",
-    "channel": "local",
-    "note": "First tester build. Cut on the maintainer machine per BUILD.md. Compilation is not verifiable in the authoring sandbox."
+    "dispatchedFromCommit": "c9e97f88df98b3aa643567fb9b25a6604e733f63",
+    "channel": "EAS cloud",
+    "workflowRunId": 33451734687,
+    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33451734687",
+    "dispatchedAt": "2026-08-31T23:41:24Z",
+    "note": "Build 3 was dispatched through the manual GitHub Actions EAS preview APK workflow. EAS completion and real-device verification are pending."
   }
 }
