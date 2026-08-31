@@ -143,12 +143,15 @@ Check: `npm test`, `npx expo export --platform android`, and bridge tests.
 - The maintainer named Build 3 in the dispatch turn. The GitHub Actions
   preview APK workflow was dispatched from commit `c9e97f8` with input
   `build-3`.
-- The workflow run is `33451734687`. It runs the full gate, then submits the
-  APK to EAS with the preview profile. Its result is not assumed until the
-  GitHub Actions and EAS jobs finish.
+- The workflow run is `33451734687`. Its checkout, named-build gate,
+  EXPO_TOKEN gate, dependency install, and test gate passed. EAS accepted the
+  project upload but rejected the build request because the Free-plan Android
+  quota was still exhausted. It reported a reset in about one hour.
 - `.build-state.json` records the build number, source commit, UTC dispatch
-  time, and workflow URL. The Android versionCode remains unchanged.
-- A real Android device still must verify telephony, Usage Access, overlay,
-  foreground service, notifications, and game detection after the APK exists.
+  time, workflow URL, and submission failure. The Android versionCode remains
+  unchanged. No APK was created.
+- A new user-named retry is required after the EAS reset. A real Android device
+  still must verify telephony, Usage Access, overlay, foreground service,
+  notifications, and game detection after an APK exists.
 
-Check: GitHub Actions run `33451734687`, then the EAS build result and device test.
+Check: GitHub Actions run `33451734687`, then a newly named EAS retry and device test.

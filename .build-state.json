@@ -11,6 +11,7 @@
     "workflowRunId": 33451734687,
     "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33451734687",
     "dispatchedAt": "2026-08-31T23:41:24Z",
-    "note": "Build 3 was dispatched through the manual GitHub Actions EAS preview APK workflow. EAS completion and real-device verification are pending."
+    "status": "submission-failed",
+    "note": "The workflow gate and EAS project upload passed, but EAS rejected Build 3 because the Free-plan Android build quota remains exhausted. EAS reported that the quota resets in about one hour. No APK was created."
   }
 }

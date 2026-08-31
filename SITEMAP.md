@@ -9,7 +9,7 @@ State at the last update of this document:
 | Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
 | App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
 | Live host | none named |
-| Last APK | `build-3` dispatched through the EAS preview APK workflow from `c9e97f8`. Completion and real-device verification are pending. |
+| Last APK | No new APK. `build-3` was rejected by EAS after upload because the Free-plan Android quota remains exhausted. A newly named retry is needed after the reset. |
 | Suite | `npm test` (agent-docs + agent-rules + legal + TS app tests) |
 | Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` |
 
