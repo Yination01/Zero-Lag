@@ -10,7 +10,7 @@ test('all fast, stable samples return MATCH READY', () => {
   assert.ok(r.jitterMs < 15, 'jitter under 15');
 });
 
-test('zero samples or all lost returns NO CONNECTION at 100 percent loss', () => {
+test('zero samples or all failed probes return NO CONNECTION at 100 percent failed probes', () => {
   assert.equal(computeReadiness([]).verdict, 'no-connection');
   const r = computeReadiness([null, null, null]);
   assert.equal(r.verdict, 'no-connection');
@@ -23,14 +23,14 @@ test('jitter is the mean absolute gap between consecutive samples', () => {
   assert.equal(r.jitterMs, 27);
 });
 
-test('loss percent is lost over total, rounded', () => {
-  // 2 lost of 8 = 25 percent
+test('failed-probe percent is failed probes over total, rounded', () => {
+  // 2 failed probes of 8 = 25 percent
   const r = computeReadiness([50, null, 55, null, 60, 52, 58, 54]);
   assert.equal(r.lossPercent, 25);
 });
 
 test('slightly slow but stable connection is PLAYABLE', () => {
-  // avg around 100, low jitter, no loss
+  // avg around 100, low jitter, no failed probes
   const r = computeReadiness([100, 102, 99, 101, 103]);
   assert.equal(r.verdict, 'playable');
 });

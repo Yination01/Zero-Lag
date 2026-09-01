@@ -35,7 +35,10 @@ import java.net.Socket
  */
 class PingOverlayService : Service() {
 
-    private val scope = CoroutineScope(Dispatchers.Default + Job())
+    private val serviceJob = Job()
+    private val scope = CoroutineScope(Dispatchers.Default + serviceJob)
+    @Volatile private var refreshIntervalMs = DEFAULT_INTERVAL_MS
+    private var loopStarted = false
     private lateinit var windowManager: WindowManager
     private var barView: TextView? = null
     private lateinit var notificationManager: NotificationManager
@@ -52,8 +55,20 @@ class PingOverlayService : Service() {
         notificationManager = getSystemService(NotificationManager::class.java)
         createChannel()
         startAsForeground("-- ms", "--% RAM")
-        addOverlay()
-        startLoop()
+        running = addOverlay()
+        if (!running) stopSelf()
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (!running) return START_NOT_STICKY
+        refreshIntervalMs = intent?.getLongExtra(EXTRA_INTERVAL_MS, DEFAULT_INTERVAL_MS)
+            ?.coerceIn(MIN_INTERVAL_MS, MAX_INTERVAL_MS)
+            ?: DEFAULT_INTERVAL_MS
+        if (!loopStarted) {
+            loopStarted = true
+            startLoop()
+        }
+        return START_NOT_STICKY
     }
 
     private fun createChannel() {
@@ -71,7 +86,7 @@ class PingOverlayService : Service() {
         else @Suppress("DEPRECATION") Notification.Builder(this)
         return builder
             .setContentTitle("Zero-Lag")
-            .setContentText("Ping $pingText   |   RAM $ramText")
+            .setContentText("Edge $pingText   |   RAM $ramText")
             .setSmallIcon(android.R.drawable.stat_sys_data_bluetooth)
             .setContentIntent(openIntent)
             .setOngoing(true)
@@ -88,10 +103,10 @@ class PingOverlayService : Service() {
         }
     }
 
-    private fun addOverlay() {
+    private fun addOverlay(): Boolean {
         windowManager = getSystemService(WINDOW_SERVICE) as WindowManager
         val view = TextView(this).apply {
-            text = "Zero-Lag\n-- ms  --% RAM"
+            text = "Zero-Lag\nEdge -- ms  --% RAM"
             textSize = 12f
             setTextColor(Color.parseColor("#00FF88"))
             setBackgroundColor(Color.parseColor("#CC0A0F14"))
@@ -104,10 +119,16 @@ class PingOverlayService : Service() {
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             type,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             PixelFormat.TRANSLUCENT
         ).apply { gravity = Gravity.TOP or Gravity.START; x = 24; y = 96 }
-        runCatching { windowManager.addView(view, params); barView = view }
+        return try {
+            windowManager.addView(view, params)
+            barView = view
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private fun startLoop() {
@@ -116,7 +137,7 @@ class PingOverlayService : Service() {
                 val rtt = tcpRtt("1.1.1.1", 443)
                 val ramPct = usedRamPercent()
                 withContext(Dispatchers.Main) {
-                    val pingText = if (rtt != null) "$rtt ms" else "LOST"
+                    val pingText = if (rtt != null) "$rtt ms" else "NO RESPONSE"
                     val ramText = "$ramPct% RAM"
                     val pingColor = when {
                         rtt == null -> Color.parseColor("#FF4D4D")
@@ -125,12 +146,12 @@ class PingOverlayService : Service() {
                         else -> Color.parseColor("#FF4D4D")
                     }
                     barView?.let { v ->
-                        v.text = "Zero-Lag\n$pingText   $ramText"
+                        v.text = "Zero-Lag\nEdge $pingText   $ramText"
                         v.setTextColor(pingColor)
                     }
                     runCatching { notificationManager.notify(NOTIF_ID, notification(pingText, ramText)) }
                 }
-                delay(2000)
+                delay(refreshIntervalMs)
             }
         }
     }
@@ -159,9 +180,11 @@ class PingOverlayService : Service() {
     }
 
     override fun onDestroy() {
-        super.onDestroy()
+        running = false
+        serviceJob.cancel()
         barView?.let { runCatching { windowManager.removeView(it) } }
         barView = null
+        super.onDestroy()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -169,9 +192,18 @@ class PingOverlayService : Service() {
     companion object {
         private const val CHANNEL = "zerolag_hud"
         private const val NOTIF_ID = 4711
+        private const val EXTRA_INTERVAL_MS = "com.yination01.zerolag.hud.EXTRA_INTERVAL_MS"
+        private const val DEFAULT_INTERVAL_MS = 3000L
+        private const val MIN_INTERVAL_MS = 1000L
+        private const val MAX_INTERVAL_MS = 10000L
+        @Volatile private var running = false
 
-        fun start(ctx: Context) {
+        fun isRunning(): Boolean = running
+
+        fun start(ctx: Context, intervalMs: Long) {
+            val safeInterval = intervalMs.coerceIn(MIN_INTERVAL_MS, MAX_INTERVAL_MS)
             val i = Intent(ctx, PingOverlayService::class.java)
+                .putExtra(EXTRA_INTERVAL_MS, safeInterval)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) ctx.startForegroundService(i)
             else ctx.startService(i)
         }

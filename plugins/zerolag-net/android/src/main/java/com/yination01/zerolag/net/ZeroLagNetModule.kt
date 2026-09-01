@@ -32,7 +32,8 @@ class ZeroLagNetModule(context: ReactApplicationContext) : ReactContextBaseJavaM
 
     // Foreground app for game detection. Requires Usage Access (a special
     // settings permission, not a runtime grant). Returns "PERMISSION_DENIED"
-    // so JS shows the grant screen instead of fabricating a game.
+    // only when access is absent and "NO_FOREGROUND_APP" when no recent event
+    // is available, so JS does not show a false permission failure.
     @ReactMethod
     fun getForegroundPackage(promise: Promise) {
         try {
@@ -43,18 +44,19 @@ class ZeroLagNetModule(context: ReactApplicationContext) : ReactContextBaseJavaM
             val usm = appContext.getSystemService(Context.USAGE_STATS_SERVICE)
                 as android.app.usage.UsageStatsManager
             val now = System.currentTimeMillis()
-            val events = usm.queryEvents(now - 10_000, now)
+            val events = usm.queryEvents(now - 120_000, now)
             var lastPkg: String? = null
             val e = android.app.usage.UsageEvents.Event()
             while (events.hasNextEvent()) {
                 events.getNextEvent(e)
-                if (e.eventType == android.app.usage.UsageEvents.Event.ACTIVITY_RESUMED ||
-                    e.eventType == android.app.usage.UsageEvents.Event.MOVE_TO_FOREGROUND
+                if ((e.eventType == android.app.usage.UsageEvents.Event.ACTIVITY_RESUMED ||
+                    e.eventType == android.app.usage.UsageEvents.Event.MOVE_TO_FOREGROUND) &&
+                    e.packageName != appContext.packageName
                 ) {
                     lastPkg = e.packageName
                 }
             }
-            promise.resolve(lastPkg ?: "PERMISSION_DENIED")
+            promise.resolve(lastPkg ?: "NO_FOREGROUND_APP")
         } catch (ex: Exception) {
             promise.resolve("PERMISSION_DENIED")
         }

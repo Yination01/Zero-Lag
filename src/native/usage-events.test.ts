@@ -35,3 +35,18 @@ test('foreground-game detection passes a UsageEvents.Event to getNextEvent', () 
     /val\s+[A-Za-z_][A-Za-z0-9_]*\s*=\s*android\.app\.usage\.UsageEvents\(\)/,
   );
 });
+
+test('foreground-game detection skips Zero-Lag itself and keeps a recent app event', () => {
+  const source = readFileSync(nativeModulePath, 'utf8');
+
+  assert.match(
+    source,
+    /packageName\s*!=\s*appContext\.packageName/,
+    'returning to Zero-Lag must not overwrite the recently opened game package',
+  );
+  assert.match(
+    source,
+    /queryEvents\(now\s*-\s*120_000,\s*now\)/,
+    'the user needs enough time to return from a game before detection refreshes',
+  );
+});

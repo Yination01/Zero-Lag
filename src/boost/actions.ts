@@ -1,6 +1,8 @@
 // Boost action catalog. Every action is something Android actually allows.
 // Nothing here kills another app silently, overclocks, or changes another
-// app's settings. Deep links take the user to the right system screen.
+// app's settings. Typed intent destinations take the user to the right system screen.
+
+import type { SettingsDestination } from '../permissions/settings';
 
 export type BoostKind = 'deep-link' | 'settings' | 'toggle';
 
@@ -12,7 +14,7 @@ export interface BoostAction {
   doesWhat: string; // exactly what happens when they tap it
   whyItWorks: string; // why it helps
   kind: BoostKind;
-  target?: string; // settings intent key or url
+  target?: SettingsDestination; // typed Android settings destination
   gated?: boolean; // needs a permission before it can run
   requiresPermission?: string;
   // Which tiers find this meaningful. Default all.
@@ -22,37 +24,37 @@ export interface BoostAction {
 export const BOOST_ACTIONS: BoostAction[] = [
   {
     id: 'guided-hogs',
-    label: 'Stop background app hogs',
-    description:
-      'Find apps using the most battery and memory and help you stop them.',
+    label: 'Allow game detection',
+    description: 'Open Usage access so Zero-Lag can recognize a supported game.',
     doesWhat:
-      'Zero-Lag lists the heaviest background apps and opens each one’s App Info screen. You tap Force stop yourself. Android blocks every third-party app from ending other apps on its own.',
+      'Opens Usage access settings. Select Zero-Lag, turn on Allow usage access, then return to the Game tab. Zero-Lag does not list, force stop, or close other apps.',
     whyItWorks:
-      'Stopping another app’s process needs root or system rights that third-party apps never get. When you force stop a hog yourself, it frees RAM and CPU until it reopens, which can make your game smoother.',
+      'Usage access lets Android report the foreground app, so Zero-Lag can label a supported game. Android keeps app management under your control.',
     kind: 'deep-link',
-    target: 'android.settings.USAGE_ACCESS_SETTINGS',
+    target: 'usage-access',
     requiresPermission: 'usage',
   },
   {
     id: 'dnd',
-    label: 'Game Mode (Do Not Disturb)',
-    description: 'Silence notifications so they do not interrupt a match.',
+    label: 'Do Not Disturb for matches',
+    description: 'Open Do Not Disturb settings to silence match interruptions.',
     doesWhat:
-      'Opens the Do Not Disturb access screen so you can turn it on. Zero-Lag does not toggle it for you.',
+      'Opens Do Not Disturb settings. Turn on Do Not Disturb or set a gaming schedule, then return to Zero-Lag. Zero-Lag does not toggle it for you.',
     whyItWorks:
-      'Notifications can trigger overlays and sounds during play. DND stops them so a banner does not cause you to lose a match.',
+      'Notifications can trigger overlays and sounds during play. Do Not Disturb reduces interruptions while you control which people and apps may break through.',
     kind: 'settings',
-    target: 'android.settings.NOTIFICATION_POLICY_ACCESS_SETTINGS',
+    target: 'do-not-disturb',
   },
   {
     id: 'wakelock',
     label: 'Keep screen awake while playing',
-    description: 'Stop the screen sleeping mid-match.',
+    description: 'Open Display settings to choose a longer screen timeout.',
     doesWhat:
-      'During an active game-bar session Zero-Lag keeps the screen awake inside its own app. It cannot change other apps’ sleep settings.',
+      'Opens Display settings. Set Screen timeout long enough for your match. Zero-Lag cannot keep another app screen awake for you.',
     whyItWorks:
-      'Android allows an app to hold a wake lock while it is running, which prevents the screen timing out during a long match.',
-    kind: 'toggle',
+      'A longer timeout prevents the screen from dimming or sleeping during a match. Android keeps this system setting under your control.',
+    kind: 'settings',
+    target: 'display',
   },
   {
     id: 'brightness',
@@ -62,7 +64,7 @@ export const BOOST_ACTIONS: BoostAction[] = [
     whyItWorks:
       'A stable brightness stops the screen dimming during long sessions. Apps cannot set system brightness without a settings-write permission, so we guide you.',
     kind: 'settings',
-    target: 'android.settings.DISPLAY_SETTINGS',
+    target: 'display',
   },
   {
     id: 'storage',
@@ -72,18 +74,18 @@ export const BOOST_ACTIONS: BoostAction[] = [
     whyItWorks:
       'Nearly full storage slows the whole phone and can block game updates. Freeing space lets the system cache work normally.',
     kind: 'settings',
-    target: 'android.settings.INTERNAL_STORAGE_SETTINGS',
+    target: 'storage',
   },
   {
     id: 'refresh',
     label: 'Guided network refresh',
-    description: 'Reconnect to the strongest tower before matchmaking.',
+    description: 'Reconnect your mobile network before matchmaking.',
     doesWhat:
-      'Opens airplane mode settings with a 5 step guide. You flip airplane mode on then off. Zero-Lag cannot toggle the radio itself.',
+      'Shows a five-step guide, then opens Airplane mode settings. You turn airplane mode on then off; Zero-Lag cannot toggle the radio itself.',
     whyItWorks:
-      'Airplane mode off then on forces the modem to drop a stale tower lock and re-register on the strongest nearby cell, which can cut lag. Never do it during a live match.',
+      'Turning airplane mode off then on makes the modem detach and register again. The network chooses the cell, so this may help a stale connection but cannot guarantee lower lag. Never do it during a live match.',
     kind: 'deep-link',
-    target: 'android.settings.AIRPLANE_MODE_SETTINGS',
+    target: 'airplane-mode',
   },
   {
     id: 'gaming-dns',

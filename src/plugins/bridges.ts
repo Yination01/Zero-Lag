@@ -14,7 +14,9 @@ export interface NativeGameDetectionModule {
 
 export interface NativeHudModule {
   canDrawOverlays?: () => Promise<unknown> | unknown;
-  start?: () => Promise<unknown> | unknown;
+  openOverlaySettings?: () => Promise<unknown> | unknown;
+  isRunning?: () => Promise<unknown> | unknown;
+  start?: (intervalMs?: number) => Promise<unknown> | unknown;
   stop?: () => Promise<unknown> | unknown;
 }
 
@@ -26,7 +28,9 @@ export interface ForegroundGamePackage {
 export interface HudController {
   isSupported(): boolean;
   canDrawOverlays(): Promise<boolean>;
-  start(): Promise<void>;
+  openOverlaySettings(): Promise<boolean>;
+  isRunning(): Promise<boolean>;
+  start(intervalMs?: number): Promise<void>;
   stop(): Promise<void>;
 }
 
@@ -73,6 +77,7 @@ export function createForegroundGamePackageReader(native: NativeGameDetectionMod
     try {
       const packageName = nonBlankString(await native.getForegroundPackage());
       if (!packageName || packageName === 'PERMISSION_DENIED') return deniedGamePackage();
+      if (packageName === 'NO_FOREGROUND_APP') return { packageName: null, needsPermission: false };
       return { packageName, needsPermission: false };
     } catch {
       return deniedGamePackage();
@@ -84,7 +89,12 @@ export function createHudController(
   native: NativeHudModule | null | undefined,
   platform: string,
 ): HudController {
-  const supported = platform === 'android' && native !== null && native !== undefined;
+  const supported =
+    platform === 'android' &&
+    typeof native?.canDrawOverlays === 'function' &&
+    typeof native?.isRunning === 'function' &&
+    typeof native?.start === 'function' &&
+    typeof native?.stop === 'function';
 
   return {
     isSupported: () => supported,
@@ -96,8 +106,29 @@ export function createHudController(
         return false;
       }
     },
-    async start() {
-      if (supported && native?.start) await native.start();
+    async openOverlaySettings() {
+      if (!supported || !native?.openOverlaySettings) return false;
+      try {
+        return (await native.openOverlaySettings()) === true;
+      } catch {
+        return false;
+      }
+    },
+    async isRunning() {
+      if (!supported || !native?.isRunning) return false;
+      try {
+        return (await native.isRunning()) === true;
+      } catch {
+        return false;
+      }
+    },
+    async start(intervalMs = 3000) {
+      if (supported && native?.start) {
+        const safeInterval = Number.isFinite(intervalMs)
+          ? Math.round(Math.min(10_000, Math.max(1_000, intervalMs)))
+          : 3000;
+        await native.start(safeInterval);
+      }
     },
     async stop() {
       if (supported && native?.stop) await native.stop();

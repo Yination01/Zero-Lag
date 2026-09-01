@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import * as tier from './tier.ts';
 import { classifyDevice, recommendProfile, ALL_TUNING } from './tier.ts';
 
 test('a high end device classifies as flagship', () => {
@@ -41,4 +42,25 @@ test('every tuning profile has the keys the HUD and test loop need', () => {
     assert.ok(p.sampleCount > 0);
     assert.ok(p.overlaysEnabled !== undefined);
   }
+});
+
+test('auto recommendation names an explicit performance level for every device tier', () => {
+  const getRecommendedPerformance = (tier as {
+    getRecommendedPerformance?: (device: ReturnType<typeof classifyDevice>) => {
+      profile: { profile: string };
+      reason: string;
+    };
+  }).getRecommendedPerformance;
+  assert.equal(typeof getRecommendedPerformance, 'function');
+
+  const entry = getRecommendedPerformance!(classifyDevice({ ramMb: 2048, cores: 4, model: 'Entry' }));
+  const midrange = getRecommendedPerformance!(classifyDevice({ ramMb: 6000, cores: 8, model: 'Mid' }));
+  const flagship = getRecommendedPerformance!(classifyDevice({ ramMb: 12000, cores: 8, model: 'Flag' }));
+
+  assert.equal(entry.profile.profile, 'battery');
+  assert.equal(midrange.profile.profile, 'balanced');
+  assert.equal(flagship.profile.profile, 'performance');
+  assert.ok(entry.reason.length > 10);
+  assert.ok(midrange.reason.length > 10);
+  assert.ok(flagship.reason.length > 10);
 });

@@ -1,68 +1,111 @@
-import React, { useCallback, useState } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-  Alert,
-  Linking,
-} from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, Linking, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { tokens } from './theme';
 import { verdictColor } from './theme';
 import { useReadiness } from '../state/useReadiness';
 import { verdictLabel } from '../net/readiness';
+import { NETWORK_ANALYSIS_GUIDANCE } from '../net/probe';
 import { REFRESH_INSTRUCTIONS, openAirplaneModeSettings } from '../net/refresh';
+import { settingsLaunchFeedback } from '../permissions/settings';
+import { hud } from '../plugins/hud';
+import type { TuningProfile } from '../device/tier';
 
 const c = tokens.color;
 
-export function HomeScreen({ onGoGame }: { onGoGame?: () => void } = {}) {
-  const { state, result, error, run } = useReadiness();
-  const [hudRequested, setHudRequested] = useState(false);
+function profileLabel(profile: TuningProfile['profile']): string {
+  return profile.charAt(0).toUpperCase() + profile.slice(1);
+}
+
+export function HomeScreen({
+  onGoGame,
+  onRequestOverlay,
+  sampleCount = 8,
+  hudIntervalMs = 3000,
+  performanceLevel = 'balanced',
+}: {
+  onGoGame?: () => void;
+  onRequestOverlay?: () => void;
+  sampleCount?: number;
+  hudIntervalMs?: number;
+  performanceLevel?: TuningProfile['profile'];
+} = {}) {
+  const { state, result, error, run } = useReadiness({ sampleCount });
+  const [barOn, setBarOn] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    void hud.isRunning().then((running) => {
+      if (active) setBarOn(running);
+    });
+    return () => { active = false; };
+  }, []);
 
   const onRefresh = useCallback(async () => {
-    await openAirplaneModeSettings(
-      { openURL: (url) => Linking.openURL(url) },
-      (url) => Linking.canOpenURL(url),
-    );
+    const outcome = await openAirplaneModeSettings(Linking);
+    if (outcome !== 'opened') {
+      Alert.alert('Open Airplane mode settings', settingsLaunchFeedback('airplane-mode', outcome));
+    }
   }, []);
 
-  const onHud = useCallback(() => {
-    // The floating overlay needs the native foreground service plugin
-    // (plugins/zerolag-hud). Not shipped in this build, so we say so
-    // honestly instead of faking an overlay.
-    Alert.alert(
-      'Floating ping HUD',
-      'The in-game overlay needs the native HUD plugin, which is not in ' +
-        'this build. Use the readiness test before a match for now.',
-    );
-    setHudRequested(true);
-  }, []);
+  const onHud = useCallback(async () => {
+    if (!hud.isSupported()) {
+      Alert.alert(
+        'Floating HUD is unavailable',
+        'Install the latest Zero-Lag APK, then allow Display over other apps before starting the HUD.',
+      );
+      return;
+    }
+
+    const canDraw = await hud.canDrawOverlays();
+    if (!canDraw) {
+      if (onRequestOverlay) {
+        onRequestOverlay();
+      } else {
+        Alert.alert(
+          'Set up the floating HUD',
+          'Open Android Settings, select Display over other apps, select Zero-Lag, turn it on, then return here.',
+        );
+      }
+      return;
+    }
+
+    try {
+      const serviceRunning = barOn || await hud.isRunning();
+      if (serviceRunning) {
+        await hud.stop();
+        setBarOn(false);
+        Alert.alert('Floating HUD stopped', 'The overlay and its ongoing notification have been stopped.');
+      } else {
+        await hud.start(hudIntervalMs);
+        setBarOn(true);
+        Alert.alert(
+          'Floating HUD started',
+          'Look for the small Zero-Lag pill over your game and its ongoing notification. The delay shown is an edge estimate, not exact game-server ping.',
+        );
+      }
+    } catch {
+      Alert.alert(
+        'Could not start the floating HUD',
+        'Check Display over other apps and Notifications for Zero-Lag, then try again.',
+      );
+    }
+  }, [barOn, hudIntervalMs, onRequestOverlay]);
 
   const verdictToken = result ? verdictColor(result.verdict) : 'good';
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
       <Text style={styles.brand}>Zero-Lag</Text>
-      <Text style={styles.tagline}>Network optimizer for mobile gamers</Text>
+      <Text style={styles.tagline}>Connection checks and a floating ping HUD for mobile games</Text>
 
-      {/* Signal card */}
       <View style={styles.card}>
         <Text style={styles.cardLabel}>CURRENT CONNECTION</Text>
-        <View style={styles.rowBetween}>
-          <View>
-            <Text style={styles.cardTitle}>Tap test to measure</Text>
-            <Text style={styles.muted}>Cellular or Wi-Fi</Text>
-          </View>
-          <Text style={styles.muted}>dBm shown by the</Text>
-        </View>
+        <Text style={styles.cardTitle}>Test Wi-Fi or mobile data before you queue</Text>
         <Text style={styles.muted}>
-          Signal strength (dBm) and carrier arrive with the native telephony
-          plugin in the next build.
+          {`Current performance level: ${profileLabel(performanceLevel)}. It uses ${sampleCount} checks and a HUD update every ${hudIntervalMs / 1000} seconds.`}
         </Text>
       </View>
 
-      {/* Readiness card */}
       <View style={styles.card}>
         <Text style={styles.cardLabel}>PRE-MATCH READINESS</Text>
 
@@ -84,10 +127,13 @@ export function HomeScreen({ onGoGame }: { onGoGame?: () => void } = {}) {
               </Text>
             </View>
             <View style={styles.statsRow}>
-              <Stat label="Ping" value={`${result.avgPingMs} ms`} />
+              <Stat label="Edge estimate" value={`${result.avgPingMs} ms`} />
               <Stat label="Jitter" value={`${result.jitterMs} ms`} />
-              <Stat label="Loss" value={`${result.lossPercent}%`} />
+              <Stat label="Probe fails" value={`${result.lossPercent}%`} />
             </View>
+            <Text style={styles.muted}>
+              {`Based on ${result.samples} edge checks. Probe fails are failed web checks, not confirmed game packet loss.`}
+            </Text>
           </>
         )}
 
@@ -112,44 +158,48 @@ export function HomeScreen({ onGoGame }: { onGoGame?: () => void } = {}) {
         </Pressable>
       </View>
 
-      {/* HUD card */}
       <View style={styles.card}>
-        <View style={styles.rowBetween}>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.cardTitle}>Floating ping HUD</Text>
-            <Text style={styles.muted}>
-              Live ping meter over your game. Passive, it never interrupts a
-              match. {hudRequested ? '(Plugin pending.)' : ''}
-            </Text>
-          </View>
-        </View>
+        <Text style={styles.cardLabel}>HOW ACCURATE IS THE TEST?</Text>
+        <Text style={styles.body}>{NETWORK_ANALYSIS_GUIDANCE.method}</Text>
+        <Text style={styles.muted}>{NETWORK_ANALYSIS_GUIDANCE.limitation}</Text>
+        <Text style={styles.steps}>{NETWORK_ANALYSIS_GUIDANCE.recommendedUse.map((step, index) => `${index + 1}. ${step}`).join('\n')}</Text>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.cardLabel}>FLOATING PING HUD</Text>
+        <Text style={styles.cardTitle}>Estimated edge delay and used RAM over your game</Text>
+        <Text style={styles.muted}>
+          {`Display over other apps is required. The HUD updates every ${hudIntervalMs / 1000} seconds and uses a foreground notification; allow Notifications if Android asks so that readout is visible. If overlay access is off, this button shows the setup steps.`}
+        </Text>
+        <Text style={[styles.hudStatus, { color: barOn ? c.good : c.muted }]}>
+          {barOn ? 'HUD STATUS: RUNNING' : 'HUD STATUS: STOPPED'}
+        </Text>
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel="Floating ping HUD info"
-          onPress={onHud}
+          accessibilityLabel="Toggle the floating ping HUD"
+          onPress={() => { void onHud(); }}
           style={({ pressed }) => [styles.secondaryButton, { opacity: pressed ? 0.85 : 1 }]}
         >
-          <Text style={styles.secondaryButtonText}>FLOATING PING HUD (NEXT BUILD)</Text>
+          <Text style={styles.secondaryButtonText}>{barOn ? 'STOP FLOATING HUD' : 'START FLOATING HUD'}</Text>
         </Pressable>
       </View>
 
-      {/* Refresh */}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Open network refresh steps"
         onPress={() =>
           Alert.alert('Network refresh', REFRESH_INSTRUCTIONS, [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'OPEN SETTINGS', onPress: onRefresh },
+            { text: 'CANCEL', style: 'cancel' },
+            { text: 'OPEN AIRPLANE MODE SETTINGS', onPress: () => { void onRefresh(); } },
           ])
         }
         style={({ pressed }) => [styles.secondaryButton, { opacity: pressed ? 0.85 : 1 }]}
       >
-        <Text style={styles.secondaryButtonText}>ONE-TAP NETWORK REFRESH (PRE-MATCH)</Text>
+        <Text style={styles.secondaryButtonText}>GUIDED NETWORK REFRESH</Text>
       </Pressable>
 
       <Text style={[styles.muted, { color: c.warn }]}>
-        Use refresh before matchmaking, never during a live match.
+        Refresh before matchmaking, never during a live match.
       </Text>
 
       {onGoGame && (
@@ -188,14 +238,15 @@ const styles = StyleSheet.create({
   },
   cardLabel: { color: c.muted, fontSize: tokens.font.secondary, fontWeight: '700' },
   cardTitle: { color: c.onSurface, fontSize: tokens.font.title, fontWeight: '700' },
-  body: { color: c.onSurface, fontSize: tokens.font.body },
-  muted: { color: c.muted, fontSize: tokens.font.secondary },
-  rowBetween: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  body: { color: c.onSurface, fontSize: tokens.font.body, lineHeight: 22 },
+  muted: { color: c.muted, fontSize: tokens.font.secondary, lineHeight: 20 },
+  steps: { color: c.onSurface, fontSize: tokens.font.secondary, lineHeight: 22 },
   badge: { borderRadius: tokens.radius.badge, padding: tokens.space.md },
   badgeText: { textAlign: 'center', fontWeight: '800', fontSize: tokens.font.body },
+  hudStatus: { fontWeight: '800', fontSize: tokens.font.secondary },
   statsRow: { flexDirection: 'row', justifyContent: 'space-around', marginVertical: tokens.space.sm },
-  stat: { alignItems: 'center' },
-  statValue: { color: c.onSurface, fontSize: tokens.font.stat, fontWeight: '800' },
+  stat: { alignItems: 'center', flex: 1 },
+  statValue: { color: c.onSurface, fontSize: tokens.font.stat, fontWeight: '800', textAlign: 'center' },
   primaryButton: {
     minHeight: tokens.minTouch + 10,
     borderRadius: tokens.radius.button,
@@ -213,5 +264,5 @@ const styles = StyleSheet.create({
     borderColor: c.good,
     paddingHorizontal: tokens.space.md,
   },
-  secondaryButtonText: { color: c.good, fontWeight: '700', fontSize: tokens.font.secondary },
+  secondaryButtonText: { color: c.good, fontWeight: '700', fontSize: tokens.font.secondary, textAlign: 'center' },
 });

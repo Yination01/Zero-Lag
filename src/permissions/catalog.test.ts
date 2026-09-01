@@ -23,6 +23,16 @@ test('overlay and usage access are special settings, not runtime prompts', () =>
   assert.equal(usage?.kind, 'special');
 });
 
+test('special permissions name a typed Android settings destination', () => {
+  const special = PERMISSIONS.filter((permission) => permission.kind === 'special');
+  assert.ok(special.length > 0);
+
+  for (const permission of special) {
+    const destination = (permission as { settingsDestination?: unknown }).settingsDestination;
+    assert.equal(typeof destination, 'string', `${permission.key} must launch a typed settings destination`);
+  }
+});
+
 test('missingPermissions returns exactly the keys not granted', () => {
   const missing = missingPermissions({ location: true, notifications: false });
   assert.ok(missing.some((p) => p.key === 'notifications'));

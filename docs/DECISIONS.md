@@ -291,3 +291,38 @@ EAS APK build and device test.
 Check: GitHub Actions run `33501773505`, EAS Build
 `c9aaa339-c91f-4061-b6db-06b3448d4c54`, APK archive checks, and a real Android
 device test.
+
+## 2026-09-01: Android special access, HUD status, and network estimates clarified
+
+- Usage access and Display over other apps are launched as Android intents,
+  never as URL strings. The HUD first requests the app-specific overlay page
+  with `ACTION_MANAGE_OVERLAY_PERMISSION` and its `package:` URI. Every
+  special-access flow states what to select in Settings, what to enable, and
+  what to do after returning to Zero-Lag.
+- The floating HUD has start, stop, and native running-status controls. It
+  shows a non-touchable overlay with public-edge delay and used RAM, keeps a
+  foreground notification, respects the selected update interval, and stops
+  its coroutine when the service is destroyed. A missing or partial native
+  bridge fails closed as unavailable instead of promising a broken HUD.
+- Usage-event lookup distinguishes denied Usage access from no recent app
+  event, skips Zero-Lag itself, and retains enough recent history for a user
+  returning from a game. It does not fabricate a game when no supported
+  package is found.
+- Connection results are described as regional pre-match public-edge estimates.
+  Failed HTTP checks are labelled probe failures, not game packet loss. The app
+  does not claim exact game-server ping, game routing, UDP behavior, server
+  load, frame rate, or in-game packet loss.
+- Auto performance selects Battery for entry devices, Balanced for mid-range,
+  and Performance for flagship devices. The saved selection changes actual
+  readiness sample count and HUD refresh interval. It does not overclock the
+  device or change game settings.
+- No new APK, EAS build, or Android Gradle build was started for these source
+  changes. They are not present in Build 6. Real-device checks of Settings
+  routing, overlay permission, foreground notification, HUD visibility and
+  status, and Usage-event timing remain required after the maintainer names a
+  new build.
+
+Check: Node 22 `npm test`, including `settings.test.ts`, `bridges.test.ts`,
+`usage-events.test.ts`, `hud-overlay.test.ts`, `probe.test.ts`, and
+`tier.test.ts`; targeted copied-backup mutants; `npx expo export --platform
+android`; and isolated Expo Android prebuild/autolinking inspection.

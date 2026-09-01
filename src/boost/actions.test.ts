@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { buildBoostActions, BOOST_ACTIONS } from './actions.ts';
+import { ANDROID_SETTINGS_ACTIONS } from '../permissions/settings.ts';
 
 test('every boost action has a unique id, a label and a supported kind', () => {
   for (const a of BOOST_ACTIONS) {
@@ -22,7 +23,10 @@ test('entry device gets the lightest safe set, no risky overlays', () => {
   const ids = set.map((a) => a.id);
   assert.ok(ids.includes('guided-hogs'), 'still offers guided force-stop');
   assert.ok(ids.includes('dnd'));
-  assert.ok(ids.includes('wakelock') === false || true);
+  const screenTimeout = set.find((action) => action.id === 'wakelock');
+  assert.equal(screenTimeout?.kind, 'settings');
+  assert.equal(screenTimeout?.target, 'display');
+  assert.match(screenTimeout?.doesWhat ?? '', /cannot keep another app/i);
 });
 
 test('usage permission missing marks the hog list as gated, never fake', () => {
@@ -41,6 +45,17 @@ test('deep-link and settings actions carry a target uri key', () => {
   for (const a of BOOST_ACTIONS) {
     if (a.kind === 'deep-link' || a.kind === 'settings') {
       assert.ok(typeof a.target === 'string' && a.target.length > 0, `${a.id} needs a target`);
+    }
+  }
+});
+
+test('settings actions use known Android intent destinations, not raw URL strings', () => {
+  for (const action of BOOST_ACTIONS) {
+    if (action.kind === 'deep-link' || action.kind === 'settings') {
+      assert.ok(
+        action.target && Object.hasOwn(ANDROID_SETTINGS_ACTIONS, action.target),
+        `${action.id} must use a known Android settings destination`,
+      );
     }
   }
 });

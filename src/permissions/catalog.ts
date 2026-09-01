@@ -2,6 +2,8 @@
 // why, in plain language. "runtime" permissions use the system dialog;
 // "special" permissions open a settings screen (overlay, usage access).
 
+import type { SettingsDestination } from './settings';
+
 export type PermissionKind = 'runtime' | 'special';
 
 export interface PermissionDef {
@@ -9,7 +11,7 @@ export interface PermissionDef {
   label: string;
   why: string; // honest reason shown to the user
   kind: PermissionKind;
-  settingsUri?: string; // for special permissions
+  settingsDestination?: SettingsDestination; // for special permissions
 }
 
 export const PERMISSIONS: PermissionDef[] = [
@@ -36,14 +38,14 @@ export const PERMISSIONS: PermissionDef[] = [
     label: 'Display over other apps',
     why: 'Required to draw the floating game bar on top of your game. It is read-only and never blocks your touch more than a tiny pill.',
     kind: 'special',
-    settingsUri: 'android.settings.action.MANAGE_OVERLAY_PERMISSION',
+    settingsDestination: 'display-over-other-apps',
   },
   {
     key: 'usage',
     label: 'Usage access',
     why: 'Needed to see which game is in the foreground so we tune the readout. We never close apps for you.',
     kind: 'special',
-    settingsUri: 'android.settings.USAGE_ACCESS_SETTINGS',
+    settingsDestination: 'usage-access',
   },
 ];
 

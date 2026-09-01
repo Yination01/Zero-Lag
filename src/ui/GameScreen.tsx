@@ -5,13 +5,20 @@ import { Card, SectionLabel, Muted, Stat, PrimaryButton, GhostButton } from './c
 import { useGame } from '../state/useGame';
 import { useReadiness } from '../state/useReadiness';
 import { verdictLabel } from '../net/readiness';
+import { NETWORK_ANALYSIS_GUIDANCE } from '../net/probe';
 import { verdictColor } from './theme';
 
 const c = tokens.color;
 
-export function GameScreen({ onRequestUsage }: { onRequestUsage: () => void }) {
+export function GameScreen({
+  onRequestUsage,
+  sampleCount = 8,
+}: {
+  onRequestUsage: () => void;
+  sampleCount?: number;
+}) {
   const game = useGame(true);
-  const readiness = useReadiness();
+  const readiness = useReadiness({ sampleCount });
   const [ranFor, setRanFor] = useState<string | null>(null);
 
   const detected = game.game;
@@ -27,8 +34,8 @@ export function GameScreen({ onRequestUsage }: { onRequestUsage: () => void }) {
         {!game.loading && !game.permissionGranted && (
           <View>
             <Text style={styles.body}>
-              Grant Usage Access so Zero-Lag can see which game is open and
-              tune the readout for it.
+              To identify a game, tap Grant Usage Access. In Android Settings,
+              select Zero-Lag, turn on Allow usage access, then return here.
             </Text>
             <GhostButton label="GRANT USAGE ACCESS" onPress={onRequestUsage} />
           </View>
@@ -43,8 +50,8 @@ export function GameScreen({ onRequestUsage }: { onRequestUsage: () => void }) {
             <Muted
               text={
                 headlineIsPing
-                  ? 'Headline metric: estimated in-game ping.'
-                  : 'Headline metric: network strength, jitter and loss.'
+                  ? 'Headline metric: estimated edge delay, not exact in-game ping.'
+                  : 'Headline metric: connection stability, jitter and probe failures.'
               }
             />
           </View>
@@ -69,14 +76,14 @@ export function GameScreen({ onRequestUsage }: { onRequestUsage: () => void }) {
             )}
             <View style={styles.statsRow}>
               {headlineIsPing && detected ? (
-                <Stat label="Est. ping" value={`${readiness.result.avgPingMs} ms`} />
+                <Stat label="Edge estimate" value={`${readiness.result.avgPingMs} ms`} />
               ) : (
-                <Stat label="Signal" value={readiness.result.lossPercent === 0 ? 'Stable' : 'Loss'} />
+                <Stat label="Connection" value={readiness.result.lossPercent === 0 ? 'Stable' : 'Probe fails'} />
               )}
               <Stat label="Jitter" value={`${readiness.result.jitterMs} ms`} />
-              <Stat label="Loss" value={`${readiness.result.lossPercent}%`} />
+              <Stat label="Probe fails" value={`${readiness.result.lossPercent}%`} />
             </View>
-            {ranFor && <Muted text={`Estimated for ${ranFor}. Regional server ping, not a live server readout.`} />}
+            {ranFor && <Muted text={`Estimated for ${ranFor}. ${NETWORK_ANALYSIS_GUIDANCE.limitation}`} />}
           </View>
         )}
         <PrimaryButton
@@ -91,7 +98,7 @@ export function GameScreen({ onRequestUsage }: { onRequestUsage: () => void }) {
 
       <Muted
         color={c.warn}
-        text="Readings are estimates to regional anycast edges. True game-server IPs are not published, so no tool can read the exact server ping."
+        text={`Recommended: ${NETWORK_ANALYSIS_GUIDANCE.recommendedUse[0]}`}
       />
     </ScrollView>
   );

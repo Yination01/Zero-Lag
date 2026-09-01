@@ -9,7 +9,7 @@ export interface GameProfile {
   packages: string[];
   headline: HeadlineMetric;
   // Why this metric: twitch shooters punish raw ping; sports titles desync
-  // on jitter/loss bursts, so signal stability is the headline.
+  // on jitter and connection-instability bursts, so stability is the headline.
   why: string;
 }
 
@@ -26,7 +26,7 @@ export const ALL_GAMES: GameProfile[] = [
     label: 'eFootball',
     packages: ['jp.konami.pesam', 'jp.konami.efootball'],
     headline: 'strength',
-    why: 'Matches desync on jitter and packet bursts.',
+    why: 'Matches are sensitive to jitter and connection instability.',
   },
   {
     id: 'pubg-mobile',
@@ -47,7 +47,7 @@ export const ALL_GAMES: GameProfile[] = [
     label: 'Mobile Legends: Bang Bang',
     packages: ['com.mobile.legends'],
     headline: 'strength',
-    why: 'MOBA sessions desync on jitter and loss.',
+    why: 'MOBA sessions are sensitive to jitter and connection instability.',
   },
 ];
 

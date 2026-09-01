@@ -18,7 +18,7 @@ test('no boost action makes a claim Android cannot deliver', () => {
   }
 });
 
-test('the hog action tells the user they stop the app themselves', () => {
-  const hogs = BOOST_ACTIONS.find((a) => a.id === 'guided-hogs');
-  assert.match(hogs!.doesWhat + hogs!.whyItWorks, /you (stop|force|tap)|yourself|one tap/i);
+test('the game-detection action makes no false app-management claim', () => {
+  const gameDetection = BOOST_ACTIONS.find((a) => a.id === 'guided-hogs');
+  assert.match(gameDetection!.doesWhat + gameDetection!.whyItWorks, /does not .*force stop|does not .*close other apps/i);
 });

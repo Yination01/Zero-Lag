@@ -3,12 +3,14 @@
 
 export type Verdict = 'match-ready' | 'playable' | 'risky' | 'no-connection';
 
-// One RTT sample in milliseconds, or null for a lost probe (packet loss).
+// One public-edge RTT sample in milliseconds, or null when that probe fails.
 export type RttSample = number | null;
 
 export interface ReadinessResult {
   avgPingMs: number;
   jitterMs: number;
+  // Kept as a stable data field; it is the percentage of failed HTTP probes,
+  // not measured UDP packet loss inside a game.
   lossPercent: number;
   samples: number;
   verdict: Verdict;
@@ -18,7 +20,7 @@ const MATCH_AVG_MAX = 80;
 const MATCH_JITTER_MAX = 15;
 const PLAYABLE_AVG_MAX = 130;
 const PLAYABLE_JITTER_MAX = 35;
-const PLAYABLE_LOSS_MAX = 10;
+const PLAYABLE_FAILED_PROBE_MAX = 10;
 
 export function computeReadiness(samples: RttSample[]): ReadinessResult {
   const total = samples.length;
@@ -37,28 +39,28 @@ export function computeReadiness(samples: RttSample[]): ReadinessResult {
     jitterMs = Math.round(gapSum / (rtts.length - 1));
   }
 
-  const lossPercent = Math.round(((total - rtts.length) * 100) / total);
+  const failedProbePercent = Math.round(((total - rtts.length) * 100) / total);
 
   let verdict: Verdict;
-  if (avgPingMs < MATCH_AVG_MAX && jitterMs < MATCH_JITTER_MAX && lossPercent === 0) {
+  if (avgPingMs < MATCH_AVG_MAX && jitterMs < MATCH_JITTER_MAX && failedProbePercent === 0) {
     verdict = 'match-ready';
-  } else if (avgPingMs < PLAYABLE_AVG_MAX && jitterMs < PLAYABLE_JITTER_MAX && lossPercent <= PLAYABLE_LOSS_MAX) {
+  } else if (avgPingMs < PLAYABLE_AVG_MAX && jitterMs < PLAYABLE_JITTER_MAX && failedProbePercent <= PLAYABLE_FAILED_PROBE_MAX) {
     verdict = 'playable';
   } else {
     verdict = 'risky';
   }
 
-  return { avgPingMs, jitterMs, lossPercent, samples: total, verdict };
+  return { avgPingMs, jitterMs, lossPercent: failedProbePercent, samples: total, verdict };
 }
 
 export function verdictLabel(verdict: Verdict): string {
   switch (verdict) {
     case 'match-ready':
-      return 'Match ready, safe to queue';
+      return 'Match-ready estimate: reasonable to queue';
     case 'playable':
-      return 'Playable, some lag risk';
+      return 'Playable estimate: some lag risk';
     case 'risky':
-      return 'Risky, high lag expected';
+      return 'Risky estimate: high edge delay or instability';
     case 'no-connection':
       return 'No connection';
   }

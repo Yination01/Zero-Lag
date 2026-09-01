@@ -1,5 +1,7 @@
 package com.yination01.zerolag.hud
 
+import android.content.Intent
+import android.net.Uri
 import android.provider.Settings
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -21,18 +23,32 @@ class ZeroLagHudModule(private val context: ReactApplicationContext) : ReactCont
     }
 
     @ReactMethod
-    fun overlaySettingsUrl(promise: Promise) {
-        promise.resolve("package:" + context.packageName)
+    fun openOverlaySettings(promise: Promise) {
+        try {
+            val intent = Intent(
+                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:${context.packageName}")
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(intent)
+            promise.resolve(true)
+        } catch (e: Exception) {
+            promise.reject("OVERLAY_SETTINGS_FAILED", "Could not open Display over other apps settings", e)
+        }
     }
 
     @ReactMethod
-    fun start(promise: Promise) {
+    fun isRunning(promise: Promise) {
+        promise.resolve(PingOverlayService.isRunning())
+    }
+
+    @ReactMethod
+    fun start(intervalMs: Double, promise: Promise) {
         try {
             if (!Settings.canDrawOverlays(context)) {
-                promise.reject("OVERLAY_DENIED", "Overlay permission not granted")
+                promise.reject("OVERLAY_DENIED", "Display over other apps is not enabled")
                 return
             }
-            PingOverlayService.start(context)
+            PingOverlayService.start(context, intervalMs.toLong())
             promise.resolve(true)
         } catch (e: Exception) {
             promise.reject("HUD_START_FAILED", e.message)

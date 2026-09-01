@@ -28,6 +28,11 @@ export interface TuningProfile {
   overlaysEnabled: boolean;
 }
 
+export interface PerformanceRecommendation {
+  profile: TuningProfile;
+  reason: string;
+}
+
 // Tuning presets for the performance feature.
 export const ALL_TUNING: TuningProfile[] = [
   { profile: 'battery', hudIntervalMs: 5000, sampleCount: 5, overlaysEnabled: false },
@@ -66,4 +71,15 @@ export function recommendProfile(
   }
   const wanted = AUTO_FOR_TIER[device.tier];
   return { ...ALL_TUNING.find((p) => p.profile === wanted)! };
+}
+
+export function getRecommendedPerformance(device: TierResult): PerformanceRecommendation {
+  const profile = recommendProfile(device, 'auto');
+  const reason =
+    device.tier === 'entry'
+      ? 'Battery is recommended because this phone has limited measured headroom.'
+      : device.tier === 'midrange'
+        ? 'Balanced is recommended for steady readings without unnecessary battery use.'
+        : 'Performance is recommended because this phone has the measured headroom for faster updates.';
+  return { profile, reason };
 }
