@@ -155,3 +155,18 @@ Check: `npm test`, `npx expo export --platform android`, and bridge tests.
   notifications, and game detection after an APK exists.
 
 Check: GitHub Actions run `33451734687`, then a newly named EAS retry and device test.
+
+## 2026-09-01: Build 3 retry queued after the reset window
+
+- The maintainer explicitly named a Build 3 retry. GitHub Actions workflow
+  `33453738183` was queued from commit `f693008` with the `build-3` and
+  `preview` inputs.
+- This retry follows workflow `33451734687`, which reached EAS but was rejected
+  before an APK existed. The retry's result remains pending until the workflow
+  completes and EAS reports a build result.
+- `.build-state.json` retains the prior workflow ID as retry context and records
+  the new workflow ID, source commit, UTC dispatch time, and queued status.
+- No APK exists until EAS accepts and completes the request. A real Android
+  device test remains required after installation.
+
+Check: GitHub Actions run `33453738183`, then the EAS result and device test.

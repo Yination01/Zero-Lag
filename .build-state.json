@@ -6,12 +6,13 @@
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "c9e97f88df98b3aa643567fb9b25a6604e733f63",
+    "dispatchedFromCommit": "f693008ddba2832f9d7eefeba7d09e3b7f3eebd7",
     "channel": "EAS cloud",
-    "workflowRunId": 33451734687,
-    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33451734687",
-    "dispatchedAt": "2026-08-31T23:41:24Z",
-    "status": "submission-failed",
-    "note": "The workflow gate and EAS project upload passed, but EAS rejected Build 3 because the Free-plan Android build quota remains exhausted. EAS reported that the quota resets in about one hour. No APK was created."
+    "workflowRunId": 33453738183,
+    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33453738183",
+    "retryOfWorkflowRunId": 33451734687,
+    "dispatchedAt": "2026-09-01T00:11:21Z",
+    "status": "queued",
+    "note": "Build 3 retry was queued through the manual GitHub Actions EAS preview APK workflow after the Free-plan reset window. The workflow gate, EAS submission, APK completion, and real-device verification remain pending."
   }
 }
