@@ -1,27 +1,18 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-3",
+    "number": "build-4",
     "versionName": "0.1.0",
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "f693008ddba2832f9d7eefeba7d09e3b7f3eebd7",
+    "dispatchedFromCommit": "4de4432577f043728b3fcfe70dd6371eb7a77654",
     "channel": "EAS cloud",
-    "workflowRunId": 33453738183,
-    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33453738183",
-    "retryOfWorkflowRunId": 33451734687,
-    "dispatchedAt": "2026-09-01T00:11:21Z",
-    "workflowStatus": "success",
-    "easBuildId": "7cebb8e9-8786-4fb8-b9a0-dba77147642f",
-    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/7cebb8e9-8786-4fb8-b9a0-dba77147642f",
-    "easSubmittedAt": "2026-09-01T00:12:21Z",
-    "easPublicStatus": "Errored",
-    "status": "eas_build_errored",
-    "failure": {
-      "expoDoctor": "app.json rejected expo.newArchEnabled as an additional property",
-      "prebuild": "withZeroLagHud accessed cfg.modResults.application instead of cfg.modResults.manifest.application"
-    },
-    "note": "Build 3 retry passed every GitHub Actions gate and was accepted by EAS after the Free-plan reset window, then EAS Build 7cebb8e9-8786-4fb8-b9a0-dba77147642f errored before an APK artifact existed. The screenshot-supplied EAS log identified the rejected app config field and the HUD manifest-root error. Both have a source correction on this branch only; no new EAS build has been started."
+    "workflowRunId": 33455409072,
+    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33455409072",
+    "followsFailedEasBuildId": "7cebb8e9-8786-4fb8-b9a0-dba77147642f",
+    "dispatchedAt": "2026-09-01T00:36:03Z",
+    "status": "queued",
+    "note": "Build 4 was explicitly named and queued through the manual GitHub Actions EAS preview APK workflow from the source correction commit. It follows the Build 3 EAS prebuild error. GitHub gates, EAS submission, APK completion, and real-device verification remain pending."
   }
 }

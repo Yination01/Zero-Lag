@@ -201,3 +201,18 @@ Check: GitHub Actions run `33453738183`, EAS Build `7cebb8e9-8786-4fb8-b9a0-dba7
 
 Check: Node 22 `npm test` with 66 app tests, and verbose Expo Doctor app-config
 schema check. A named EAS APK build and Android device test remain required.
+
+## 2026-09-01: Build 4 dispatched from the EAS prebuild correction
+
+- The maintainer explicitly named Build 4 for an EAS preview APK. The manual
+  GitHub Actions workflow was dispatched from source correction commit
+  `4de4432` with the `build-4` and `preview` inputs.
+- Workflow `33455409072` is queued. It follows EAS Build
+  `7cebb8e9-8786-4fb8-b9a0-dba77147642f`, which errored before producing an
+  APK because of the now-corrected Expo config and HUD manifest plugin defects.
+- `.build-state.json` records the Build 4 number, source commit, workflow ID,
+  workflow URL, UTC dispatch time, predecessor EAS build, and queued status.
+- No APK exists until the workflow passes its gate and EAS accepts and completes
+  the Android build. A real Android device still must verify native behaviour.
+
+Check: GitHub Actions run `33455409072`, then its EAS build result and device test.
