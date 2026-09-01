@@ -12,7 +12,11 @@
     "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33453738183",
     "retryOfWorkflowRunId": 33451734687,
     "dispatchedAt": "2026-09-01T00:11:21Z",
-    "status": "queued",
-    "note": "Build 3 retry was queued through the manual GitHub Actions EAS preview APK workflow after the Free-plan reset window. The workflow gate, EAS submission, APK completion, and real-device verification remain pending."
+    "workflowStatus": "success",
+    "easBuildId": "7cebb8e9-8786-4fb8-b9a0-dba77147642f",
+    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/7cebb8e9-8786-4fb8-b9a0-dba77147642f",
+    "easSubmittedAt": "2026-09-01T00:12:21Z",
+    "status": "eas_build_in_progress",
+    "note": "Build 3 retry passed every GitHub Actions gate and was accepted by EAS after the Free-plan reset window. EAS Build 7cebb8e9-8786-4fb8-b9a0-dba77147642f is currently in progress; no APK artifact has completed, and real-device verification remains pending."
   }
 }

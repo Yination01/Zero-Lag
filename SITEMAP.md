@@ -9,7 +9,7 @@ State at the last update of this document:
 | Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
 | App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
 | Live host | none named |
-| Last APK | No new APK yet. The user-named `build-3` retry is queued through the EAS preview APK workflow from `f693008`. Submission, completion, and real-device verification are pending. |
+| Last APK | No new APK artifact yet. The user-named `build-3` retry from `f693008` passed the GitHub Actions gates and is in progress on [EAS Build `7cebb8e9`](https://expo.dev/accounts/yination/projects/zero-lag/builds/7cebb8e9-8786-4fb8-b9a0-dba77147642f). Completion and real-device verification are pending. |
 | Suite | `npm test` (agent-docs + agent-rules + legal + TS app tests) |
 | Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` |
 
