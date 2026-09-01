@@ -45,7 +45,7 @@ class ZeroLagNetModule(context: ReactApplicationContext) : ReactContextBaseJavaM
             val now = System.currentTimeMillis()
             val events = usm.queryEvents(now - 10_000, now)
             var lastPkg: String? = null
-            val e = android.app.usage.UsageEvents()
+            val e = android.app.usage.UsageEvents.Event()
             while (events.hasNextEvent()) {
                 events.getNextEvent(e)
                 if (e.eventType == android.app.usage.UsageEvents.Event.ACTIVITY_RESUMED ||

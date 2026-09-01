@@ -18,6 +18,10 @@
     "easSubmittedAt": "2026-09-01T00:37:04Z",
     "easPublicStatus": "Errored",
     "status": "eas_build_errored",
-    "note": "Build 4 passed every GitHub Actions gate and EAS accepted the project upload from source correction commit 4de4432. EAS Build 46faa278-da3a-4cd0-926f-9e847d344a61 then reported Errored before an APK artifact existed. The detailed terminal EAS log is not available to this sandbox, so the root cause is intentionally unrecorded until supplied from the Expo dashboard."
+    "failure": {
+      "gradleTask": ":zerolag_net:compileReleaseKotlin",
+      "cause": "getForegroundPackage constructed UsageEvents instead of UsageEvents.Event, so getNextEvent received the wrong Android API type"
+    },
+    "note": "Build 4 passed every GitHub Actions gate, Expo Doctor, Android prebuild, and the early Gradle tasks, then EAS Build 46faa278-da3a-4cd0-926f-9e847d344a61 failed compiling ZeroLagNetModule.kt. The screenshot-supplied Gradle log identified the UsageEvents.Event type correction. The correction is on the current source branch only; no new EAS build has been started and no APK artifact exists."
   }
 }

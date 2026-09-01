@@ -202,7 +202,7 @@ Check: GitHub Actions run `33453738183`, EAS Build `7cebb8e9-8786-4fb8-b9a0-dba7
 Check: Node 22 `npm test` with 66 app tests, and verbose Expo Doctor app-config
 schema check. A named EAS APK build and Android device test remain required.
 
-## 2026-09-01: Build 4 errored after EAS accepted the prebuild correction
+## 2026-09-01: Build 4 reached Gradle and revealed the net-module type error
 
 - The maintainer explicitly named Build 4 for an EAS preview APK. GitHub Actions
   workflow `33455409072` ran from source correction commit `4de4432` with the
@@ -211,14 +211,19 @@ schema check. A named EAS APK build and Android device test remain required.
   install, the full test gate, EAS CLI install, and EAS project upload. EAS
   accepted Build `46faa278-da3a-4cd0-926f-9e847d344a61` at
   `2026-09-01T00:37:04Z`.
-- The public EAS build page then reported `Errored`, with no internal
-  distribution APK artifact. This is a new terminal EAS result after the source
-  correction, not evidence that the prior error recurred.
-- The detailed EAS failure log remains restricted to the Expo account and cannot
-  be read from this sandbox. Its cause must not be guessed. `.build-state.json`
-  records the successful workflow, EAS build ID, submission time, and errored
-  result.
-- No APK exists and Android compilation plus real-device behaviour remain
-  unverified. Do not dispatch another build unless the maintainer names one.
+- EAS passed Expo Doctor and Android prebuild, confirming that the prior app
+  config and HUD-manifest defects no longer blocked the build. It then failed at
+  `:zerolag_net:compileReleaseKotlin` with a concrete Android API type error.
+- `getForegroundPackage` constructed `UsageEvents`, which is an event collection,
+  then supplied it to `getNextEvent`. The Android API requires one
+  `UsageEvents.Event` object, which owns `eventType` and `packageName`. The code
+  now constructs `UsageEvents.Event` instead.
+- `src/native/usage-events.test.ts` asserts that the declared event is passed to
+  `getNextEvent`, exposes the needed event fields, and is not a collection. A
+  collection-constructor mutant failed the named test, then a copied backup was
+  restored byte-for-byte.
+- No APK exists and this source correction has not had another EAS or local
+  Android compilation. Android compilation plus real-device behaviour remain
+  unverified until the maintainer names another build.
 
-Check: GitHub Actions run `33455409072`, EAS Build `46faa278-da3a-4cd0-926f-9e847d344a61`, detailed EAS log, then device test.
+Check: Node 22 `npm test`, EAS Build `46faa278-da3a-4cd0-926f-9e847d344a61`, then a newly named EAS APK build and device test.
