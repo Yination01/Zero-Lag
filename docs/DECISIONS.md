@@ -261,3 +261,33 @@ Check: Node 22 `npm test`, EAS Build `46faa278-da3a-4cd0-926f-9e847d344a61`, the
 Check: protected EAS Build `7711b779-6cfe-4ab6-8b8b-4a2095755c1e`, the isolated
 Expo Android prebuild resource check, Node 22 `npm test`, then a newly named
 EAS APK build and device test.
+
+## 2026-09-01: Build 6 completed the Android preview APK
+
+- The maintainer explicitly named Build 6 for an EAS preview APK. GitHub
+  Actions workflow `33501773505` ran from source commit `9ee234f` with
+  `build-6` and `preview`, and completed successfully.
+- The workflow passed checkout, the named-build and EXPO_TOKEN gates,
+  dependency installation, the full test gate, EAS CLI installation, and EAS
+  project upload. It accepted EAS Build `c9aaa339-c91f-4061-b6db-06b3448d4c54`
+  at `2026-09-01T11:19:04.361Z`.
+- EAS completed Android compilation and resource linking at
+  `2026-09-01T11:29:09.738Z`. Its logs recorded
+  `android/app/build/outputs/apk/release/app-release.apk` as a 59.4 MB
+  application archive before upload. This validates the previous
+  UsageEvents.Event Kotlin correction and the splash color resource correction
+  in an actual cloud Android Gradle build.
+- The resulting internal-distribution APK was downloaded as
+  `~/Zero-Lag-build-6.apk`, 62,309,425 bytes, SHA-256
+  `8f9d6123555399668fa5ab4495bc4386e75dcdbde99335de351bd319f1270ad6`.
+  ZIP integrity passed, and the archive contains the Android manifest,
+  resources, classes.dex, and native libraries for arm64-v8a, armeabi-v7a,
+  x86, and x86_64.
+- A real SIM-enabled Android device has not installed this APK. Runtime
+  registration, onboarding, permission and overlay flows, Usage Access,
+  telephony facts, foreground-game detection, HUD behavior, and real network
+  measurements remain unverified until that device test occurs.
+
+Check: GitHub Actions run `33501773505`, EAS Build
+`c9aaa339-c91f-4061-b6db-06b3448d4c54`, APK archive checks, and a real Android
+device test.

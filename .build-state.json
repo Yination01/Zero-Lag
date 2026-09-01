@@ -1,27 +1,28 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-5",
+    "number": "build-6",
     "versionName": "0.1.0",
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "b4478977a6edb2b7c340a8b8b0406d11456fa8e2",
+    "dispatchedFromCommit": "9ee234f127c7f6f091c6eb6829abf4dd3284851d",
     "channel": "EAS cloud",
-    "workflowRunId": 33465572075,
-    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33465572075",
-    "followsFailedEasBuildId": "46faa278-da3a-4cd0-926f-9e847d344a61",
-    "dispatchedAt": "2026-09-01T03:15:44Z",
+    "workflowRunId": 33501773505,
+    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33501773505",
+    "followsFailedEasBuildId": "7711b779-6cfe-4ab6-8b8b-4a2095755c1e",
+    "dispatchedAt": "2026-09-01T11:18:05Z",
     "workflowStatus": "success",
-    "easBuildId": "7711b779-6cfe-4ab6-8b8b-4a2095755c1e",
-    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/7711b779-6cfe-4ab6-8b8b-4a2095755c1e",
-    "easSubmittedAt": "2026-09-01T03:16:42.634Z",
-    "easPublicStatus": "Errored",
-    "status": "eas_build_errored",
-    "failure": {
-      "gradleTask": ":app:processReleaseResources",
-      "cause": "Expo prebuild emitted @color/splashscreen_background but the app config omitted splash.backgroundColor, so Android resource linking could not resolve the color"
-    },
-    "note": "Build 5 passed every GitHub Actions gate, Expo Doctor, Android prebuild, and the earlier zerolag_net Kotlin compilation, then EAS Build 7711b779-6cfe-4ab6-8b8b-4a2095755c1e failed at Android resource linking. The source branch now declares a top-level splash.backgroundColor and has a regression test plus an isolated Expo prebuild check proving the generated color resource exists. That correction is not in an APK, no further EAS build has been started, and no APK artifact exists."
+    "easBuildId": "c9aaa339-c91f-4061-b6db-06b3448d4c54",
+    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/c9aaa339-c91f-4061-b6db-06b3448d4c54",
+    "easSubmittedAt": "2026-09-01T11:19:04.361Z",
+    "easPublicStatus": "Finished",
+    "status": "apk_ready_for_device_test",
+    "artifactWorkspacePath": "/home/user/Zero-Lag-build-6.apk",
+    "artifactBytes": 62309425,
+    "artifactSha256": "8f9d6123555399668fa5ab4495bc4386e75dcdbde99335de351bd319f1270ad6",
+    "apkArchiveIntegrity": "passed",
+    "deviceInstallStatus": "not_verified",
+    "note": "Build 6 passed every GitHub Actions gate and completed EAS Android compilation from the splash-resource correction commit. EAS uploaded the internal-distribution APK and it was downloaded to the workspace. The archive passed ZIP integrity checks and contains AndroidManifest.xml, classes.dex, resources.arsc, and native libraries for arm64-v8a, armeabi-v7a, x86, and x86_64. No real Android device has installed or exercised it yet, so runtime native behavior remains unverified."
   }
 }
