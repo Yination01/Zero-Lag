@@ -9,7 +9,7 @@ State at the last update of this document:
 | Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
 | App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
 | Live host | none named |
-| Last APK | No new APK artifact. The user-named `build-4` workflow passed all GitHub gates, Expo Doctor, and Android prebuild, then [EAS Build `46faa278`](https://expo.dev/accounts/yination/projects/zero-lag/builds/46faa278-da3a-4cd0-926f-9e847d344a61) failed compiling `zerolag_net`. The UsageEvents type correction is in source only, awaiting a newly named APK build and real-device verification. |
+| Last APK | No APK artifact. The user-named `build-5` workflow passed all GitHub gates and EAS accepted [Build `7711b779`](https://expo.dev/accounts/yination/projects/zero-lag/builds/7711b779-6cfe-4ab6-8b8b-4a2095755c1e), then Android resource linking failed because Expo generated a splash drawable that referenced an absent color. The top-level splash color correction is in source only, awaiting a newly named APK build and real-device verification. |
 | Suite | `npm test` (agent-docs + agent-rules + legal + TS app tests) |
 | Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` |
 

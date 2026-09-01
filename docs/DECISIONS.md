@@ -227,3 +227,37 @@ schema check. A named EAS APK build and Android device test remain required.
   unverified until the maintainer names another build.
 
 Check: Node 22 `npm test`, EAS Build `46faa278-da3a-4cd0-926f-9e847d344a61`, then a newly named EAS APK build and device test.
+
+## 2026-09-01: Build 5 exposed a missing Android splash color resource
+
+- The maintainer explicitly named Build 5 for an EAS preview APK. GitHub
+  Actions workflow `33465572075` ran from commit `b447897` with `build-5`
+  and `preview`, and completed successfully.
+- The workflow passed checkout, named-build and EXPO_TOKEN gates, dependency
+  installation, the full test gate, EAS CLI installation, and EAS project
+  upload. EAS accepted Build `7711b779-6cfe-4ab6-8b8b-4a2095755c1e` at
+  `2026-09-01T03:16:42.634Z`.
+- The protected EAS log proves that the former `zerolag_net` Kotlin failure
+  no longer stopped Gradle. The new terminal task was
+  `:app:processReleaseResources`.
+- Android resource linking failed because generated `drawable/splashscreen.xml`
+  references `@color/splashscreen_background`, while the generated color
+  resources contained no `splashscreen_background` entry. The app config had
+  no explicit supported top-level `splash.backgroundColor`.
+- The focused correction adds `splash.backgroundColor` as `#0A0F14` to
+  `app.json`. A baseline isolated Expo prebuild reproduced the broken drawable
+  reference without the color resource. The corrected isolated prebuild emits
+  the matching color entry, so the generated resource link is now valid.
+- `src/native/splash-config.test.ts` was written failing first against the
+  absent configuration. The source correction makes it pass. Removing the
+  splash config as a mutant failed the named test, then a copied app config
+  backup was restored byte-for-byte. The check protects the explicit supported
+  config that feeds the Android splash resource generator.
+- No APK exists and no later EAS build has been started for this source
+  correction. Android compilation after this resource change, APK
+  installation, and real-device native behaviour remain unverified until the
+  maintainer names another build.
+
+Check: protected EAS Build `7711b779-6cfe-4ab6-8b8b-4a2095755c1e`, the isolated
+Expo Android prebuild resource check, Node 22 `npm test`, then a newly named
+EAS APK build and device test.

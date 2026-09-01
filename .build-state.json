@@ -1,27 +1,27 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-4",
+    "number": "build-5",
     "versionName": "0.1.0",
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "4de4432577f043728b3fcfe70dd6371eb7a77654",
+    "dispatchedFromCommit": "b4478977a6edb2b7c340a8b8b0406d11456fa8e2",
     "channel": "EAS cloud",
-    "workflowRunId": 33455409072,
-    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33455409072",
-    "followsFailedEasBuildId": "7cebb8e9-8786-4fb8-b9a0-dba77147642f",
-    "dispatchedAt": "2026-09-01T00:36:03Z",
+    "workflowRunId": 33465572075,
+    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33465572075",
+    "followsFailedEasBuildId": "46faa278-da3a-4cd0-926f-9e847d344a61",
+    "dispatchedAt": "2026-09-01T03:15:44Z",
     "workflowStatus": "success",
-    "easBuildId": "46faa278-da3a-4cd0-926f-9e847d344a61",
-    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/46faa278-da3a-4cd0-926f-9e847d344a61",
-    "easSubmittedAt": "2026-09-01T00:37:04Z",
+    "easBuildId": "7711b779-6cfe-4ab6-8b8b-4a2095755c1e",
+    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/7711b779-6cfe-4ab6-8b8b-4a2095755c1e",
+    "easSubmittedAt": "2026-09-01T03:16:42.634Z",
     "easPublicStatus": "Errored",
     "status": "eas_build_errored",
     "failure": {
-      "gradleTask": ":zerolag_net:compileReleaseKotlin",
-      "cause": "getForegroundPackage constructed UsageEvents instead of UsageEvents.Event, so getNextEvent received the wrong Android API type"
+      "gradleTask": ":app:processReleaseResources",
+      "cause": "Expo prebuild emitted @color/splashscreen_background but the app config omitted splash.backgroundColor, so Android resource linking could not resolve the color"
     },
-    "note": "Build 4 passed every GitHub Actions gate, Expo Doctor, Android prebuild, and the early Gradle tasks, then EAS Build 46faa278-da3a-4cd0-926f-9e847d344a61 failed compiling ZeroLagNetModule.kt. The screenshot-supplied Gradle log identified the UsageEvents.Event type correction. The correction is on the current source branch only; no new EAS build has been started and no APK artifact exists."
+    "note": "Build 5 passed every GitHub Actions gate, Expo Doctor, Android prebuild, and the earlier zerolag_net Kotlin compilation, then EAS Build 7711b779-6cfe-4ab6-8b8b-4a2095755c1e failed at Android resource linking. The source branch now declares a top-level splash.backgroundColor and has a regression test plus an isolated Expo prebuild check proving the generated color resource exists. That correction is not in an APK, no further EAS build has been started, and no APK artifact exists."
   }
 }

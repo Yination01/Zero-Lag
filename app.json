@@ -3,6 +3,9 @@
     "name": "Zero-Lag",
     "slug": "zero-lag",
     "version": "0.1.0",
+    "splash": {
+      "backgroundColor": "#0A0F14"
+    },
     "orientation": "portrait",
     "userInterfaceStyle": "dark",
     "android": {
