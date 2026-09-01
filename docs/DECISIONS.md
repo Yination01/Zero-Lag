@@ -156,7 +156,7 @@ Check: `npm test`, `npx expo export --platform android`, and bridge tests.
 
 Check: GitHub Actions run `33451734687`, then a newly named EAS retry and device test.
 
-## 2026-09-01: Build 3 retry accepted by EAS after the reset window
+## 2026-09-01: Build 3 retry errored after EAS acceptance
 
 - The maintainer explicitly named a Build 3 retry. GitHub Actions workflow
   `33453738183` ran from commit `f693008` with the `build-3` and `preview`
@@ -165,12 +165,15 @@ Check: GitHub Actions run `33451734687`, then a newly named EAS retry and device
   before an APK existed. The retry passed checkout, named-build and EXPO_TOKEN
   gates, dependency install, the full test gate, and EAS project upload.
 - EAS accepted the retry as Build `7cebb8e9-8786-4fb8-b9a0-dba77147642f` at
-  `2026-09-01T00:12:21Z`. Its public build page reports `Build in progress`.
-  The workflow used `--no-wait`, so its success proves EAS submission rather
-  than APK completion.
-- `.build-state.json` records the prior workflow ID as retry context, the
-  successful workflow, EAS build ID and URL, and current in-progress status.
-- No APK artifact exists until the EAS build completes. A real Android device
-  test remains required after installation.
+  `2026-09-01T00:12:21Z`, then its public build page reported `Errored`. The
+  internal-distribution route confirms that no APK artifact exists. The GitHub
+  workflow used `--no-wait`, so its success proves EAS submission rather than
+  EAS build completion.
+- The detailed failure log is restricted to the Expo account. It cannot be read
+  from this sandbox because the Expo credential is stored only as a GitHub
+  Actions secret. The root cause must not be guessed from the workflow result.
+- `.build-state.json` records the prior workflow as retry context, the successful
+  workflow, EAS build ID and URL, and the EAS errored status. A real Android
+  device test remains required only after a successful APK installation.
 
-Check: GitHub Actions run `33453738183`, EAS Build `7cebb8e9-8786-4fb8-b9a0-dba77147642f`, then device test.
+Check: GitHub Actions run `33453738183`, EAS Build `7cebb8e9-8786-4fb8-b9a0-dba77147642f`, detailed EAS log, then device test.
