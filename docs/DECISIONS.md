@@ -202,17 +202,23 @@ Check: GitHub Actions run `33453738183`, EAS Build `7cebb8e9-8786-4fb8-b9a0-dba7
 Check: Node 22 `npm test` with 66 app tests, and verbose Expo Doctor app-config
 schema check. A named EAS APK build and Android device test remain required.
 
-## 2026-09-01: Build 4 dispatched from the EAS prebuild correction
+## 2026-09-01: Build 4 errored after EAS accepted the prebuild correction
 
-- The maintainer explicitly named Build 4 for an EAS preview APK. The manual
-  GitHub Actions workflow was dispatched from source correction commit
-  `4de4432` with the `build-4` and `preview` inputs.
-- Workflow `33455409072` is queued. It follows EAS Build
-  `7cebb8e9-8786-4fb8-b9a0-dba77147642f`, which errored before producing an
-  APK because of the now-corrected Expo config and HUD manifest plugin defects.
-- `.build-state.json` records the Build 4 number, source commit, workflow ID,
-  workflow URL, UTC dispatch time, predecessor EAS build, and queued status.
-- No APK exists until the workflow passes its gate and EAS accepts and completes
-  the Android build. A real Android device still must verify native behaviour.
+- The maintainer explicitly named Build 4 for an EAS preview APK. GitHub Actions
+  workflow `33455409072` ran from source correction commit `4de4432` with the
+  `build-4` and `preview` inputs, and completed successfully.
+- The workflow passed checkout, named-build and EXPO_TOKEN gates, dependency
+  install, the full test gate, EAS CLI install, and EAS project upload. EAS
+  accepted Build `46faa278-da3a-4cd0-926f-9e847d344a61` at
+  `2026-09-01T00:37:04Z`.
+- The public EAS build page then reported `Errored`, with no internal
+  distribution APK artifact. This is a new terminal EAS result after the source
+  correction, not evidence that the prior error recurred.
+- The detailed EAS failure log remains restricted to the Expo account and cannot
+  be read from this sandbox. Its cause must not be guessed. `.build-state.json`
+  records the successful workflow, EAS build ID, submission time, and errored
+  result.
+- No APK exists and Android compilation plus real-device behaviour remain
+  unverified. Do not dispatch another build unless the maintainer names one.
 
-Check: GitHub Actions run `33455409072`, then its EAS build result and device test.
+Check: GitHub Actions run `33455409072`, EAS Build `46faa278-da3a-4cd0-926f-9e847d344a61`, detailed EAS log, then device test.

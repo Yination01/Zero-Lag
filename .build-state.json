@@ -12,7 +12,12 @@
     "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33455409072",
     "followsFailedEasBuildId": "7cebb8e9-8786-4fb8-b9a0-dba77147642f",
     "dispatchedAt": "2026-09-01T00:36:03Z",
-    "status": "queued",
-    "note": "Build 4 was explicitly named and queued through the manual GitHub Actions EAS preview APK workflow from the source correction commit. It follows the Build 3 EAS prebuild error. GitHub gates, EAS submission, APK completion, and real-device verification remain pending."
+    "workflowStatus": "success",
+    "easBuildId": "46faa278-da3a-4cd0-926f-9e847d344a61",
+    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/46faa278-da3a-4cd0-926f-9e847d344a61",
+    "easSubmittedAt": "2026-09-01T00:37:04Z",
+    "easPublicStatus": "Errored",
+    "status": "eas_build_errored",
+    "note": "Build 4 passed every GitHub Actions gate and EAS accepted the project upload from source correction commit 4de4432. EAS Build 46faa278-da3a-4cd0-926f-9e847d344a61 then reported Errored before an APK artifact existed. The detailed terminal EAS log is not available to this sandbox, so the root cause is intentionally unrecorded until supplied from the Expo dashboard."
   }
 }
