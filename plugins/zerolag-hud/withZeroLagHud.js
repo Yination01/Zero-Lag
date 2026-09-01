@@ -13,38 +13,47 @@ const PERMISSIONS = [
 
 function addPermission(manifest, name) {
   manifest['uses-permission'] = manifest['uses-permission'] || [];
-  const has = manifest['uses-permission'].some((p) => p.$?.['android:name'] === name);
+  const has = manifest['uses-permission'].some((permission) => permission.$?.['android:name'] === name);
   if (!has) manifest['uses-permission'].push({ $: { 'android:name': name } });
+}
+
+function applyToManifest(modResults) {
+  const manifest = modResults?.manifest;
+  const app = manifest?.application?.[0];
+
+  if (!app) {
+    throw new Error('AndroidManifest.xml must provide an application element for the Zero-Lag HUD.');
+  }
+
+  app.service = app.service || [];
+  const exists = app.service.some((service) => service.$?.['android:name'] === SERVICE_NAME);
+  if (!exists) {
+    app.service.push({
+      $: {
+        'android:name': SERVICE_NAME,
+        'android:enabled': 'true',
+        'android:exported': 'false',
+        'android:foregroundServiceType': 'specialUse',
+      },
+      property: [
+        {
+          $: {
+            'android:name': 'android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE',
+            'android:value':
+              'Floating real-time ping meter shown over mobile games so the user can monitor network stability while playing.',
+          },
+        },
+      ],
+    });
+  }
+
+  for (const permission of PERMISSIONS) addPermission(manifest, permission);
+  return modResults;
 }
 
 function withZeroLagHud(config) {
   return withAndroidManifest(config, (cfg) => {
-    const manifest = cfg.modResults;
-    const app = manifest.application[0];
-
-    app.service = app.service || [];
-    const exists = app.service.some((s) => s.$?.['android:name'] === SERVICE_NAME);
-    if (!exists) {
-      app.service.push({
-        $: {
-          'android:name': SERVICE_NAME,
-          'android:enabled': 'true',
-          'android:exported': 'false',
-          'android:foregroundServiceType': 'specialUse',
-        },
-        property: [
-          {
-            $: {
-              'android:name': 'android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE',
-              'android:value':
-                'Floating real-time ping meter shown over mobile games so the user can monitor network stability while playing.',
-            },
-          },
-        ],
-      });
-    }
-
-    for (const p of PERMISSIONS) addPermission(manifest, p);
+    applyToManifest(cfg.modResults);
     return cfg;
   });
 }

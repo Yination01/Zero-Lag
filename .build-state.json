@@ -18,6 +18,10 @@
     "easSubmittedAt": "2026-09-01T00:12:21Z",
     "easPublicStatus": "Errored",
     "status": "eas_build_errored",
-    "note": "Build 3 retry passed every GitHub Actions gate and was accepted by EAS after the Free-plan reset window. EAS Build 7cebb8e9-8786-4fb8-b9a0-dba77147642f subsequently reported Errored. No internal-distribution APK artifact exists. Its detailed EAS logs require the Expo account credential, which is not available in this sandbox; the GitHub workflow used --no-wait, so its success only confirms EAS submission."
+    "failure": {
+      "expoDoctor": "app.json rejected expo.newArchEnabled as an additional property",
+      "prebuild": "withZeroLagHud accessed cfg.modResults.application instead of cfg.modResults.manifest.application"
+    },
+    "note": "Build 3 retry passed every GitHub Actions gate and was accepted by EAS after the Free-plan reset window, then EAS Build 7cebb8e9-8786-4fb8-b9a0-dba77147642f errored before an APK artifact existed. The screenshot-supplied EAS log identified the rejected app config field and the HUD manifest-root error. Both have a source correction on this branch only; no new EAS build has been started."
   }
 }

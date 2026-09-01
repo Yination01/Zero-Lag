@@ -9,7 +9,7 @@ State at the last update of this document:
 | Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
 | App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
 | Live host | none named |
-| Last APK | No new APK artifact. The user-named `build-3` retry from `f693008` passed all GitHub Actions gates, but [EAS Build `7cebb8e9`](https://expo.dev/accounts/yination/projects/zero-lag/builds/7cebb8e9-8786-4fb8-b9a0-dba77147642f) subsequently reported `Errored`. EAS failure detail and real-device verification remain pending. |
+| Last APK | No new APK artifact. The user-named `build-3` retry from `f693008` passed all GitHub Actions gates, but [EAS Build `7cebb8e9`](https://expo.dev/accounts/yination/projects/zero-lag/builds/7cebb8e9-8786-4fb8-b9a0-dba77147642f) errored at Expo Doctor and Android manifest prebuild. The source correction is on this branch only, awaiting a newly named APK build and real-device verification. |
 | Suite | `npm test` (agent-docs + agent-rules + legal + TS app tests) |
 | Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` |
 

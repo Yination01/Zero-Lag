@@ -177,3 +177,27 @@ Check: GitHub Actions run `33451734687`, then a newly named EAS retry and device
   device test remains required only after a successful APK installation.
 
 Check: GitHub Actions run `33453738183`, EAS Build `7cebb8e9-8786-4fb8-b9a0-dba77147642f`, detailed EAS log, then device test.
+
+## 2026-09-01: Build 3 EAS failures diagnosed and corrected in source
+
+- The protected EAS log showed two separate prebuild blockers. Expo Doctor
+  rejected `expo.newArchEnabled` as an additional `app.json` property for this
+  SDK 51 project. The property is removed.
+- The HUD config plugin addressed `cfg.modResults` as though `application` were
+  at its top level. Expo Android manifest mods instead place it under
+  `cfg.modResults.manifest`. The plugin now transforms that nested manifest,
+  verifies an application element exists, and adds the HUD service and required
+  permissions idempotently.
+- `src/native/hud-config-plugin.test.ts` covers the nested manifest shape,
+  required service and permissions, idempotence, and the rejected config field.
+  A manifest-root mutant and a reintroduced-config-field mutant both failed the
+  named checks, then the copied backups were restored byte-for-byte.
+- Local Expo Doctor now passes its app-config schema check. Its only remaining
+  advisory is the repository's pre-existing absence of a package lockfile. No
+  dependency versions or lockfile were changed as part of this focused fix.
+- No new EAS or APK build was started for this source correction. It is not in
+  an APK, and Android compilation plus real-device behaviour remain unverified
+  until the maintainer names another build.
+
+Check: Node 22 `npm test` with 66 app tests, and verbose Expo Doctor app-config
+schema check. A named EAS APK build and Android device test remain required.
