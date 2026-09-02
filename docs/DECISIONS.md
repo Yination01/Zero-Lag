@@ -478,3 +478,32 @@ and `docs/DEVICE_TEST_PLAN.md` after an APK installs.
 Check: GitHub Actions run `33689536556`, its terminal local EAS output, the
 `preview-10` release asset if successful, and `docs/DEVICE_TEST_PLAN.md` after
 installation.
+
+## 2026-09-02: Build 10 GitHub-local APK completed
+
+- Build 10 retry GitHub Actions run `33689536556` completed with `success` at
+  `2026-09-02T22:25:01Z`. The run retained its `1fd1b72` source cut. Its
+  required workflow steps succeeded, including Expo authentication, `npm ci`,
+  `npm test`, the transient build stamp, local EAS Android build, APK-output
+  check, artifact upload, and prerelease publication.
+- The installable release asset is
+  [`zero-lag.apk`](https://github.com/Yination01/Zero-Lag/releases/download/preview-10/zero-lag.apk),
+  published in the [`preview-10` prerelease](https://github.com/Yination01/Zero-Lag/releases/tag/preview-10).
+  It is 62,328,280 bytes and has SHA-256
+  `9fdb6e182b055a3dfe9b607d94c97cbba10916c30b1c3ecf71a68dd93c82cc27`.
+- A fresh ZIP integrity check passed. The artifact contains `AndroidManifest.xml`,
+  `resources.arsc`, `classes.dex`, and native libraries for `arm64-v8a`,
+  `armeabi-v7a`, `x86`, and `x86_64`.
+- This proves the Poise-style GitHub-local EAS route can compile and publish this
+  source without waiting in the EAS cloud queue. It does not prove installation
+  or behavior on a real Android device.
+- Real-device validation remains outstanding for consent, runtime permissions,
+  Usage Access, overlay, foreground notification and Stop action, HUD lifecycle,
+  history persistence, foreground-game detection, and network behavior. The
+  separate EAS Build 9 job remains queued without an artifact.
+- The updated build state and this record are post-build evidence only. They are
+  not part of the Build 10 APK source cut.
+
+Check: [Build 10 run 33689536556](https://github.com/Yination01/Zero-Lag/actions/runs/33689536556),
+[preview-10 release](https://github.com/Yination01/Zero-Lag/releases/tag/preview-10),
+APK SHA-256 and archive checks, then `docs/DEVICE_TEST_PLAN.md` on a real phone.

@@ -16,9 +16,22 @@
     "githubRunId": "33689536556",
     "githubRunUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33689536556",
     "githubReleaseTag": "preview-10",
+    "githubReleaseUrl": "https://github.com/Yination01/Zero-Lag/releases/tag/preview-10",
     "githubReleaseAsset": "zero-lag.apk",
-    "status": "github_actions_queued",
-    "deviceInstallStatus": "not_available",
-    "note": "The maintainer explicitly named a Build 10 retry after the first run stopped at the repository EXPO_TOKEN secret gate. GitHub Actions run 33689536556 was accepted from 1fd1b72cced1d1cf7de859b9b7caf71aebbef767, which changes only dispatch evidence from the initial app-source cut. It is queued to use the local EAS executor on GitHub Ubuntu, not the EAS cloud queue. No terminal Gradle result, APK artifact, GitHub prerelease asset, installation, archive inspection, or real-device test is available yet. The separate EAS Build 9 job remains queued without an artifact."
+    "artifactUrl": "https://github.com/Yination01/Zero-Lag/releases/download/preview-10/zero-lag.apk",
+    "artifactBytes": 62328280,
+    "artifactSha256": "9fdb6e182b055a3dfe9b607d94c97cbba10916c30b1c3ecf71a68dd93c82cc27",
+    "archiveIntegrity": "zip_test_passed",
+    "nativeAbis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "status": "github_actions_finished",
+    "terminalAt": "2026-09-02T22:25:01Z",
+    "terminalConclusion": "success",
+    "deviceInstallStatus": "not_installed_or_tested",
+    "note": "Build 10 retry completed successfully in GitHub Actions run 33689536556. The local EAS build, APK output check, workflow artifact upload, and preview-10 prerelease publication all succeeded. The release APK is 62,328,280 bytes, SHA-256 9fdb6e182b055a3dfe9b607d94c97cbba10916c30b1c3ecf71a68dd93c82cc27. A fresh archive check passed and found AndroidManifest.xml, resources.arsc, classes.dex, and arm64-v8a, armeabi-v7a, x86, and x86_64 native libraries. No real Android installation or device behavior test has occurred. The separate EAS Build 9 job remains queued without an artifact."
   }
 }

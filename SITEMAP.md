@@ -6,12 +6,12 @@ Orientation document. Read it before guessing a path.
 
 | Thing | Value |
 |---|---|
-| Tip of this branch | Expo React Native Android app with local readiness history, native HUD controls, and truth-first permission flows. Build 10 retry was dispatched from `1fd1b72` to the Poise-style GitHub-local APK workflow and is awaiting terminal completion. |
+| Tip of this branch | Expo React Native Android app with local readiness history, native HUD controls, and truth-first permission flows. Build 10 completed through the Poise-style GitHub-local APK workflow. Its APK is published, but it has not yet been installed or device-tested. |
 | App scaffold | Expo / React Native Android source present. `android/` is generated and gitignored. |
 | Live host | None named. Local data does not upload to a Zero-Lag server. |
-| Current GitHub APK build | [Build 10 retry workflow run](https://github.com/Yination01/Zero-Lag/actions/runs/33689536556), GitHub Actions run `33689536556`, was manually dispatched at `2026-09-02T22:16:17Z` from `1fd1b72`. It uses EAS local build on GitHub Ubuntu and is queued. No APK or terminal Android compilation result exists yet. The first Build 10 attempt, run `33688703597`, failed at Expo-secret authentication before source build work. |
+| Latest GitHub APK build | [Build 10 retry workflow run](https://github.com/Yination01/Zero-Lag/actions/runs/33689536556) finished successfully at `2026-09-02T22:25:01Z` from `1fd1b72`. Its GitHub-local EAS build published [`zero-lag.apk`](https://github.com/Yination01/Zero-Lag/releases/download/preview-10/zero-lag.apk) in the [`preview-10` prerelease](https://github.com/Yination01/Zero-Lag/releases/tag/preview-10). The 62,328,280-byte APK passed archive integrity checks but is not installed or device-tested. The first Build 10 attempt, run `33688703597`, failed at Expo-secret authentication before source build work. |
 | Separate EAS build | [Build 9](https://expo.dev/accounts/yination/projects/zero-lag/builds/7d6383fb-e857-421a-a1b7-738fd43216b0), EAS ID `7d6383fb-e857-421a-a1b7-738fd43216b0`, was directly submitted at `2026-09-02T19:35:04.675Z` from `477ca5e`. The fresh public status remains `IN_QUEUE`; no APK or Android compilation result exists yet. |
-| Last finished APK | [Build 8](https://expo.dev/accounts/yination/projects/zero-lag/builds/0a54b56a-01ad-47c4-98a7-0a4bd9fd0768) finished successfully from `f1071a3`. The maintainer reports it is installed, but the real-device Settings, permission, HUD, notification, and network checks have not run. |
+| Last finished APK | [Build 10 `zero-lag.apk`](https://github.com/Yination01/Zero-Lag/releases/download/preview-10/zero-lag.apk) finished successfully from `1fd1b72` through GitHub-local EAS. It is not yet installed or device-tested. Build 8 remains installed, but its real-device Settings, permission, HUD, notification, and network checks have not run. |
 | Prior EAS failure | Build 7, `f316f8b1-6030-40e0-af5f-abb26a9f887a`, errored during Gradle. Its terminal failure detail was not available. |
 | Suite | `npm test` runs agent-docs, agent-rules, legal, dependency-lock, the GitHub APK workflow gate, TypeScript, and TS app tests. |
 | Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE`. |
@@ -25,7 +25,7 @@ Orientation document. Read it before guessing a path.
 | `DESIGN.md` | Locked visual tokens and accessibility direction. |
 | `SITEMAP.md` | This file. |
 | `BUILD.md` | Source gate, reproducible dependency install, and maintainer-only build routes. |
-| `.build-state.json` | The most recently dispatched APK record. Currently queued Build 10 retry in the GitHub-local workflow, with Build 9 queue state and Build 8 evidence retained in decisions and sitemap. |
+| `.build-state.json` | The most recently dispatched APK record. Currently finished Build 10 with GitHub prerelease asset, archive evidence, and remaining device-test status. Build 9 queue state and Build 8 evidence remain in decisions and sitemap. |
 | `package.json` | Expo dependencies and `npm test`, the local gate. |
 | `app.json` / `eas.json` | Expo config and EAS Android build profiles. |
 | `App.tsx`, `index.ts` | Expo root component and entry. |
