@@ -407,3 +407,29 @@ inspection, authenticated EAS monitoring, and the manual
 
 Check: `node .audit/apk-workflow.cjs`, the copied-backup cloud-mode mutation,
 and `npm test` after the workflow audit is included in the source gate.
+
+## 2026-09-02: Build 10 dispatched through the GitHub-local APK route
+
+- The maintainer explicitly named Build 10 in the dispatch turn. Its source cut
+  is `48417680f839ec7e80c288ede5a2a1c14adace91`, the Poise-style GitHub-local
+  preview-delivery commit.
+- A fresh Node 22 `npm test` passed before dispatch, including the 15-check
+  workflow contract and all 117 app tests. The source was then pushed to
+  `main` as that exact commit.
+- GitHub Actions workflow `345554094`, **Preview Zero-Lag APK**, was dispatched
+  on `main` with numeric input `10`. GitHub registered run `33688703597` at
+  `2026-09-02T22:06:38Z`: [Build 10 workflow run](https://github.com/Yination01/Zero-Lag/actions/runs/33688703597).
+  Its initial state is `in_progress` and its recorded head SHA is the source
+  cut above.
+- The workflow uses the EAS local executor on a GitHub Ubuntu runner. If it
+  completes successfully, it will create `zero-lag.apk`, upload a workflow
+  artifact, and publish the `preview-10` prerelease asset. It does not submit a
+  new job to the EAS cloud queue.
+- At this record point there is no terminal Gradle result, GitHub artifact,
+  release asset, APK archive evidence, installation, or real-device result.
+  The pre-existing separate EAS Build 9 remains queued without an artifact.
+- This decision record is post-dispatch evidence only. It is not part of the
+  Build 10 source cut and cannot change the APK running in that workflow.
+
+Check: GitHub Actions run `33688703597`, the terminal artifact or failure log,
+and `docs/DEVICE_TEST_PLAN.md` after a successful installation.

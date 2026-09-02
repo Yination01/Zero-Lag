@@ -1,20 +1,22 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-9",
+    "number": "build-10",
     "versionName": "0.1.0",
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "477ca5e8a0c070df90035f5876280787d607d909",
-    "channel": "EAS cloud",
-    "dispatchMethod": "direct_eas_cli",
-    "dispatchedAt": "2026-09-02T19:35:04.675Z",
-    "easBuildId": "7d6383fb-e857-421a-a1b7-738fd43216b0",
-    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/7d6383fb-e857-421a-a1b7-738fd43216b0",
-    "easPublicStatus": "IN_QUEUE",
-    "status": "eas_queued",
+    "dispatchedFromCommit": "48417680f839ec7e80c288ede5a2a1c14adace91",
+    "channel": "GitHub Actions local EAS",
+    "dispatchMethod": "github_workflow_dispatch",
+    "dispatchedAt": "2026-09-02T22:06:38Z",
+    "githubWorkflowId": "345554094",
+    "githubRunId": "33688703597",
+    "githubRunUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33688703597",
+    "githubReleaseTag": "preview-10",
+    "githubReleaseAsset": "zero-lag.apk",
+    "status": "github_actions_in_progress",
     "deviceInstallStatus": "not_available",
-    "note": "Build 9 was directly submitted to EAS only after the fresh Node 22 npm ci and npm test gate passed on 477ca5e8a0c070df90035f5876280787d607d909. The first authenticated EAS status view reported IN_QUEUE. No Android compilation, APK artifact, installation, archive inspection, or real-device test has occurred for Build 9. Build 8 remains the latest finished APK and is installed but not user-tested."
+    "note": "Build 10 was manually dispatched from 48417680f839ec7e80c288ede5a2a1c14adace91 after the fresh Node 22 npm test gate. GitHub Actions run 33688703597 is using the local EAS executor on GitHub Ubuntu, not the EAS cloud queue. No terminal Gradle result, APK artifact, GitHub prerelease asset, installation, archive inspection, or real-device test is available yet. The separate EAS Build 9 job remains queued without an artifact."
   }
 }
