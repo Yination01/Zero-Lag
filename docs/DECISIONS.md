@@ -455,3 +455,26 @@ and `docs/DEVICE_TEST_PLAN.md` after a successful installation.
 
 Check: [GitHub Actions run 33688703597](https://github.com/Yination01/Zero-Lag/actions/runs/33688703597), a valid repository Expo secret, a newly authorized retry,
 and `docs/DEVICE_TEST_PLAN.md` after an APK installs.
+
+## 2026-09-02: Build 10 retry dispatched after Expo-secret correction
+
+- The maintainer explicitly named a **Retry Build 10** after updating the
+  repository Expo credential. A fresh Node 22 `npm test` gate passed again
+  before the retry.
+- GitHub accepted workflow `345554094` dispatch on `main` with numeric input
+  `10`. The new GitHub Actions run is `33689536556`, created at
+  `2026-09-02T22:16:17Z`: [Build 10 retry workflow run](https://github.com/Yination01/Zero-Lag/actions/runs/33689536556).
+- The retry source cut is `1fd1b72cced1d1cf7de859b9b7caf71aebbef767`. Relative
+  to the initial Build 10 source cut, it contains only truthful prior-dispatch
+  and failure evidence, not an application or workflow behavior change.
+- At dispatch time the retry is queued. It will use EAS local build on GitHub
+  Ubuntu, and it will only create `zero-lag.apk` plus the `preview-10` release
+  asset if its Expo authentication, source gate, and Android build all pass.
+- There is not yet a terminal workflow result, Gradle compilation result, APK,
+  release asset, installation, or device validation. The unrelated EAS Build 9
+  remains queued without an artifact.
+- This is post-dispatch evidence only, not part of the retry source cut.
+
+Check: GitHub Actions run `33689536556`, its terminal local EAS output, the
+`preview-10` release asset if successful, and `docs/DEVICE_TEST_PLAN.md` after
+installation.
