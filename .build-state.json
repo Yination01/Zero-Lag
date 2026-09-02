@@ -15,8 +15,12 @@
     "githubRunUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33688703597",
     "githubReleaseTag": "preview-10",
     "githubReleaseAsset": "zero-lag.apk",
-    "status": "github_actions_in_progress",
+    "status": "github_actions_failed",
+    "terminalAt": "2026-09-02T22:07:16Z",
+    "terminalConclusion": "failure",
+    "failureStep": "Set up Expo and EAS",
+    "failureReason": "The repository EXPO_TOKEN Actions secret was rejected by EAS during eas whoami.",
     "deviceInstallStatus": "not_available",
-    "note": "Build 10 was manually dispatched from 48417680f839ec7e80c288ede5a2a1c14adace91 after the fresh Node 22 npm test gate. GitHub Actions run 33688703597 is using the local EAS executor on GitHub Ubuntu, not the EAS cloud queue. No terminal Gradle result, APK artifact, GitHub prerelease asset, installation, archive inspection, or real-device test is available yet. The separate EAS Build 9 job remains queued without an artifact."
+    "note": "Build 10 was manually dispatched from 48417680f839ec7e80c288ede5a2a1c14adace91 after the fresh Node 22 npm test gate. GitHub Actions run 33688703597 reached the new local EAS workflow, then stopped at Set up Expo and EAS because the repository EXPO_TOKEN secret is invalid. npm ci, the workflow source gate, Gradle, APK output, artifact upload, and prerelease publication did not run. No APK, archive inspection, installation, or real-device test is available. The separate EAS Build 9 job remains queued without an artifact. A Build 10 retry requires a valid repository EXPO_TOKEN and explicit retry authorization."
   }
 }

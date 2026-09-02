@@ -433,3 +433,25 @@ and `npm test` after the workflow audit is included in the source gate.
 
 Check: GitHub Actions run `33688703597`, the terminal artifact or failure log,
 and `docs/DEVICE_TEST_PLAN.md` after a successful installation.
+
+## 2026-09-02: Build 10 stopped at the Expo secret gate
+
+- GitHub Actions run `33688703597` completed with conclusion `failure` at
+  `2026-09-02T22:07:16Z`. Checkout, Node 22 setup, the numeric Build 10 and
+  unused-tag checks, and the explicit repository-secret presence check passed.
+- The next **Set up Expo and EAS** action ran `eas whoami` and EAS rejected the
+  repository `EXPO_TOKEN` secret as invalid. This is a secret configuration
+  failure, not a Zero-Lag source, Gradle, Android resource, or APK failure.
+- `npm ci`, the workflow source gate, metadata stamp, Gradle setup, local EAS
+  build, artifact upload, and GitHub prerelease step were skipped. Therefore no
+  `zero-lag.apk`, `preview-10` asset, Android compilation result, or device
+  test exists for this run.
+- A valid Expo access token must replace the repository Actions `EXPO_TOKEN`
+  secret before retrying. The failed run did not create the `preview-10` tag,
+  so the same source can be retried only after the maintainer explicitly names
+  a Build 10 retry. The unrelated EAS Build 9 remains queued with no artifact.
+- The failure is recorded in `.build-state.json` and this post-dispatch record
+  is not part of the Build 10 source cut.
+
+Check: [GitHub Actions run 33688703597](https://github.com/Yination01/Zero-Lag/actions/runs/33688703597), a valid repository Expo secret, a newly authorized retry,
+and `docs/DEVICE_TEST_PLAN.md` after an APK installs.
