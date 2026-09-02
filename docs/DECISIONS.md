@@ -376,3 +376,34 @@ Check: targeted test-first checks and mutation restores, a clean `npm ci`, the
 final Node 22 suite, Android export/config validation, generated-native
 inspection, authenticated EAS monitoring, and the manual
 `docs/DEVICE_TEST_PLAN.md`.
+
+## 2026-09-02: Poise-style GitHub-local preview delivery
+
+- The maintainer asked for Zero-Lag APK delivery to work like Poise. The manual
+  GitHub workflow now runs the EAS local executor on a GitHub Ubuntu runner,
+  rather than submitting another job to the EAS cloud queue.
+- The workflow requires a numeric preview number of 10 or higher. Build 9 is
+  already allocated to the existing EAS job, and the workflow fails before any
+  build work if the matching `preview-N` tag already exists. This prevents a
+  tag or build-number overwrite.
+- It fails closed when `EXPO_TOKEN` is missing, installs with `npm ci`, runs
+  `npm test`, then stamps only transient `expo.extra.buildNumber` metadata.
+  It never changes Android `versionCode` in CI.
+- A successful local build writes `zero-lag.apk`, verifies it is non-empty,
+  uploads it as the GitHub Actions artifact, and publishes it as the
+  `preview-N` GitHub prerelease asset. Repository access rules control who can
+  download either location.
+- `.audit/apk-workflow.cjs` statically checks manual-only dispatch, named
+  number and tag gates, secret gate, ordering, local EAS mode, Gradle setup,
+  artifact upload, and prerelease publication. Targeted mutations removed the
+  manual, permission, numeric, tag, secret, metadata, Gradle, local-build,
+  artifact, and prerelease guarantees. Each failed its named check, then the
+  workflow was restored from a copied backup and checked byte-for-byte.
+- No GitHub Actions build was dispatched during this workflow change because
+  the maintainer did not name a build number in this turn. Build 9 remains in
+  the EAS free-tier queue and has no APK artifact as of the fresh public status
+  check. The new GitHub-local path still needs a named manual run and real
+  Android device validation.
+
+Check: `node .audit/apk-workflow.cjs`, the copied-backup cloud-mode mutation,
+and `npm test` after the workflow audit is included in the source gate.

@@ -12,7 +12,7 @@ Orientation document. Read it before guessing a path.
 | Current EAS build | [Build 9](https://expo.dev/accounts/yination/projects/zero-lag/builds/7d6383fb-e857-421a-a1b7-738fd43216b0), EAS ID `7d6383fb-e857-421a-a1b7-738fd43216b0`, was directly submitted at `2026-09-02T19:35:04.675Z` from `477ca5e`. The first authenticated status was `IN_QUEUE`; no APK or Android compilation result exists yet. |
 | Last finished APK | [Build 8](https://expo.dev/accounts/yination/projects/zero-lag/builds/0a54b56a-01ad-47c4-98a7-0a4bd9fd0768) finished successfully from `f1071a3`. The maintainer reports it is installed, but the real-device Settings, permission, HUD, notification, and network checks have not run. |
 | Prior EAS failure | Build 7, `f316f8b1-6030-40e0-af5f-abb26a9f887a`, errored during Gradle. Its terminal failure detail was not available. |
-| Suite | `npm test` runs agent-docs, agent-rules, legal, dependency-lock, TypeScript, and TS app tests. |
+| Suite | `npm test` runs agent-docs, agent-rules, legal, dependency-lock, the GitHub APK workflow gate, TypeScript, and TS app tests. |
 | Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE`. |
 
 ## Top level
@@ -40,7 +40,7 @@ Orientation document. Read it before guessing a path.
 | `src/onboarding/` | Legal consent, local start screen, and permissions flow. No fake account sign-in. |
 | `src/legal/`, `src/auth/`, `src/permissions/` | Consent, guest-only local session, and permission catalogs and feedback. |
 | `plugins/` | Local React Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud`. Their `file:` dependencies let React Native autolink them. |
-| `.github/workflows/apk.yml` | Manual EAS APK workflow. Requires a named build number and the `EXPO_TOKEN` GitHub secret. |
+| `.github/workflows/apk.yml` | Manual Poise-style preview APK workflow. It requires a numeric unused build number of 10 or higher and `EXPO_TOKEN`, runs EAS locally on GitHub Ubuntu, then uploads `zero-lag.apk` as a workflow artifact and `preview-N` prerelease asset. |
 | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` | Legal pack, enforced by `.audit/legal.cjs`. Not legal advice. |
 
 ## `.agent/`
@@ -59,6 +59,7 @@ Orientation document. Read it before guessing a path.
 | `agent-rules.cjs` | The eight hard rules stay stated. |
 | `legal.cjs` | Honest product claims, Nigeria courts, 13+, placeholder contact, and legal-pack dates. |
 | `dependency-lock.cjs` | Lockfile integrity and exact dependency installation in the manual APK workflow. |
+| `apk-workflow.cjs` | Static gate for Poise-style GitHub-local APK delivery: named-number and tag guards, secret gate, ordered local EAS build, artifact, and prerelease asset. |
 
 ## `docs/`
 

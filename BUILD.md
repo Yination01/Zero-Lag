@@ -27,28 +27,39 @@ advisory. The automated remediation requests a major Expo and React Native
 migration. Do not run `npm audit fix --force` for this app; schedule that SDK
 migration as dedicated compatibility and Android device-validation work.
 
-## Recommended preview APK route: manual GitHub Actions dispatch
+## Recommended preview APK route: Poise-style GitHub delivery
 
-The checked-in workflow is `.github/workflows/apk.yml`. It is manual only,
-requires a build number, and fails closed if the repository does not hold an
-`EXPO_TOKEN` Actions secret.
+The checked-in workflow is `.github/workflows/apk.yml`. It is manual only and
+runs the EAS **local** executor on a GitHub Ubuntu runner. It does not submit
+work to the EAS cloud queue. A successful run exposes `zero-lag.apk` in two
+places: its GitHub Actions artifact and a numbered GitHub prerelease asset.
 
-Use this route only after the maintainer has explicitly named the build and the
-source commit is pushed:
+The workflow fails closed unless the repository has an `EXPO_TOKEN` Actions
+secret. It also refuses non-numeric, reused, or pre-10 numbers. Build 9 is
+already allocated to the queued EAS job, so the next GitHub preview number is
+10 or higher.
+
+Use this route only after the maintainer has explicitly named the build in the
+same message and the source commit is pushed:
 
 1. Open the repository's **Actions** tab.
-2. Select **Build Zero-Lag APK** and choose **Run workflow**.
+2. Select **Preview Zero-Lag APK** and choose **Run workflow**.
 3. Select the pushed branch, normally `main`.
-4. Enter the named build value, for example `build-9`, and keep the `preview`
-   profile selected.
-5. Run the workflow. A green GitHub workflow confirms source gating and EAS
-   submission. It does not itself prove that EAS finished Android compilation.
-6. Open the EAS build page that the workflow reports. Install an APK only after
-   EAS reports **Finished**, then use `docs/DEVICE_TEST_PLAN.md` on a real
-   Android phone.
+4. Enter the named numeric value, for example `10`.
+5. Run the workflow. It checks the unused `preview-10` tag, runs `npm ci` and
+   `npm test`, stamps transient build metadata after the gate, then runs
+   `eas build --platform android --profile preview --local` on the GitHub
+   runner.
+6. If the job is green, download `zero-lag.apk` from the run's **Artifacts**
+   section or the `preview-10` GitHub prerelease. Release visibility follows
+   the repository's access rules.
+7. Install only the successful APK and run `docs/DEVICE_TEST_PLAN.md` on a
+   real Android phone.
 
-Do not reuse an old build number as evidence for changed source. Record the
-new dispatch and terminal EAS state in `.build-state.json`.
+A green workflow proves the GitHub-run local Android build and publication
+steps completed. It does not replace real-device checks of permissions, HUD,
+notifications, foreground-game detection, or network behavior. Record each
+new dispatch and terminal result in `.build-state.json`.
 
 ## Direct EAS route
 

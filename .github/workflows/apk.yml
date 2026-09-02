@@ -1,70 +1,142 @@
-name: Build Zero-Lag APK
+name: Preview Zero-Lag APK
 
-# Builds an Android test APK with EAS. Gated by project law (CLAUDE.md rule 1):
-# 1. It is triggered manually and REQUIRES a build number typed into the
-#    "Build number" field. No number, no build.
-# 2. It fails closed when EXPO_TOKEN is missing. Add EXPO_TOKEN as a GitHub
-#    Actions secret before this can succeed. Budget zero until then.
-# To dispatch: Actions tab -> Build Zero-Lag APK -> Run workflow ->
-# set the build number (e.g. build-2) and branch -> Run.
+# Manual, numbered preview delivery. The APK is built locally by EAS on the
+# GitHub Ubuntu runner, then exposed as both a run artifact and a prerelease
+# asset. It deliberately does not submit to the EAS cloud queue.
 
 on:
   workflow_dispatch:
     inputs:
       build_number:
-        description: 'Build number (required, e.g. build-2). Leave blank to abort.'
-        required: false
-        default: ''
+        description: 'Required numeric preview number, starting at 10.'
+        required: true
         type: string
-      profile:
-        description: 'EAS profile'
-        required: false
-        default: 'preview'
-        type: choice
-        options:
-          - preview
-          - development
+
+permissions:
+  contents: write
 
 jobs:
   build:
-    name: Build APK (named dispatch only)
+    name: Build numbered preview APK
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout the named source commit
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Setup Node
+      - name: Set up Node 22 from the lockfile
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
 
-      - name: Fail closed if no build number was named
+      - name: Validate the numbered preview and unused release tag
+        env:
+          RAW_BUILD_N: ${{ inputs.build_number }}
         run: |
-          if [ -z "${{ github.event.inputs.build_number }}" ]; then
-            echo "No build number supplied. A named number is required (rule 1). Aborting."
+          set -euo pipefail
+          if ! [[ "$RAW_BUILD_N" =~ ^[0-9]+$ ]]; then
+            echo 'Build number must contain digits only.'
             exit 1
           fi
-          echo "Dispatching ${{ github.event.inputs.build_number }}"
+          BUILD_N=$((10#$RAW_BUILD_N))
+          if (( BUILD_N < 10 )); then
+            echo 'Build number 10 or greater is required. Build 9 is already allocated.'
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/preview-${BUILD_N}" >/dev/null; then
+            echo "preview-${BUILD_N} already exists. Choose a new build number."
+            exit 1
+          fi
+          echo "BUILD_N=${BUILD_N}" >> "$GITHUB_ENV"
+          echo "Preparing preview-${BUILD_N} from ${GITHUB_SHA}."
 
       - name: Fail closed if EXPO_TOKEN is not configured
-        run: |
-          if [ -z "$EXPO_TOKEN" ]; then
-            echo "EXPO_TOKEN secret is missing. Gates fail closed. Add the secret in repo settings."
-            exit 1
-          fi
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo 'EXPO_TOKEN secret is missing. The APK job stops before dependency or build work.'
+            exit 1
+          fi
+
+      - name: Set up Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install exact locked dependencies
         run: npm ci
 
-      - name: Run the gate
+      - name: Run the source gate
         run: npm test
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli
+      - name: Stamp this named preview build
+        env:
+          BUILD_N: ${{ env.BUILD_N }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const buildNumber = Number(process.env.BUILD_N);
+          if (!Number.isSafeInteger(buildNumber) || buildNumber < 10) {
+            throw new Error('Validated BUILD_N is missing or invalid.');
+          }
+          const app = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+          app.expo ??= {};
+          app.expo.extra ??= {};
+          app.expo.extra.buildNumber = buildNumber;
+          fs.writeFileSync('app.json', `${JSON.stringify(app, null, 2)}\n`);
+          NODE
 
-      - name: Build on EAS (Android APK)
-        run: eas build --platform android --profile "${{ github.event.inputs.profile }}" --non-interactive --no-wait
+      - name: Restore Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('package-lock.json', 'app.json', 'eas.json', 'plugins/**') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Configure Gradle for the runner
+        run: |
+          mkdir -p ~/.gradle
+          cat > ~/.gradle/gradle.properties <<'EOF'
+          org.gradle.caching=true
+          org.gradle.parallel=true
+          org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8
+          EOF
+
+      - name: Build installable APK on this GitHub runner
+        run: eas build --platform android --profile preview --local --non-interactive --output zero-lag.apk
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Verify local APK output
+        run: |
+          test -s zero-lag.apk
+          sha256sum zero-lag.apk
+
+      - name: Upload APK workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zero-lag-apk-${{ env.BUILD_N }}
+          path: zero-lag.apk
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish preview release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: preview-${{ env.BUILD_N }}
+          target_commitish: ${{ github.sha }}
+          name: Zero-Lag preview ${{ env.BUILD_N }}
+          prerelease: true
+          generate_release_notes: false
+          body: Installable Zero-Lag preview APK built by the GitHub runner.
+          files: zero-lag.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
