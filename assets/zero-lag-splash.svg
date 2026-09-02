@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Zero-Lag splash signal pulse mark">
+  <defs>
+    <linearGradient id="pulse" x1="232" y1="328" x2="792" y2="696" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4DA6FF"/>
+      <stop offset="0.42" stop-color="#00FF88"/>
+      <stop offset="1" stop-color="#00D66F"/>
+    </linearGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="18" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <g fill="none" stroke="#4DA6FF" stroke-linecap="round" opacity="0.22">
+    <circle cx="512" cy="512" r="270" stroke-width="4" stroke-dasharray="12 22"/>
+    <circle cx="512" cy="512" r="206" stroke-width="3" stroke-dasharray="8 20"/>
+  </g>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M232 596H350L411 498L470 648L548 386L624 596H792" stroke="#00FF88" stroke-opacity="0.28" stroke-width="42" filter="url(#softGlow)"/>
+    <path d="M232 596H350L411 498L470 648L548 386L624 596H792" stroke="url(#pulse)" stroke-width="22"/>
+    <path d="M232 596H350L411 498L470 648L548 386L624 596H792" stroke="#E6EDF3" stroke-opacity="0.42" stroke-width="4"/>
+  </g>
+  <circle cx="548" cy="386" r="22" fill="#0A0F14" stroke="#00FF88" stroke-width="11"/>
+  <circle cx="548" cy="386" r="6" fill="#E6EDF3"/>
+  <circle cx="792" cy="596" r="16" fill="#00FF88"/>
+</svg>

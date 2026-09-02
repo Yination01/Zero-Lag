@@ -507,3 +507,36 @@ installation.
 Check: [Build 10 run 33689536556](https://github.com/Yination01/Zero-Lag/actions/runs/33689536556),
 [preview-10 release](https://github.com/Yination01/Zero-Lag/releases/tag/preview-10),
 APK SHA-256 and archive checks, then `docs/DEVICE_TEST_PLAN.md` on a real phone.
+
+## 2026-09-02: launcher, adaptive icon, and splash branding source
+
+- The maintainer selected launcher-and-splash scope only, with no in-app logo or
+  screen-layout change. The chosen direction is a text-free neon signal-pulse
+  mark on the locked `#0A0F14` background, using the Zero-Lag `good` green and
+  `info` blue token values.
+- `assets/` now retains editable SVG masters plus 1024 by 1024 PNG delivery
+  assets: an opaque launcher icon, a transparent Android adaptive-icon
+  foreground, and a transparent splash mark. The adaptive artwork is centered
+  inside its intended safe area instead of relying on launcher-icon cropping.
+- `app.json` binds `zero-lag-icon.png` as the launcher icon,
+  `zero-lag-splash.png` as the contain-mode splash image, and
+  `zero-lag-adaptive-foreground.png` plus `#0A0F14` as the Android adaptive
+  icon configuration. The splash and adaptive surfaces therefore use the same
+  locked dark background.
+- `src/native/brand-assets.test.ts` was written before the missing config and
+  PNG bindings were added. Its initial run failed on the absent launcher-icon
+  config and asset. It now checks all required bindings, the locked background,
+  PNG signatures, 1024 by 1024 dimensions, and non-placeholder file sizes.
+  Nine copied-backup mutations removed or changed each config guarantee,
+  reduced each of the three rasters to a placeholder, or changed both dark
+  surfaces together. Each failed the intended named check, and every restore
+  was byte-for-byte exact.
+- Build 10 was cut from `1fd1b72` before this source work. Its published APK
+  does not contain this launcher, adaptive icon, or splash image. No new APK
+  build, installation, or real-device icon and splash validation has started.
+  A newly named build is required to put the branding on a phone.
+
+Check: Node 22 `npm test` passed with all 119 tests, the resolved Expo config
+returned all six launcher, splash, and adaptive-icon values, and Android export
+bundled successfully. A newly named APK build and real-device cold-start check
+remain required.

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" role="img" aria-label="Zero-Lag signal pulse mark">
+  <defs>
+    <linearGradient id="panel" x1="116" y1="96" x2="908" y2="928" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#162631"/>
+      <stop offset="1" stop-color="#0A0F14"/>
+    </linearGradient>
+    <linearGradient id="pulse" x1="194" y1="290" x2="840" y2="706" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4DA6FF"/>
+      <stop offset="0.38" stop-color="#00FF88"/>
+      <stop offset="1" stop-color="#00D66F"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientTransform="translate(512 512) rotate(90) scale(404)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#00FF88" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#00FF88" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="20" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="1024" height="1024" rx="224" fill="#0A0F14"/>
+  <rect x="72" y="72" width="880" height="880" rx="184" fill="url(#panel)" stroke="#243847" stroke-width="4"/>
+  <circle cx="512" cy="512" r="404" fill="url(#halo)"/>
+  <g fill="none" stroke="#4DA6FF" stroke-linecap="round" opacity="0.23">
+    <circle cx="512" cy="512" r="314" stroke-width="4" stroke-dasharray="12 22"/>
+    <circle cx="512" cy="512" r="250" stroke-width="3" stroke-dasharray="8 20"/>
+  </g>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M186 603H323L394 489L461 673L548 339L637 603H838" stroke="#00FF88" stroke-opacity="0.25" stroke-width="46" filter="url(#softGlow)"/>
+    <path d="M186 603H323L394 489L461 673L548 339L637 603H838" stroke="url(#pulse)" stroke-width="24"/>
+    <path d="M186 603H323L394 489L461 673L548 339L637 603H838" stroke="#E6EDF3" stroke-opacity="0.42" stroke-width="4"/>
+  </g>
+  <g>
+    <circle cx="548" cy="339" r="25" fill="#0A0F14" stroke="#00FF88" stroke-width="12"/>
+    <circle cx="548" cy="339" r="7" fill="#E6EDF3"/>
+    <circle cx="838" cy="603" r="17" fill="#00FF88"/>
+  </g>
+  <path d="M236 438H326" stroke="#4DA6FF" stroke-width="16" stroke-linecap="round" opacity="0.9"/>
+  <path d="M208 486H326" stroke="#00FF88" stroke-width="16" stroke-linecap="round" opacity="0.64"/>
+</svg>

@@ -6,7 +6,7 @@ Orientation document. Read it before guessing a path.
 
 | Thing | Value |
 |---|---|
-| Tip of this branch | Expo React Native Android app with local readiness history, native HUD controls, and truth-first permission flows. Build 10 completed through the Poise-style GitHub-local APK workflow. Its APK is published, but it has not yet been installed or device-tested. |
+| Tip of this branch | Expo React Native Android app with local readiness history, native HUD controls, truth-first permission flows, and selected text-free neon signal-pulse launcher and splash branding. Build 10 completed through the Poise-style GitHub-local APK workflow, but its APK predates the branding source and has not yet been installed or device-tested. |
 | App scaffold | Expo / React Native Android source present. `android/` is generated and gitignored. |
 | Live host | None named. Local data does not upload to a Zero-Lag server. |
 | Latest GitHub APK build | [Build 10 retry workflow run](https://github.com/Yination01/Zero-Lag/actions/runs/33689536556) finished successfully at `2026-09-02T22:25:01Z` from `1fd1b72`. Its GitHub-local EAS build published [`zero-lag.apk`](https://github.com/Yination01/Zero-Lag/releases/download/preview-10/zero-lag.apk) in the [`preview-10` prerelease](https://github.com/Yination01/Zero-Lag/releases/tag/preview-10). The 62,328,280-byte APK passed archive integrity checks but is not installed or device-tested. The first Build 10 attempt, run `33688703597`, failed at Expo-secret authentication before source build work. |
@@ -25,11 +25,13 @@ Orientation document. Read it before guessing a path.
 | `DESIGN.md` | Locked visual tokens and accessibility direction. |
 | `SITEMAP.md` | This file. |
 | `BUILD.md` | Source gate, reproducible dependency install, and maintainer-only build routes. |
-| `.build-state.json` | The most recently dispatched APK record. Currently finished Build 10 with GitHub prerelease asset, archive evidence, and remaining device-test status. Build 9 queue state and Build 8 evidence remain in decisions and sitemap. |
+| `.build-state.json` | The most recently dispatched APK record. Currently finished Build 10 with GitHub prerelease asset, archive evidence, and remaining device-test status. The unshipped branding source is not in that APK. Build 9 queue state and Build 8 evidence remain in decisions and sitemap. |
 | `package.json` | Expo dependencies and `npm test`, the local gate. |
-| `app.json` / `eas.json` | Expo config and EAS Android build profiles. |
+| `app.json` / `eas.json` | Expo config and EAS Android build profiles. `app.json` binds the 1024 px launcher icon, dark contain-mode splash image, and Android adaptive foreground and background. |
+| `assets/` | Editable SVG masters and 1024 px PNG delivery assets for the text-free neon signal-pulse launcher icon, transparent adaptive-icon foreground, and transparent splash mark. |
 | `App.tsx`, `index.ts` | Expo root component and entry. |
 | `src/net/` | Public-edge readiness math, RTT probes, signal, and refresh guidance. |
+| `src/native/` | Source-level contracts for Android configuration and native integration, including the launcher, adaptive-icon, splash, and raster-branding guard. |
 | `src/game/` | Supported game catalog and per-game headline metric. |
 | `src/device/` | Device tier classifier and performance tuning profiles. |
 | `src/boost/` | Guided Android settings actions and permission gating. |
