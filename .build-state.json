@@ -15,8 +15,21 @@
     "githubRunUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33694402846",
     "githubReleaseTag": "preview-11",
     "githubReleaseAsset": "zero-lag.apk",
-    "status": "github_actions_in_progress",
-    "deviceInstallStatus": "not_available",
-    "note": "The maintainer explicitly named Build 11. GitHub Actions run 33694402846 was accepted from e77c13ea7927d6fb3fee4f0af00002de023969f8, the source commit that adds the selected launcher icon, Android adaptive icon, and splash image. The run was observed in progress after registration. It uses the local EAS executor on GitHub Ubuntu, not the EAS cloud queue. No terminal Gradle result, APK artifact, GitHub prerelease asset, installation, archive inspection, or real-device test is available yet."
+    "status": "github_actions_finished",
+    "deviceInstallStatus": "not_installed_or_tested",
+    "note": "Build 11 completed successfully in GitHub Actions run 33694402846 from e77c13ea7927d6fb3fee4f0af00002de023969f8. The job passed Expo authentication, locked dependency installation, the full source gate, build stamp, GitHub-local EAS Android build, APK output verification, workflow artifact upload, and preview-11 prerelease publication. The release APK is 62,737,907 bytes, SHA-256 d3df918c71ed6b4114880145b87c6cc74df210272240c9b2ebfbeddb18f184db. A fresh archive check passed and found AndroidManifest.xml, resources.arsc, classes.dex, ic_launcher, ic_launcher_foreground, splashscreen_image, splashscreen_background, and arm64-v8a, armeabi-v7a, x86, and x86_64 native libraries. No real Android installation, launcher rendering, adaptive mask rendering, splash cold-start, or device behavior test has occurred.",
+    "githubReleaseUrl": "https://github.com/Yination01/Zero-Lag/releases/tag/preview-11",
+    "artifactUrl": "https://github.com/Yination01/Zero-Lag/releases/download/preview-11/zero-lag.apk",
+    "artifactBytes": 62737907,
+    "artifactSha256": "d3df918c71ed6b4114880145b87c6cc74df210272240c9b2ebfbeddb18f184db",
+    "archiveIntegrity": "zip_test_passed",
+    "nativeAbis": [
+      "arm64-v8a",
+      "armeabi-v7a",
+      "x86",
+      "x86_64"
+    ],
+    "terminalAt": "2026-09-02T23:22:26Z",
+    "terminalConclusion": "success"
   }
 }

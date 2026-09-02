@@ -568,3 +568,31 @@ remain required.
 Check: GitHub Actions run `33694402846`, then the `preview-11` release asset,
 archive inspection, and a real Android cold-start check after successful
 installation.
+
+## 2026-09-03: Build 11 branded preview APK completed
+
+- [Build 11 GitHub Actions run `33694402846`](https://github.com/Yination01/Zero-Lag/actions/runs/33694402846)
+  completed with `success` at `2026-09-02T23:22:26Z`, retaining its exact
+  `e77c13e` branding source cut. The completed job confirms checkout, Node 22,
+  numbered-tag guard, Expo authentication, locked dependency install, full
+  source gate, preview stamp, Gradle setup, GitHub-local EAS Android build, APK
+  output verification, workflow artifact upload, and prerelease publication.
+- The installable result is [`zero-lag.apk`](https://github.com/Yination01/Zero-Lag/releases/download/preview-11/zero-lag.apk),
+  published in the [`preview-11` prerelease](https://github.com/Yination01/Zero-Lag/releases/tag/preview-11).
+  GitHub reports 62,737,907 bytes. A fresh download has SHA-256
+  `d3df918c71ed6b4114880145b87c6cc74df210272240c9b2ebfbeddb18f184db`.
+- ZIP integrity passed. The release archive contains `AndroidManifest.xml`,
+  `resources.arsc`, `classes.dex`, and native libraries for `arm64-v8a`,
+  `armeabi-v7a`, `x86`, and `x86_64`. Its compiled Android resource table also
+  contains `ic_launcher`, `ic_launcher_foreground`, `splashscreen_image`,
+  `splashscreen_background`, and `expo_splash_screen_resize_mode`, consistent
+  with the launcher, adaptive-icon, and splash configuration in the source cut.
+- This validates a packaged APK from the new branding source. It does not prove
+  launcher cropping or masking on a particular Android launcher, nor splash
+  rendering during a real cold start. No person has installed Build 11 or run
+  the consent, permissions, HUD, network, history, or other device checks.
+- The completion state and this record are post-build evidence only. They are
+  not part of the Build 11 APK source cut.
+
+Check: the Build 11 run, prerelease asset, SHA-256, archive inspection, and a
+real Android installation with a cold-start launcher and splash check.
