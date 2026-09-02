@@ -50,6 +50,15 @@ class PingOverlayService : Service() {
         )
     }
 
+    private val stopIntent by lazy {
+        PendingIntent.getService(
+            this,
+            STOP_REQUEST_CODE,
+            Intent(this, PingOverlayService::class.java).setAction(ACTION_STOP),
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+    }
+
     override fun onCreate() {
         super.onCreate()
         notificationManager = getSystemService(NotificationManager::class.java)
@@ -60,6 +69,10 @@ class PingOverlayService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.action == ACTION_STOP) {
+            stopSelf()
+            return START_NOT_STICKY
+        }
         if (!running) return START_NOT_STICKY
         refreshIntervalMs = intent?.getLongExtra(EXTRA_INTERVAL_MS, DEFAULT_INTERVAL_MS)
             ?.coerceIn(MIN_INTERVAL_MS, MAX_INTERVAL_MS)
@@ -75,7 +88,7 @@ class PingOverlayService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(
                 NotificationChannel(CHANNEL, "Zero-Lag game bar", NotificationManager.IMPORTANCE_LOW)
-                    .apply { description = "Live ping and device performance over games." }
+                    .apply { description = "Live public-edge estimate and device readout over games." }
             )
         }
     }
@@ -87,8 +100,9 @@ class PingOverlayService : Service() {
         return builder
             .setContentTitle("Zero-Lag")
             .setContentText("Edge $pingText   |   RAM $ramText")
-            .setSmallIcon(android.R.drawable.stat_sys_data_bluetooth)
+            .setSmallIcon(applicationInfo.icon)
             .setContentIntent(openIntent)
+            .addAction(Notification.Action.Builder(applicationInfo.icon, "Stop HUD", stopIntent).build())
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .build()
@@ -192,6 +206,8 @@ class PingOverlayService : Service() {
     companion object {
         private const val CHANNEL = "zerolag_hud"
         private const val NOTIF_ID = 4711
+        private const val STOP_REQUEST_CODE = 4712
+        private const val ACTION_STOP = "com.yination01.zerolag.hud.ACTION_STOP"
         private const val EXTRA_INTERVAL_MS = "com.yination01.zerolag.hud.EXTRA_INTERVAL_MS"
         private const val DEFAULT_INTERVAL_MS = 3000L
         private const val MIN_INTERVAL_MS = 1000L

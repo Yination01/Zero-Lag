@@ -1,6 +1,6 @@
 # Terms of Use for Zero-Lag
 
-**Last updated: 2026-08-29**
+**Last updated: 2026-09-02**
 **Copyright © 2026 Yination / Zero-Lag. All rights reserved.**
 
 These Terms are a product draft for the Zero-Lag Android app. They are not
@@ -20,20 +20,23 @@ If you do not agree, do not use the app.
 Zero-Lag is an Android app (Expo / React Native) for mobile gamers and people
 on slow networks. It:
 
-- runs a match-readiness test (ping, jitter, packet loss, and a verdict)
-- can show a floating ping HUD over other apps if you grant overlay access
+- runs a pre-match public-edge readiness test (edge estimate, jitter, failed
+  web probes, and a verdict)
+- can show a floating public-edge HUD over other apps if you grant overlay
+  access, with an ongoing notification that can stop the HUD
 - can detect a foreground game (COD Mobile, eFootball, PUBG, Free Fire, MLBB)
   if you grant Usage Access, and show a per-game headline metric
 - can read device facts (model, RAM, cores) and map them to a performance tier
-- can offer **guided** boosts: airplane-mode refresh, Game Mode Do Not Disturb,
-  keep-awake, brightness, and a hog list that deep-links to App Info so **you**
-  force-stop an app
+- can offer **guided** boosts: airplane-mode refresh, Do Not Disturb, screen
+  timeout, brightness, and storage settings that you control
 
-Ping to a game is an **estimate**. Game server IPs are not published. No app
-can raise tower signal. Zero-Lag cannot overclock a CPU, cannot change another
-app's graphics, and does not kill other apps.
+The edge result is an **estimate**, not exact game-server ping or measured
+in-game packet loss. Game server IPs are not published. No app can raise tower
+signal. Zero-Lag cannot overclock a CPU, cannot change another app's graphics,
+and does not kill other apps.
 
-There is **no live host**. Logs stay on the device until a host is named.
+There is **no live host**. Readiness history stays on the device until you
+clear it in the app, clear app storage, or uninstall.
 
 ## 3. Eligibility
 
@@ -131,9 +134,11 @@ Your rights as a consumer under Nigerian law stay.
 
 ## 9. Termination
 
-Stop using the app and uninstall it at any time. Local logs leave with the
-uninstall unless you exported them. We may refuse future builds to testers
-who abuse overlay, Usage Access, or other testers.
+Stop using the app and uninstall it at any time. You can clear readiness
+history in the app before uninstalling. Android backup may retain a system
+copy under your device backup settings, as described in `PRIVACY.md`. We may
+refuse future builds to testers who abuse overlay, Usage Access, or other
+testers.
 
 ## 10. Governing law
 

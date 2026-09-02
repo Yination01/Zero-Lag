@@ -1,15 +1,27 @@
 import React, { useCallback } from 'react';
-import { Alert, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, AppState, Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 import { tokens } from './theme';
 import { HomeScreen } from './HomeScreen';
 import { GameScreen } from './GameScreen';
 import { BoostScreen } from './BoostScreen';
 import { DeviceScreen } from './DeviceScreen';
+import { HistoryScreen } from './HistoryScreen';
+import { PRIMARY_TABS, type PrimaryTab } from './navigation';
 import { useDevice } from '../state/useDevice';
 import { useGame } from '../state/useGame';
+import { useReadinessHistory } from '../state/useReadinessHistory';
+import { createRunGate } from '../state/runGate';
+import { createLatestRequest } from '../state/latestRequest';
 import { getJson, KEYS, setJson } from '../storage';
 import type { ProfileId, TuningProfile } from '../device/tier';
+import type { ReadinessResult } from '../net/readiness';
 import { hud } from '../plugins/hud';
+import {
+  inspectHud,
+  toggleHud,
+  type HudDisplayStatus,
+  type HudTransition,
+} from '../hud/lifecycle';
 import {
   openAndroidSettings,
   settingsLaunchFeedback,
@@ -19,14 +31,9 @@ import {
 
 const c = tokens.color;
 
-type Tab = 'home' | 'game' | 'boost' | 'device';
+type Tab = PrimaryTab;
 
-const TABS: Array<{ id: Tab; label: string }> = [
-  { id: 'home', label: 'Home' },
-  { id: 'game', label: 'Game' },
-  { id: 'boost', label: 'Boost' },
-  { id: 'device', label: 'Device' },
-];
+const TABS = PRIMARY_TABS;
 
 const FALLBACK_PROFILE: TuningProfile = {
   profile: 'battery',
@@ -39,10 +46,68 @@ function isProfileId(value: unknown): value is ProfileId {
   return value === 'auto' || value === 'battery' || value === 'balanced' || value === 'performance';
 }
 
+function hudFeedback(transition: HudTransition): { title: string; message: string } | null {
+  switch (transition.action) {
+    case 'started':
+      return {
+        title: 'Floating HUD confirmed',
+        message: 'Android confirmed the HUD is running. Look for the small Zero-Lag pill and its ongoing notification. You can stop it from Zero-Lag or its notification. The delay shown is an edge estimate, not exact game-server ping.',
+      };
+    case 'stopped':
+      return {
+        title: 'Floating HUD stopped',
+        message: 'Android confirmed the overlay and its ongoing notification have stopped.',
+      };
+    case 'unavailable':
+      return {
+        title: 'Floating HUD is unavailable',
+        message: 'Install the latest Zero-Lag APK, then allow Display over other apps before starting the HUD.',
+      };
+    case 'start-unconfirmed':
+      return {
+        title: 'HUD start was not confirmed',
+        message: 'The start request was sent, but Android did not report a running HUD. Check Display over other apps and Notifications for Zero-Lag, then try again.',
+      };
+    case 'stop-unconfirmed':
+      return {
+        title: 'HUD stop was not confirmed',
+        message: 'The stop request was sent, but Android did not report that the HUD stopped. Return to Zero-Lag and check the status again.',
+      };
+    case 'start-failed':
+      return {
+        title: 'Could not start the floating HUD',
+        message: 'Check Display over other apps and Notifications for Zero-Lag, then try again.',
+      };
+    case 'stop-failed':
+      return {
+        title: 'Could not stop the floating HUD',
+        message: 'Return to Zero-Lag and check the HUD status again before trying once more.',
+      };
+    case 'status-unknown':
+      return {
+        title: 'HUD status is unknown',
+        message: 'Android did not return a reliable HUD state. Return to Zero-Lag, then check again before starting or stopping it.',
+      };
+    case 'needs-overlay-permission':
+      return null;
+  }
+}
+
 export function Root() {
   const [tab, setTab] = React.useState<Tab>('home');
   const [performancePreference, setPerformancePreference] = React.useState<ProfileId>('auto');
+  const [hudStatus, setHudStatus] = React.useState<HudDisplayStatus>('checking');
+  const [hudBusy, setHudBusy] = React.useState(false);
   const preferenceTouched = React.useRef(false);
+  const hudOperationGate = React.useRef(createRunGate()).current;
+  const hudStatusRequests = React.useRef(createLatestRequest()).current;
+  const appliedHudInterval = React.useRef<number | null>(null);
+  const mounted = React.useRef(true);
+
+  React.useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
 
   React.useEffect(() => {
     let active = true;
@@ -62,19 +127,32 @@ export function Root() {
 
   const device = useDevice(performancePreference);
   const usageAccess = useGame(tab === 'boost', 5000);
+  const readinessHistory = useReadinessHistory();
   const profile = device.profile ?? FALLBACK_PROFILE;
 
+  const recordReadiness = useCallback((result: ReadinessResult, game: string | null) => {
+    void readinessHistory.record(result, game);
+  }, [readinessHistory.record]);
+
+  const publishHudStatus = useCallback((next: HudDisplayStatus) => {
+    hudStatusRequests.invalidate();
+    if (mounted.current) setHudStatus(next);
+  }, [hudStatusRequests]);
+
+  const refreshHudStatus = useCallback(async () => {
+    const request = hudStatusRequests.begin();
+    const next = await inspectHud(hud);
+    if (mounted.current && hudStatusRequests.isCurrent(request)) setHudStatus(next);
+    return next;
+  }, [hudStatusRequests]);
+
   React.useEffect(() => {
-    let active = true;
-    void (async () => {
-      if (await hud.isRunning() && active) {
-        await hud.start(profile.hudIntervalMs);
-      }
-    })().catch(() => {
-      // A stopped or unavailable native HUD must not block profile selection.
+    void refreshHudStatus();
+    const subscription = AppState.addEventListener('change', (nextAppState) => {
+      if (nextAppState === 'active') void refreshHudStatus();
     });
-    return () => { active = false; };
-  }, [profile.hudIntervalMs]);
+    return () => subscription.remove();
+  }, [refreshHudStatus]);
 
   const goGame = useCallback(() => setTab('game'), []);
 
@@ -106,13 +184,86 @@ export function Root() {
     );
   }, [openSpecialSettings]);
 
+  const requestHudToggle = useCallback(async () => {
+    if (!hudOperationGate.tryAcquire()) return;
+    setHudBusy(true);
+    try {
+      if (hudStatus === 'status-unknown') {
+        const refreshed = await refreshHudStatus();
+        if (refreshed === 'status-unknown' && mounted.current) {
+          Alert.alert(
+            'HUD status is unknown',
+            'Android did not return a reliable HUD state. Return to Zero-Lag, then check again before starting or stopping it.',
+          );
+        }
+        return;
+      }
+
+      const transition = await toggleHud(hud, profile.hudIntervalMs);
+      if (!mounted.current) return;
+
+      publishHudStatus(transition.status);
+      if (transition.action === 'started') {
+        appliedHudInterval.current = profile.hudIntervalMs;
+      } else if (transition.status === 'stopped' || transition.status === 'unavailable' || transition.status === 'needs-overlay-permission') {
+        appliedHudInterval.current = null;
+      }
+
+      if (transition.action === 'needs-overlay-permission') {
+        requestSpecialSettings('display-over-other-apps');
+      } else {
+        const feedback = hudFeedback(transition);
+        if (feedback) Alert.alert(feedback.title, feedback.message);
+      }
+    } catch {
+      if (mounted.current) {
+        publishHudStatus('status-unknown');
+        Alert.alert(
+          'HUD status is unknown',
+          'Android did not return a reliable HUD state. Return to Zero-Lag, then check again before starting or stopping it.',
+        );
+      }
+    } finally {
+      hudOperationGate.release();
+      if (mounted.current) setHudBusy(false);
+    }
+  }, [hudStatus, profile.hudIntervalMs, publishHudStatus, refreshHudStatus, requestSpecialSettings]);
+
+  // Reapply an updated performance interval only after Android has confirmed
+  // that a HUD is already running. The ref prevents a second start call after
+  // the user just started the service at the current interval.
+  React.useEffect(() => {
+    if (hudStatus === 'stopped' || hudStatus === 'unavailable' || hudStatus === 'needs-overlay-permission') {
+      appliedHudInterval.current = null;
+      return;
+    }
+    if (hudStatus !== 'running' || hudBusy || appliedHudInterval.current === profile.hudIntervalMs) return;
+
+    appliedHudInterval.current = profile.hudIntervalMs;
+    void hud.start(profile.hudIntervalMs)
+      .then(() => refreshHudStatus())
+      .catch(() => {
+        appliedHudInterval.current = null;
+        publishHudStatus('status-unknown');
+      });
+  }, [hudBusy, hudStatus, profile.hudIntervalMs, publishHudStatus, refreshHudStatus]);
+
   return (
     <View style={styles.container}>
       <View style={styles.screen}>
         {tab === 'home' && (
           <HomeScreen
             onGoGame={goGame}
-            onRequestOverlay={() => requestSpecialSettings('display-over-other-apps')}
+            onToggleHud={() => { void requestHudToggle(); }}
+            onReadinessComplete={recordReadiness}
+            onClearHistory={() => { void readinessHistory.clear(); }}
+            onGoHistory={() => setTab('history')}
+            history={readinessHistory.records}
+            historyLoading={readinessHistory.loading}
+            historySaving={readinessHistory.saving}
+            historyError={readinessHistory.error}
+            hudStatus={hudStatus}
+            hudBusy={hudBusy}
             sampleCount={profile.sampleCount}
             hudIntervalMs={profile.hudIntervalMs}
             performanceLevel={profile.profile}
@@ -121,17 +272,29 @@ export function Root() {
         {tab === 'game' && (
           <GameScreen
             onRequestUsage={() => requestSpecialSettings('usage-access')}
+            onReadinessComplete={recordReadiness}
             sampleCount={profile.sampleCount}
           />
         )}
         {tab === 'boost' && (
           <BoostScreen
             onRequestUsage={() => requestSpecialSettings('usage-access')}
-            onRequestOverlay={() => requestSpecialSettings('display-over-other-apps')}
+            onToggleHud={() => { void requestHudToggle(); }}
+            hudStatus={hudStatus}
+            hudBusy={hudBusy}
             usagePermission={usageAccess.permissionGranted}
             tier={device.tier?.tier ?? 'entry'}
             hudIntervalMs={profile.hudIntervalMs}
             performanceLevel={profile.profile}
+          />
+        )}
+        {tab === 'history' && (
+          <HistoryScreen
+            records={readinessHistory.records}
+            loading={readinessHistory.loading}
+            saving={readinessHistory.saving}
+            error={readinessHistory.error}
+            onClearHistory={() => { void readinessHistory.clear(); }}
           />
         )}
         {tab === 'device' && (

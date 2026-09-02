@@ -5,7 +5,7 @@
 // line with the legal pack: Nigeria courts, no arbitration, age 13+, no live
 // host, and no claim to raise signal, kill apps, or overclock.
 
-export const LEGAL_VERSION = '1.0.0';
+export const LEGAL_VERSION = '1.1.0';
 
 export interface LegalDoc {
   id: 'terms' | 'privacy' | 'eula';
@@ -33,9 +33,11 @@ export const LEGAL_DOCS: LegalDoc[] = [
       'In this version everything stays on your device. There is no live ' +
       'host and nothing is uploaded until one is named and you opt in. The ' +
       'Nigeria Data Protection Regulation (NDPR) applies. Location is used ' +
-      'on-device to read signal strength, not for maps. Usage Access detects ' +
-      'the open game. The overlay draws the game bar. Permissions are ' +
-      'optional and each has a working denied state.',
+      'on-device to read signal strength, not for maps. Completed readiness ' +
+      'checks stay on this device until you clear their in-app history, clear ' +
+      'app storage, or uninstall. Usage Access detects the open game. The ' +
+      'overlay draws the game bar. Permissions are optional and each has a ' +
+      'working denied state.',
   },
   {
     id: 'eula',

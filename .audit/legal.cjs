@@ -44,8 +44,8 @@ ok('contact is the named placeholder, not a domain we do not own',
   !/@zero-lag\.(app|com|dev)/i.test(all) &&
   !/admin\.poise@gmail\.com/.test(all));
 ok('copyright is all rights reserved', /all rights reserved/i.test(license) && /all rights reserved/i.test(copyright));
-ok('pack is dated 2026-08-29',
-  /2026-08-29/.test(terms) && /2026-08-29/.test(privacy));
+ok('pack is dated 2026-09-02',
+  /2026-09-02/.test(terms) && /2026-09-02/.test(privacy));
 
 ok('does not claim to raise tower signal',
   /no app can raise|cannot raise tower|does not raise/i.test(all) &&

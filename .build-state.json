@@ -1,28 +1,23 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-6",
+    "number": "build-8",
     "versionName": "0.1.0",
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "9ee234f127c7f6f091c6eb6829abf4dd3284851d",
+    "dispatchedFromCommit": "f1071a3cfaab7cb8d4b7cadb8b12b1680507c45b",
     "channel": "EAS cloud",
-    "workflowRunId": 33501773505,
-    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33501773505",
-    "followsFailedEasBuildId": "7711b779-6cfe-4ab6-8b8b-4a2095755c1e",
-    "dispatchedAt": "2026-09-01T11:18:05Z",
+    "workflowRunId": 33566744566,
+    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33566744566",
+    "followsFailedEasBuildId": "f316f8b1-6030-40e0-af5f-abb26a9f887a",
+    "dispatchedAt": "2026-09-01T22:31:45Z",
     "workflowStatus": "success",
-    "easBuildId": "c9aaa339-c91f-4061-b6db-06b3448d4c54",
-    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/c9aaa339-c91f-4061-b6db-06b3448d4c54",
-    "easSubmittedAt": "2026-09-01T11:19:04.361Z",
+    "easBuildId": "0a54b56a-01ad-47c4-98a7-0a4bd9fd0768",
+    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/0a54b56a-01ad-47c4-98a7-0a4bd9fd0768",
     "easPublicStatus": "Finished",
     "status": "apk_ready_for_device_test",
-    "artifactWorkspacePath": "/home/user/Zero-Lag-build-6.apk",
-    "artifactBytes": 62309425,
-    "artifactSha256": "8f9d6123555399668fa5ab4495bc4386e75dcdbde99335de351bd319f1270ad6",
-    "apkArchiveIntegrity": "passed",
-    "deviceInstallStatus": "not_verified",
-    "note": "Build 6 passed every GitHub Actions gate and completed EAS Android compilation from the splash-resource correction commit. EAS uploaded the internal-distribution APK and it was downloaded to the workspace. The archive passed ZIP integrity checks and contains AndroidManifest.xml, classes.dex, resources.arsc, and native libraries for arm64-v8a, armeabi-v7a, x86, and x86_64. No real Android device has installed or exercised it yet, so runtime native behavior remains unverified."
+    "deviceInstallStatus": "installed_not_tested",
+    "note": "Build 7 errored during EAS Gradle execution, but its terminal failure detail was not available. Build 8 completed EAS Android compilation from f1071a3 and produced a preview APK. The maintainer reports that Build 8 is installed but has not yet performed the real-device Settings, permission, HUD, notification, Usage Access, or network checks. No local APK download, archive check, or checksum is recorded for Build 8."
   }
 }

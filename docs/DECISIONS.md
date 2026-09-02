@@ -326,3 +326,48 @@ Check: Node 22 `npm test`, including `settings.test.ts`, `bridges.test.ts`,
 `usage-events.test.ts`, `hud-overlay.test.ts`, `probe.test.ts`, and
 `tier.test.ts`; targeted copied-backup mutants; `npx expo export --platform
 android`; and isolated Expo Android prebuild/autolinking inspection.
+
+## 2026-09-02: local-only access and recoverable readiness history
+
+- The former local-only email, password, account-creation, and login surface is
+  removed. It suggested credentials or an account service that Zero-Lag does
+  not provide. There is no backend, cloud backup, account requirement, or
+  authentication claim in this release.
+- App access is an unrestricted local guest session. A legacy stored value that
+  resembles the former account state is not accepted as an authenticated user;
+  it returns the person to the current local setup flow instead.
+- Consent remains the first required destination. After consent, the local
+  start screen truthfully explains that no account is needed. Android runtime
+  permissions follow, and the completed onboarding marker prevents the setup
+  flow from repeating on every ordinary launch. Damaged local bootstrap data
+  fails closed to consent.
+- Completed readiness checks are stored in bounded on-device history. Writes
+  are serialized, invalid or duplicate local values are rejected, a temporary
+  storage read or write can recover on a later local action, completion order
+  cannot make an older result appear above a newer timestamp, and an explicit
+  no-connection verdict rather than a numeric zero determines no response.
+- The app now exposes the compact Home history card and a full History tab. Both
+  show local-only retention and allow irreversible local deletion. No history,
+  permissions result, or usage data is uploaded as part of this decision.
+- HUD controls refresh Android status after returning to the app, ignore stale
+  asynchronous status checks after a newer check or confirmed action, avoid
+  overlapping operations, provide an app-icon foreground notification with a
+  Stop HUD action, and keep wording clear that Zero-Lag or the notification can
+  stop the overlay. Native compilation and device behavior for this source are
+  still unverified.
+- A checked-in npm lockfile now records the dependency graph that passed this
+  source gate, and the manual APK workflow uses `npm ci` rather than resolving
+  moving dependency ranges on every dispatch. The new audit verifies the lock's
+  root package data and the exact-install workflow step.
+- The locked Expo 51 and React Native 0.74 toolchain still reports 31 npm audit
+  advisories, including one critical transitive advisory. npm's proposed remedy
+  is a major Expo and React Native migration, so it is deliberately not applied
+  as an unverified automatic patch during this focused release. It needs its own
+  compatibility, Android build, and real-device verification work.
+- Build 8 is the most recent finished preview APK and is recorded as installed
+  but not device-tested. Build 9 may be manually dispatched by the maintainer
+  only after the final green source commit; this work does not dispatch it.
+
+Check: targeted test-first checks and mutation restores, a clean `npm ci`, then the final Node 22
+suite, Android export/config validation, generated-native inspection, and the
+manual `docs/DEVICE_TEST_PLAN.md`.

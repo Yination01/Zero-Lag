@@ -6,7 +6,7 @@
   "description": "Zero-Lag. Expo / React Native Android. Network lag tool for mobile gamers.",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs && node .audit/legal.cjs && npm run typecheck && node --experimental-strip-types --test 'src/**/*.test.ts'",
+    "test": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs && node .audit/legal.cjs && node .audit/dependency-lock.cjs && npm run typecheck && node --experimental-strip-types --test 'src/**/*.test.ts'",
     "test:app": "node --experimental-strip-types --test 'src/**/*.test.ts'",
     "test:agent-docs": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs",
     "start": "expo start",

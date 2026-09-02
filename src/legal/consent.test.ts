@@ -7,6 +7,10 @@ test('a null or old acceptance requires consent', () => {
   assert.equal(needsConsent('0.9.0'), true);
 });
 
+test('the previous consent version must be renewed after the local history disclosure update', () => {
+  assert.equal(needsConsent('1.0.0'), true);
+});
+
 test('accepting the current version clears the gate', () => {
   assert.equal(needsConsent(LEGAL_VERSION), false);
 });

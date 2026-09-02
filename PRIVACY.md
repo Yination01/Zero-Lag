@@ -1,6 +1,6 @@
 # Privacy Policy for Zero-Lag
 
-**Last updated: 2026-08-29**
+**Last updated: 2026-09-02**
 **Copyright © 2026 Yination / Zero-Lag. All rights reserved.**
 
 This policy is a product draft. It is not legal advice. Nigeria's NDPR applies.
@@ -20,8 +20,10 @@ nothing is uploaded to a Zero-Lag server because none exists.
 
 Until a host is named, processing is **local only**.
 
-- **Network tests:** ping, jitter, packet loss, verdict, timestamps, the
-  probe targets (for example Cloudflare or Google anycast). Stored on device.
+- **Network tests and readiness history:** public-edge estimates, jitter,
+  failed web probes, verdicts, timestamps, and a recognized supported-game
+  label when one is available. Stored on device. Failed web probes are not
+  confirmed in-game packet loss.
 - **HUD session:** current ping shown over other apps, if overlay is granted.
 - **Foreground game (if Usage Access is granted):** the package name of the
   app in the foreground, matched to a small catalog (COD Mobile, eFootball,
@@ -52,8 +54,8 @@ Every restricted permission gets a why screen and a usable denied state.
 - **SYSTEM_ALERT_WINDOW:** floating ping HUD over a game.
 - **FOREGROUND_SERVICE / SPECIAL_USE:** keep the HUD and probes alive while
   you play, with a visible notification.
-- **POST_NOTIFICATIONS:** that foreground notification, and optional alerts
-  when ping spikes.
+- **POST_NOTIFICATIONS:** the ongoing foreground HUD notification, including
+  its Stop HUD control.
 - **Usage Access (UsageStatsManager):** detect the foreground game package.
   Optional. Denied means the Game tab stays generic.
 
@@ -66,7 +68,7 @@ SMS, or mail.
 - We do not run a third-party advertising or analytics SDK in this version.
 - We do not upload diagnostics until a host is named and you consent.
 - We cannot raise tower signal, overclock the CPU, or silently kill other
-  apps. A hog list only deep-links to App Info so you can force stop.
+  apps. Boost only opens Android settings pages that you control.
 
 ## 5. Planned features that would change this policy
 
@@ -80,13 +82,13 @@ host, a retention period, and a consent switch. Absent config means shut.
 
 ## 6. Retention and your controls
 
-Local logs last until you clear app storage or uninstall, unless a later
-build adds an in-app delete control. There is no account to delete on a
-server today.
+Local readiness history lasts until you use Clear History in Zero-Lag, clear
+app storage, or uninstall. Clear History permanently removes saved readiness
+results from this device. There is no account to delete on a server today.
 
-**Access / portability / erasure:** while data is local only, Android
-settings (clear storage, uninstall) are the erasure path. When a host
-exists, this section must name an in-app export and delete path the same
+**Access / portability / erasure:** while data is local only, Clear History,
+Android settings (clear storage), and uninstall are the erasure paths. When a
+host exists, this section must name an in-app export and delete path the same
 day.
 
 ## 7. Children

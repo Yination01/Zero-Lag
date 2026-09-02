@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { LegalScreen } from './LegalScreen';
-import { AuthScreen } from './AuthScreen';
+import { StartScreen } from './StartScreen';
 import { PermissionsScreen } from './PermissionsScreen';
-import { LEGAL_VERSION, needsConsent } from '../legal/consent';
+import { LEGAL_VERSION } from '../legal/consent';
+import { nextOnboardingStep, type OnboardingStep } from './flow';
 import { getJson, setJson, KEYS } from '../storage';
 import type { Session } from '../auth/session';
 
-type Step = 'loading' | 'legal' | 'auth' | 'permissions' | 'done';
+type Step = 'loading' | OnboardingStep;
 
 export function Onboarding({ children }: { children: React.ReactNode }) {
   const [step, setStep] = useState<Step>('loading');
 
   useEffect(() => {
-    (async () => {
-      const accepted = await getJson<string | null>(KEYS.legalVersion, null);
-      if (needsConsent(accepted)) {
-        setStep('legal');
-        return;
+    let active = true;
+    void (async () => {
+      try {
+        const acceptedLegalVersion = await getJson<string | null>(KEYS.legalVersion, null);
+        const session = await getJson<unknown>(KEYS.session, null);
+        const permissionsComplete = await getJson<unknown>(KEYS.onboardingComplete, false);
+        if (active) setStep(nextOnboardingStep({ acceptedLegalVersion, session, permissionsComplete }));
+      } catch {
+        // A damaged local store must not bypass legal consent or setup.
+        if (active) setStep('legal');
       }
-      const session = await getJson<Session | null>(KEYS.session, null);
-      if (!session) {
-        setStep('auth');
-        return;
-      }
-      setStep('permissions'); // permissions screen also has "enter app", so repeat visits can skip
     })();
+    return () => { active = false; };
   }, []);
 
   if (step === 'loading') return null;
@@ -33,30 +34,49 @@ export function Onboarding({ children }: { children: React.ReactNode }) {
     return (
       <LegalScreen
         onAccept={async () => {
-          await setJson(KEYS.legalVersion, LEGAL_VERSION);
-          setStep('auth');
+          try {
+            await setJson(KEYS.legalVersion, LEGAL_VERSION);
+            setStep('start');
+          } catch {
+            setStep('legal');
+          }
         }}
         onDecline={() => {
-          // No forced continuation; user stays on the screen.
+          // No forced continuation, the user stays on the screen.
           setStep('legal');
         }}
       />
     );
   }
 
-  if (step === 'auth') {
+  if (step === 'start') {
     return (
-      <AuthScreen
+      <StartScreen
         onContinue={async (session: Session) => {
-          await setJson(KEYS.session, session);
-          setStep('permissions');
+          try {
+            await setJson(KEYS.session, session);
+          } finally {
+            setStep('permissions');
+          }
         }}
       />
     );
   }
 
   if (step === 'permissions') {
-    return <PermissionsScreen onFinish={() => setStep('done')} />;
+    return (
+      <PermissionsScreen
+        onFinish={() => {
+          void (async () => {
+            try {
+              await setJson(KEYS.onboardingComplete, true);
+            } finally {
+              setStep('done');
+            }
+          })();
+        }}
+      />
+    );
   }
 
   return <>{children}</>;

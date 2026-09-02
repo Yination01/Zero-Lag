@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { tokens } from './theme';
 import { Card, SectionLabel, Muted, Stat, PrimaryButton, GhostButton } from './components';
 import { useGame } from '../state/useGame';
 import { useReadiness } from '../state/useReadiness';
-import { verdictLabel } from '../net/readiness';
+import { verdictLabel, type ReadinessResult } from '../net/readiness';
 import { NETWORK_ANALYSIS_GUIDANCE } from '../net/probe';
 import { verdictColor } from './theme';
 
@@ -12,14 +12,25 @@ const c = tokens.color;
 
 export function GameScreen({
   onRequestUsage,
+  onReadinessComplete,
   sampleCount = 8,
 }: {
   onRequestUsage: () => void;
+  onReadinessComplete?: (result: ReadinessResult, game: string | null) => void;
   sampleCount?: number;
 }) {
   const game = useGame(true);
   const readiness = useReadiness({ sampleCount });
   const [ranFor, setRanFor] = useState<string | null>(null);
+  const testedGame = useRef<string | null>(null);
+  const savedResults = useRef(new WeakSet<ReadinessResult>());
+
+  useEffect(() => {
+    const result = readiness.result;
+    if (readiness.state !== 'success' || !result || !onReadinessComplete || savedResults.current.has(result)) return;
+    savedResults.current.add(result);
+    void onReadinessComplete(result, testedGame.current);
+  }, [onReadinessComplete, readiness.result, readiness.state]);
 
   const detected = game.game;
   const headlineIsPing = detected?.headline === 'ping';
@@ -90,8 +101,9 @@ export function GameScreen({
           label={readiness.state === 'loading' ? 'TESTING' : 'TEST FOR THIS GAME'}
           disabled={readiness.state === 'loading'}
           onPress={() => {
-            readiness.run();
-            setRanFor(detected?.label ?? 'this network');
+            testedGame.current = detected?.label ?? null;
+            setRanFor(testedGame.current ?? 'this network');
+            void readiness.run();
           }}
         />
       </Card>

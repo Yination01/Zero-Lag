@@ -2,16 +2,17 @@
 
 Orientation document. Read it before guessing a path.
 
-State at the last update of this document:
+## Current state
 
 | Thing | Value |
 |---|---|
-| Tip of this branch | Expo app scaffolded, readiness engine TDD green, native plugins drafted |
-| App scaffold | Expo / React Native Android source present. `android/` generated, gitignored. |
-| Live host | none named |
-| Last APK | [Build `c9aaa339`](https://expo.dev/accounts/yination/projects/zero-lag/builds/c9aaa339-c91f-4061-b6db-06b3448d4c54) finished successfully from `9ee234f`. Its 62,309,425-byte preview APK is available at `~/Zero-Lag-build-6.apk`; ZIP integrity and packaged Android contents were checked. Installation and native behavior on a real Android device remain unverified. |
-| Suite | `npm test` (agent-docs + agent-rules + legal + TS app tests) |
-| Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` |
+| Tip of this branch | Expo React Native Android app with local readiness history, native HUD controls, and truth-first permission flows. Changes after Build 8 are not in an APK until Build 9 is manually dispatched. |
+| App scaffold | Expo / React Native Android source present. `android/` is generated and gitignored. |
+| Live host | None named. Local data does not upload to a Zero-Lag server. |
+| Last APK | [Build 8](https://expo.dev/accounts/yination/projects/zero-lag/builds/0a54b56a-01ad-47c4-98a7-0a4bd9fd0768) finished successfully from `f1071a3`. The maintainer reports it is installed, but the real-device Settings, permission, HUD, notification, and network checks have not run. |
+| Prior EAS failure | Build 7, `f316f8b1-6030-40e0-af5f-abb26a9f887a`, errored during Gradle. Its terminal failure detail was not available. |
+| Suite | `npm test` runs agent-docs, agent-rules, legal, dependency-lock, TypeScript, and TS app tests. |
+| Legal | `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE`. |
 
 ## Top level
 
@@ -19,52 +20,58 @@ State at the last update of this document:
 |---|---|
 | `AGENTS.md` | How to work. |
 | `CLAUDE.md` | Project law. Wins ties. |
-| `DESIGN.md` | Locked tokens, once they exist. Empty on purpose. |
+| `DESIGN.md` | Locked visual tokens and accessibility direction. |
 | `SITEMAP.md` | This file. |
-| `.build-state.json` | The APK a tester is actually running. This branch records `build-1`. |
-| `package.json` | Expo app deps and `npm test` (audits plus TS app tests). |
+| `BUILD.md` | Source gate, reproducible dependency install, and maintainer-only build routes. |
+| `.build-state.json` | The most recently dispatched APK record. Currently Build 8, with its device state. |
+| `package.json` | Expo dependencies and `npm test`, the local gate. |
 | `app.json` / `eas.json` | Expo config and EAS Android build profiles. |
 | `App.tsx`, `index.ts` | Expo root component and entry. |
-| `src/net/` | Readiness math, RTT probe, signal and refresh logic. |
-| `src/game/` | Game catalog and per-game headline metric. |
+| `src/net/` | Public-edge readiness math, RTT probes, signal, and refresh guidance. |
+| `src/game/` | Supported game catalog and per-game headline metric. |
 | `src/device/` | Device tier classifier and performance tuning profiles. |
-| `src/boost/` | Boost action catalog and permission gating. |
-| `src/ui/` | Tab shell, Home/Game/Boost/Device screens, design tokens. |
-| `src/state/` | React hooks (readiness, game detection, device). |
-| `src/plugins/` | Typed bridges from React Native native modules to app source. They validate unavailable or malformed native values conservatively. |
-| `src/onboarding/` | First-launch flow: legal consent, guest/account, permissions. |
-| `src/legal/`, `src/auth/`, `src/permissions/` | Consent, session (guests equal to accounts), permission catalog with reasons. |
-| `plugins/` | Local React Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud` (game bar overlay). Their `file:` dependencies let React Native autolink them. |
-| `.github/workflows/apk.yml` | Manual EAS APK build. Requires a typed build number and an EXPO_TOKEN secret; fails closed otherwise. |
-| `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` | Official legal pack, enforced by `.audit/legal.cjs`. Not legal advice. |
+| `src/boost/` | Guided Android settings actions and permission gating. |
+| `src/history/` | Validated, bounded, serialized on-device readiness history. |
+| `src/hud/` | Confirmed HUD lifecycle state and start or stop transitions. |
+| `src/state/` | React hooks, local history adapter, single-flight action gate, and latest-request guard for asynchronous HUD status. |
+| `src/ui/` | Tab shell, Home, Game, Boost, History, and Device screens with locked tokens. `navigation.ts` defines the tested primary destinations. |
+| `src/plugins/` | Typed bridges to native modules. Absent, denied, malformed, or failed values stay conservative. |
+| `src/onboarding/` | Legal consent, local start screen, and permissions flow. No fake account sign-in. |
+| `src/legal/`, `src/auth/`, `src/permissions/` | Consent, guest-only local session, and permission catalogs and feedback. |
+| `plugins/` | Local React Native Android modules and config plugins: `zerolag-net`, `zerolag-device`, `zerolag-hud`. Their `file:` dependencies let React Native autolink them. |
+| `.github/workflows/apk.yml` | Manual EAS APK workflow. Requires a named build number and the `EXPO_TOKEN` GitHub secret. |
+| `TERMS.md`, `PRIVACY.md`, `COPYRIGHT.md`, `COMPLIANCE.md`, `PLAY_DATA_SAFETY.md`, `LICENSE` | Legal pack, enforced by `.audit/legal.cjs`. Not legal advice. |
 
 ## `.agent/`
 
 | Path | What it is |
 |---|---|
 | `agent-pack.json` | Standing pack. How to store and retag. |
-| `master-skills.json` | 60 skills, v1.3.0, `applies_to_project`. |
+| `master-skills.json` | 60 skills, v1.3.0, with project applicability. |
 | `quality-bar.json` | 181 items, v40.0. `stack_exclusions` are not open work. |
 
 ## `.audit/`
 
 | Path | What it is |
 |---|---|
-| `agent-docs.cjs` | Catalog parses, stubs delegate, no em-dash. |
+| `agent-docs.cjs` | Catalog parses, stubs delegate, no em-dash or en-dash. |
 | `agent-rules.cjs` | The eight hard rules stay stated. |
-| `legal.cjs` | Honest booster claims, Nigeria courts, 13+, placeholder contact. |
+| `legal.cjs` | Honest product claims, Nigeria courts, 13+, placeholder contact, and legal-pack dates. |
+| `dependency-lock.cjs` | Lockfile integrity and exact dependency installation in the manual APK workflow. |
 
 ## `docs/`
 
 | Path | What it is |
 |---|---|
 | `DECISIONS.md` | Decisions written the day they are made. |
-| `poise-architecture.json` | REFERENCE ONLY. How Poise is built. Not Zero-Lag law. |
-| `EXPO_PLAN.md` | TDD plan for the Expo / React Native Android app. Not scaffolded yet. |
-| `kotlin-reference/` | REFERENCE ONLY. Pre-law native Kotlin prototype. Behavior spec to port, not shipping code. |
+| `DEVICE_TEST_PLAN.md` | Real Android device validation plan for the next finished preview APK. |
+| `poise-architecture.json` | Reference only. How Poise is built, not Zero-Lag law. |
+| `EXPO_PLAN.md` | Original Expo plan. Superseded where current source and decisions describe later work. |
+| `kotlin-reference/` | Reference only. Pre-law Kotlin prototype and behavior source, not shipping code. |
 
 ## Not here yet
 
-`backend/`, `.github/workflows/apk.yml`, a generated `android/` folder, and
-a dispatched APK. Do not run prebuild in git and do not dispatch an APK
-unless the maintainer names the build number in that turn.
+There is no backend, live host, real authentication service, cloud history,
+generated `android/` folder in Git, or named iOS ship target. Do not add any
+of them without user approval and the required security, privacy, and build
+work.

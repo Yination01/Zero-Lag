@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { tokens } from '../ui/theme';
 import { PrimaryButton, GhostButton, Muted } from '../ui/components';
 import { PERMISSIONS } from '../permissions/catalog';
 import { hud } from '../plugins/hud';
+import { createRunGate } from '../state/runGate';
+import {
+  summarizeRuntimePermissionResults,
+  type RuntimePermissionSummary,
+} from '../permissions/runtime';
 import {
   openAndroidSettings,
   settingsLaunchFeedback,
@@ -13,23 +18,42 @@ import {
 
 const c = tokens.color;
 
+type RuntimeRequestState =
+  | { kind: 'idle' | 'requesting' | 'error' }
+  | { kind: 'complete' | 'partial'; summary: RuntimePermissionSummary };
+
 export function PermissionsScreen({ onFinish }: { onFinish: () => void }) {
+  const [runtimeRequest, setRuntimeRequest] = useState<RuntimeRequestState>({ kind: 'idle' });
+  const requestGate = useRef(createRunGate()).current;
+  const mounted = useRef(true);
+
+  useEffect(() => {
+    mounted.current = true;
+    return () => { mounted.current = false; };
+  }, []);
+
   async function requestRuntime() {
+    if (!requestGate.tryAcquire()) return;
+    setRuntimeRequest({ kind: 'requesting' });
     try {
       const { PermissionsAndroid } = require('react-native');
-      const map = [
-        ['location', PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION],
-        ['phone', PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE],
-        ['notifications', PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS],
-      ];
-      for (const [, permission] of map) {
-        if (permission) await PermissionsAndroid.request(permission);
+      const runtimePermissions = [
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+      ].filter((permission): permission is string => typeof permission === 'string');
+      const results: unknown[] = [];
+      for (const permission of runtimePermissions) {
+        results.push(await PermissionsAndroid.request(permission));
+      }
+      const summary = summarizeRuntimePermissionResults(results);
+      if (mounted.current) {
+        setRuntimeRequest({ kind: summary.complete ? 'complete' : 'partial', summary });
       }
     } catch {
-      Alert.alert(
-        'Permission request did not open',
-        'Open Android Settings, select Apps, select Zero-Lag, then select Permissions.',
-      );
+      if (mounted.current) setRuntimeRequest({ kind: 'error' });
+    } finally {
+      requestGate.release();
     }
   }
 
@@ -43,6 +67,8 @@ export function PermissionsScreen({ onFinish }: { onFinish: () => void }) {
       Alert.alert(guide?.title ?? 'Open Android settings', settingsLaunchFeedback(destination, result));
     }
   }
+
+  const requestingRuntime = runtimeRequest.kind === 'requesting';
 
   return (
     <ScrollView style={styles.root} contentContainerStyle={styles.content}>
@@ -75,10 +101,23 @@ export function PermissionsScreen({ onFinish }: { onFinish: () => void }) {
       })}
 
       <PrimaryButton
-        label="ALLOW APP PERMISSIONS"
-        onPress={requestRuntime}
+        label={requestingRuntime ? 'REQUESTING PERMISSIONS' : 'ALLOW APP PERMISSIONS'}
+        disabled={requestingRuntime}
+        onPress={() => { void requestRuntime(); }}
         accessibilityLabel="Allow location phone state and notification permissions"
       />
+      {runtimeRequest.kind === 'requesting' && (
+        <Muted text="Waiting for Android permission choices." />
+      )}
+      {runtimeRequest.kind === 'complete' && (
+        <Muted color={c.good} text={`Android allowed ${runtimeRequest.summary.granted} of ${runtimeRequest.summary.requested} requested app permissions.`} />
+      )}
+      {runtimeRequest.kind === 'partial' && (
+        <Muted color={c.warn} text={`Android allowed ${runtimeRequest.summary.granted} of ${runtimeRequest.summary.requested} requested app permissions. You can continue, and unavailable data stays clearly labelled.`} />
+      )}
+      {runtimeRequest.kind === 'error' && (
+        <Muted color={c.warn} text="Android did not open the permission request. Open Settings, Apps, Zero-Lag, then Permissions, and try again." />
+      )}
       <GhostButton label="ENTER ZERO-LAG" onPress={onFinish} accessibilityLabel="Finish permissions and enter Zero-Lag" />
       <Muted text="You can skip any permission and enable it later. Zero-Lag shows unavailable data instead of guessing." />
     </ScrollView>

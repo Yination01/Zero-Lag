@@ -55,8 +55,8 @@ jobs:
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install exact locked dependencies
+        run: npm ci
 
       - name: Run the gate
         run: npm test

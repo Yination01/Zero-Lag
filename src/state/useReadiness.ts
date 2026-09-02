@@ -1,9 +1,10 @@
 // React state hook for running a readiness test. The test logic lives in
 // the pure net layer so it can be reused and reasoned about.
 
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { probeSeries, rnRequest } from '../net/probe';
 import { computeReadiness, type ReadinessResult } from '../net/readiness';
+import { createRunGate } from './runGate';
 
 export type TestState = 'idle' | 'loading' | 'error' | 'success';
 
@@ -21,9 +22,12 @@ export function useReadiness({ sampleCount, gapMs = 250 }: ReadinessOptions = {}
   const [state, setState] = useState<TestState>('idle');
   const [result, setResult] = useState<ReadinessResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const runGate = useRef(createRunGate()).current;
   const count = safeSampleCount(sampleCount);
 
   const run = useCallback(async () => {
+    if (!runGate.tryAcquire()) return;
+
     setState('loading');
     setError(null);
     try {
@@ -33,8 +37,10 @@ export function useReadiness({ sampleCount, gapMs = 250 }: ReadinessOptions = {}
     } catch {
       setError('Could not run the test. Check your connection and try again.');
       setState('error');
+    } finally {
+      runGate.release();
     }
-  }, [count, gapMs]);
+  }, [count, gapMs, runGate]);
 
   return { state, result, error, run };
 }

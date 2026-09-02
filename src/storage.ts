@@ -1,7 +1,7 @@
-// On-device persistence. Guests and account users use the same local store;
-// an account only matters for optional cloud sync later. We lazily load
-// AsyncStorage so node tests (which have no React Native runtime) still work,
-// falling back to an in-memory map.
+// On-device persistence for Zero-Lag's unrestricted local guest session. We
+// lazily load AsyncStorage so node tests (which have no React Native runtime)
+// still work, falling back to an in-memory map. There is no account service or
+// cloud sync in this version.
 
 type StorageDriver = {
   getItem(key: string): Promise<string | null>;
@@ -68,6 +68,7 @@ export const KEYS = {
   legalVersion: 'zerolag.legalVersion',
   session: 'zerolag.session',
   permissions: 'zerolag.permissions',
+  onboardingComplete: 'zerolag.onboardingComplete',
   history: 'zerolag.history',
   profile: 'zerolag.performanceProfile',
 } as const;

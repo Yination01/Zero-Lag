@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { Alert, Linking, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { tokens } from './theme';
 import { Card, SectionLabel, Muted, GhostButton, PrimaryButton } from './components';
 import { buildBoostActions, type BoostAction } from '../boost/actions';
-import { hud } from '../plugins/hud';
 import { openAndroidSettings, settingsLaunchFeedback } from '../permissions/settings';
 import { REFRESH_INSTRUCTIONS } from '../net/refresh';
 import type { TuningProfile } from '../device/tier';
+import type { HudDisplayStatus } from '../hud/lifecycle';
 
 const c = tokens.color;
 
@@ -16,16 +16,47 @@ function profileLabel(profile: TuningProfile['profile']): string {
   return profile.charAt(0).toUpperCase() + profile.slice(1);
 }
 
+function hudStatusText(status: HudDisplayStatus): string {
+  switch (status) {
+    case 'checking': return 'CHECKING';
+    case 'running': return 'RUNNING';
+    case 'stopped': return 'STOPPED';
+    case 'needs-overlay-permission': return 'SETUP NEEDED';
+    case 'unavailable': return 'UNAVAILABLE';
+    case 'status-unknown': return 'CHECK AGAIN';
+  }
+}
+
+function hudStatusColor(status: HudDisplayStatus): string {
+  if (status === 'running') return c.good;
+  if (status === 'checking') return c.info;
+  if (status === 'needs-overlay-permission' || status === 'status-unknown') return c.warn;
+  return c.muted;
+}
+
+function hudButtonLabel(status: HudDisplayStatus): string {
+  if (status === 'running') return 'STOP FLOATING HUD';
+  if (status === 'checking') return 'CHECKING HUD STATUS';
+  if (status === 'status-unknown') return 'CHECK HUD STATUS';
+  if (status === 'needs-overlay-permission') return 'SET UP FLOATING HUD';
+  if (status === 'unavailable') return 'HUD UNAVAILABLE';
+  return 'START FLOATING HUD';
+}
+
 export function BoostScreen({
   onRequestUsage,
-  onRequestOverlay,
+  onToggleHud,
+  hudStatus = 'checking',
+  hudBusy = false,
   usagePermission = false,
   tier = 'entry',
   hudIntervalMs = 3000,
   performanceLevel = 'balanced',
 }: {
   onRequestUsage: () => void;
-  onRequestOverlay: () => void;
+  onToggleHud?: () => void;
+  hudStatus?: HudDisplayStatus;
+  hudBusy?: boolean;
   usagePermission?: boolean;
   tier?: 'entry' | 'midrange' | 'flagship';
   hudIntervalMs?: number;
@@ -35,51 +66,8 @@ export function BoostScreen({
     () => buildBoostActions({ ...DEFAULT_CTX, tier, usagePermission }),
     [tier, usagePermission],
   );
-  const [barOn, setBarOn] = useState(false);
-
-  useEffect(() => {
-    let active = true;
-    void hud.isRunning().then((running) => {
-      if (active) setBarOn(running);
-    });
-    return () => { active = false; };
-  }, []);
-
-  async function toggleGameBar() {
-    if (!hud.isSupported()) {
-      Alert.alert(
-        'Floating HUD is unavailable',
-        'Install the latest Zero-Lag APK, then allow Display over other apps before starting the HUD.',
-      );
-      return;
-    }
-    const canDraw = await hud.canDrawOverlays();
-    if (!canDraw) {
-      onRequestOverlay();
-      return;
-    }
-
-    try {
-      const serviceRunning = barOn || await hud.isRunning();
-      if (serviceRunning) {
-        await hud.stop();
-        setBarOn(false);
-        Alert.alert('Floating HUD stopped', 'The overlay and its ongoing notification have been stopped.');
-      } else {
-        await hud.start(hudIntervalMs);
-        setBarOn(true);
-        Alert.alert(
-          'Floating HUD started',
-          'Look for the small Zero-Lag pill over your game and its ongoing notification. The delay shown is an edge estimate, not exact game-server ping.',
-        );
-      }
-    } catch {
-      Alert.alert(
-        'Could not start the floating HUD',
-        'Check Display over other apps and Notifications for Zero-Lag, then try again.',
-      );
-    }
-  }
+  const hudIsChecking = hudBusy || hudStatus === 'checking';
+  const hudButtonDisabled = hudIsChecking || !onToggleHud;
 
   async function openActionSettings(action: BoostAction) {
     if (!action.target) return;
@@ -121,12 +109,15 @@ export function BoostScreen({
       <Card testID="game-bar-card">
         <SectionLabel text="FLOATING PING HUD" />
         <Text style={styles.name}>Estimated edge delay and used RAM over your game</Text>
-        <Muted text={`Display over other apps is required. Current ${profileLabel(performanceLevel)} level updates the HUD every ${hudIntervalMs / 1000} seconds. It uses a foreground notification; allow Notifications if Android asks so that readout is visible.`} />
+        <Muted text={`Display over other apps is required. Current ${profileLabel(performanceLevel)} level updates the HUD every ${hudIntervalMs / 1000} seconds. It uses a foreground notification; allow Notifications if Android asks so that readout is visible. You can stop it in Zero-Lag or from its notification.`} />
         <Muted text="If Display over other apps is off, Start Floating HUD opens a step-by-step setup prompt." />
-        <Text style={[styles.hudStatus, { color: barOn ? c.good : c.muted }]}>{barOn ? 'HUD STATUS: RUNNING' : 'HUD STATUS: STOPPED'}</Text>
+        <Text accessibilityLiveRegion="polite" style={[styles.hudStatus, { color: hudStatusColor(hudStatus) }]}>
+          {`HUD STATUS: ${hudStatusText(hudStatus)}`}
+        </Text>
         <PrimaryButton
-          label={barOn ? 'STOP FLOATING HUD' : 'START FLOATING HUD'}
-          onPress={() => { void toggleGameBar(); }}
+          label={hudBusy ? 'WORKING' : hudButtonLabel(hudStatus)}
+          disabled={hudButtonDisabled}
+          onPress={() => { onToggleHud?.(); }}
           accessibilityLabel="Toggle the floating ping HUD"
         />
       </Card>
