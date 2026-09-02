@@ -540,3 +540,31 @@ Check: Node 22 `npm test` passed with all 119 tests, the resolved Expo config
 returned all six launcher, splash, and adaptive-icon values, and Android export
 bundled successfully. A newly named APK build and real-device cold-start check
 remain required.
+
+## 2026-09-03: Build 11 dispatched with launcher and splash branding
+
+- The maintainer explicitly named **Build 11**. The source cut is
+  `e77c13ea7927d6fb3fee4f0af00002de023969f8`, which includes the selected
+  text-free neon signal-pulse launcher icon, Android adaptive-icon foreground,
+  and contain-mode splash image. This is the first named APK build that can
+  carry that branding to a phone.
+- Before dispatch, a fresh Node 22 `npm ci` and `npm test` gate passed with all
+  119 TypeScript app tests plus the documentation, rules, legal, dependency,
+  and GitHub-local APK workflow audits. Public preflight confirmed remote
+  `main` matched `e77c13e` and `preview-11` did not exist.
+- GitHub accepted manual workflow `345554094`, **Preview Zero-Lag APK**, on
+  `main` with numeric input `11` at `2026-09-02T23:17:28Z`. It registered
+  [run `33694402846`](https://github.com/Yination01/Zero-Lag/actions/runs/33694402846),
+  run number 14, from the exact source cut above.
+- GitHub initially queued the workflow and then reported it in progress. It will
+  use the GitHub-local EAS executor, not the EAS cloud queue. There is no
+  terminal Gradle result, APK, prerelease asset, archive check, installation,
+  launcher rendering, adaptive mask rendering, splash cold-start result, or
+  other real-device evidence yet.
+- Build 10 remains the last finished APK. It predates the branding source and
+  cannot change after publication. This evidence record is post-dispatch only,
+  so it is not part of the Build 11 source cut.
+
+Check: GitHub Actions run `33694402846`, then the `preview-11` release asset,
+archive inspection, and a real Android cold-start check after successful
+installation.
