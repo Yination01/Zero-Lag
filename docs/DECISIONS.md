@@ -364,10 +364,15 @@ android`; and isolated Expo Android prebuild/autolinking inspection.
   is a major Expo and React Native migration, so it is deliberately not applied
   as an unverified automatic patch during this focused release. It needs its own
   compatibility, Android build, and real-device verification work.
-- Build 8 is the most recent finished preview APK and is recorded as installed
-  but not device-tested. Build 9 may be manually dispatched by the maintainer
-  only after the final green source commit; this work does not dispatch it.
+- Build 8 remains the most recent finished preview APK and is recorded as
+  installed but not device-tested. The maintainer later explicitly superseded
+  the manual-only Build 9 route and authorized an agent EAS submission.
+- Build 9 was submitted directly to EAS from `477ca5e` after a fresh Node 22
+  `npm ci` and full test gate. Its EAS ID is
+  `7d6383fb-e857-421a-a1b7-738fd43216b0`; the first authenticated status was
+  `IN_QUEUE`. It has no APK, Android compilation result, or device evidence yet.
 
-Check: targeted test-first checks and mutation restores, a clean `npm ci`, then the final Node 22
-suite, Android export/config validation, generated-native inspection, and the
-manual `docs/DEVICE_TEST_PLAN.md`.
+Check: targeted test-first checks and mutation restores, a clean `npm ci`, the
+final Node 22 suite, Android export/config validation, generated-native
+inspection, authenticated EAS monitoring, and the manual
+`docs/DEVICE_TEST_PLAN.md`.

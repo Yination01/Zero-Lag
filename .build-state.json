@@ -1,23 +1,20 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-8",
+    "number": "build-9",
     "versionName": "0.1.0",
     "versionCode": 1,
     "profile": "preview",
     "artifact": "APK",
-    "dispatchedFromCommit": "f1071a3cfaab7cb8d4b7cadb8b12b1680507c45b",
+    "dispatchedFromCommit": "477ca5e8a0c070df90035f5876280787d607d909",
     "channel": "EAS cloud",
-    "workflowRunId": 33566744566,
-    "workflowUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33566744566",
-    "followsFailedEasBuildId": "f316f8b1-6030-40e0-af5f-abb26a9f887a",
-    "dispatchedAt": "2026-09-01T22:31:45Z",
-    "workflowStatus": "success",
-    "easBuildId": "0a54b56a-01ad-47c4-98a7-0a4bd9fd0768",
-    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/0a54b56a-01ad-47c4-98a7-0a4bd9fd0768",
-    "easPublicStatus": "Finished",
-    "status": "apk_ready_for_device_test",
-    "deviceInstallStatus": "installed_not_tested",
-    "note": "Build 7 errored during EAS Gradle execution, but its terminal failure detail was not available. Build 8 completed EAS Android compilation from f1071a3 and produced a preview APK. The maintainer reports that Build 8 is installed but has not yet performed the real-device Settings, permission, HUD, notification, Usage Access, or network checks. No local APK download, archive check, or checksum is recorded for Build 8."
+    "dispatchMethod": "direct_eas_cli",
+    "dispatchedAt": "2026-09-02T19:35:04.675Z",
+    "easBuildId": "7d6383fb-e857-421a-a1b7-738fd43216b0",
+    "easBuildUrl": "https://expo.dev/accounts/yination/projects/zero-lag/builds/7d6383fb-e857-421a-a1b7-738fd43216b0",
+    "easPublicStatus": "IN_QUEUE",
+    "status": "eas_queued",
+    "deviceInstallStatus": "not_available",
+    "note": "Build 9 was directly submitted to EAS only after the fresh Node 22 npm ci and npm test gate passed on 477ca5e8a0c070df90035f5876280787d607d909. The first authenticated EAS status view reported IN_QUEUE. No Android compilation, APK artifact, installation, archive inspection, or real-device test has occurred for Build 9. Build 8 remains the latest finished APK and is installed but not user-tested."
   }
 }
