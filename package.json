@@ -6,24 +6,26 @@
   "description": "Zero-Lag. Expo / React Native Android. Network lag tool for mobile gamers.",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs && node .audit/legal.cjs && node .audit/dependency-lock.cjs && node .audit/apk-workflow.cjs && npm run typecheck && node --experimental-strip-types --test 'src/**/*.test.ts'",
+    "test": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs && node .audit/legal.cjs && node .audit/dependency-lock.cjs && node .audit/apk-workflow.cjs && node .audit/play-aab-workflow.cjs && npm run typecheck && node --experimental-strip-types --test 'src/**/*.test.ts'",
     "test:app": "node --experimental-strip-types --test 'src/**/*.test.ts'",
     "test:agent-docs": "node .audit/agent-docs.cjs && node .audit/agent-rules.cjs",
     "start": "expo start",
     "android": "expo start --android"
   },
   "dependencies": {
-    "@react-native-async-storage/async-storage": "1.23.1",
+    "@react-native-async-storage/async-storage": "2.2.0",
     "@zerolag/device": "file:plugins/zerolag-device",
     "@zerolag/hud": "file:plugins/zerolag-hud",
     "@zerolag/net": "file:plugins/zerolag-net",
-    "expo": "~51.0.0",
-    "expo-status-bar": "~1.12.1",
-    "react": "18.2.0",
-    "react-native": "0.74.5"
+    "expo": "^54.0.37",
+    "expo-build-properties": "~1.0.10",
+    "expo-status-bar": "~3.0.9",
+    "react": "19.1.0",
+    "react-native": "0.81.5"
   },
   "devDependencies": {
-    "@types/react": "~18.2.45",
-    "typescript": "~5.3.3"
+    "@react-native-community/cli": "^20.2.0",
+    "@types/react": "~19.1.10",
+    "typescript": "~5.9.2"
   }
 }

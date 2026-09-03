@@ -596,3 +596,52 @@ installation.
 
 Check: the Build 11 run, prerelease asset, SHA-256, archive inspection, and a
 real Android installation with a cold-start launcher and splash check.
+
+## 2026-09-03: Play closed-testing candidate preparation and Build 12 plan
+
+- The maintainer selected a Nigeria, English closed-testing path, authorized
+  GitHub Pages as a future policy host, explicitly named Build 12 for one
+  production Android App Bundle, and chose source preparation before any Play
+  Console action. The maintainer also instructed that the placeholder contact
+  remain for now. Therefore no public policy page, Console record, testing
+  track, or Play submission may be created in this work.
+- Google Play currently requires Android API 36 for new app submissions. The
+  source moves in controlled SDK 51 to 52 to 53 to 54 steps, landing on Expo
+  54 and React Native 0.81. Expo 54 supports compile and target SDK 36. The
+  `expo-build-properties` configuration explicitly applies compile SDK 36,
+  target SDK 36, and build tools 36.0.0. Each local native Android library
+  inherits the generated values and now carries API 36 fallback values.
+- `.github/workflows/play-aab.yml` is a separate manual-only candidate route.
+  It accepts a unique numeric Build 12 or higher, fails closed for an existing
+  `play-candidate-N` tag or missing Expo secret, installs the lockfile, runs
+  the full source gate, stamps only transient metadata, builds the production
+  profile locally on GitHub, verifies the AAB ZIP and signature, preserves an
+  artifact, and publishes a clearly named candidate release asset. It does not
+  submit to Google Play.
+- `docs/play/` now holds the blocked readiness record, truthful listing copy,
+  authentic screenshot instructions, a non-deployable privacy-policy template,
+  and the Console handoff. The 512 by 512 RGB Play icon and 1024 by 500 RGB
+  feature graphic are in `assets/play-store/`. No invented app screenshots or
+  public contact were created.
+- Test-first evidence: the API-contract test initially failed because the
+  build-properties configuration was absent; the native fallback test then
+  failed at the former API 34 values; the candidate-workflow audit initially
+  failed because no workflow existed; its signature check then failed before
+  the signature command was added; and the listing-artwork test initially
+  failed because both deliverable files were absent. Eleven API and profile
+  mutants, six artwork mutants, and eighteen AAB-workflow mutants all failed
+  their intended named checks. Copied backups were restored byte-for-byte.
+- A fresh production-dependency audit now reports 16 advisories: 7 moderate,
+  9 high, and no critical. The available remediation requires a major Expo 57
+  upgrade. It is deliberately not forced into this API 36 release candidate.
+- Build 11 remains the last finished APK and predates this Expo 54 and API 36
+  source work. Build 12 must use the pushed final source only after the full
+  source and Expo checks pass. A successful candidate AAB will still not make
+  the app Play ready without a real contact, public policy URL, Console work,
+  authentic screenshots, and real-device results.
+
+Check: fresh Node 22 `npm ci` and `npm test` passed all 123 app tests plus all
+seven source audits. Expo Doctor passed 18 of 18 checks, the resolved Expo
+configuration returned compile SDK 36, target SDK 36, and build tools 36.0.0,
+and Android export bundled successfully. Source commit and push, then the
+user-named Build 12 candidate workflow and artifact inspection remain.

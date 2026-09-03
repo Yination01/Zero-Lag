@@ -7,11 +7,11 @@ def safeExtGet = { prop, fallback ->
 
 android {
   namespace 'com.yination01.zerolag.net'
-  compileSdkVersion safeExtGet('compileSdkVersion', 34)
+  compileSdkVersion safeExtGet('compileSdkVersion', 36)
 
   defaultConfig {
     minSdkVersion safeExtGet('minSdkVersion', 23)
-    targetSdkVersion safeExtGet('targetSdkVersion', 34)
+    targetSdkVersion safeExtGet('targetSdkVersion', 36)
   }
 
   compileOptions {

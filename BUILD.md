@@ -10,22 +10,26 @@ npm ci
 npm test
 ```
 
-The gate runs all of these checks and must pass before a preview APK is
-requested:
+The gate runs all of these checks and must pass before a preview APK or Play
+candidate AAB is requested:
 
 1. agent docs (`.audit/agent-docs.cjs`)
 2. agent hard rules (`.audit/agent-rules.cjs`)
 3. legal pack (`.audit/legal.cjs`)
-4. TypeScript (`tsc --noEmit`)
-5. app unit tests (`src/**/*.test.ts`)
+4. dependency lock (`.audit/dependency-lock.cjs`)
+5. preview APK workflow (`.audit/apk-workflow.cjs`)
+6. Play candidate AAB workflow (`.audit/play-aab-workflow.cjs`)
+7. TypeScript (`tsc --noEmit`)
+8. app unit tests (`src/**/*.test.ts`)
 
 ### Known dependency-security follow-up
 
-As of 2026-09-02, `npm audit --omit=dev` reports 31 advisories in the locked
-Expo 51 and React Native 0.74 toolchain, including one critical transitive
-advisory. The automated remediation requests a major Expo and React Native
-migration. Do not run `npm audit fix --force` for this app; schedule that SDK
-migration as dedicated compatibility and Android device-validation work.
+As of 2026-09-03, `npm audit --omit=dev` reports 16 advisories in the locked
+Expo 54 and React Native 0.81 toolchain: 7 moderate, 9 high, and no critical.
+The available automated remediation requests a major Expo 57 upgrade. Do not
+run `npm audit fix --force` for this app. Treat that upgrade as a separate
+compatibility, Android-build, and real-device-validation project rather than
+an unreviewed release-candidate patch.
 
 ## Recommended preview APK route: Poise-style GitHub delivery
 
@@ -60,6 +64,38 @@ A green workflow proves the GitHub-run local Android build and publication
 steps completed. It does not replace real-device checks of permissions, HUD,
 notifications, foreground-game detection, or network behavior. Record each
 new dispatch and terminal result in `.build-state.json`.
+
+## Google Play candidate AAB route
+
+The checked-in workflow is `.github/workflows/play-aab.yml`. It is manual only
+and uses the EAS local executor on a GitHub Ubuntu runner. It makes a signed
+Android App Bundle, `zero-lag.aab`, from the `production` profile. An AAB is a
+Google Play upload artifact, not a file to install directly on a phone.
+
+This route requires a user-named number of 12 or higher and refuses to overwrite
+an existing `play-candidate-N` tag. It fails closed without the repository
+`EXPO_TOKEN`, installs the lockfile with `npm ci`, runs the entire source gate,
+adds only transient `expo.extra.buildNumber` metadata, then verifies the AAB ZIP
+and its JAR signature before retaining it as an Actions artifact and a clearly
+marked GitHub prerelease candidate.
+
+It deliberately stops after creating the candidate. It does not use `eas submit`
+or upload to Google Play. A real public privacy-policy URL, working contact,
+Console account access, truthful declarations, authentic screenshots, and
+real-device evidence remain separate gates. See `docs/play/`.
+
+Use this route only after the maintainer has explicitly named the build in the
+same message and the source commit is pushed:
+
+1. Open the repository's **Actions** tab.
+2. Select **Build Zero-Lag Play candidate AAB** and choose **Run workflow**.
+3. Select the pushed branch, normally `main`.
+4. Enter the named numeric value, for example `12`.
+5. After a green run, download `zero-lag.aab` from its artifact or
+   `play-candidate-12` prerelease. Verify its SHA-256 before a later Console
+   upload.
+6. Do not call the candidate Play Store ready until every entry in
+   `docs/play/RELEASE_READINESS.md` has evidence.
 
 ## Direct EAS route
 

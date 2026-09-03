@@ -75,7 +75,7 @@ test('HUD config plugin transforms the nested Android manifest and is idempotent
   }
 });
 
-test('SDK 51 app configuration omits the architecture flag rejected by Expo Doctor', () => {
+test('app configuration carries no unreviewed architecture override', () => {
   const appConfig = JSON.parse(readFileSync(join(projectRoot, 'app.json'), 'utf8'));
   assert.equal(Object.hasOwn(appConfig.expo, 'newArchEnabled'), false);
 });

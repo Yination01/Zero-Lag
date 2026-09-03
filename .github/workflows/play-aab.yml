@@ -1,0 +1,144 @@
+name: Build Zero-Lag Play candidate AAB
+
+# Manual Google Play preparation. The AAB is built locally by EAS on the
+# GitHub Ubuntu runner, retained as an artifact, and published only as a
+# clearly marked candidate. It never submits an app to Google Play.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_number:
+        description: 'Required numeric Play candidate number, starting at 12.'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build numbered Play candidate AAB
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the named source commit
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node 22 from the lockfile
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Validate the numbered candidate and unused release tag
+        env:
+          RAW_BUILD_N: ${{ inputs.build_number }}
+        run: |
+          set -euo pipefail
+          if ! [[ "$RAW_BUILD_N" =~ ^[0-9]+$ ]]; then
+            echo 'Build number must contain digits only.'
+            exit 1
+          fi
+          BUILD_N=$((10#$RAW_BUILD_N))
+          if (( BUILD_N < 12 )); then
+            echo 'Build number 12 or greater is required. Build 11 is allocated to the preview APK.'
+            exit 1
+          fi
+          if git ls-remote --exit-code --tags origin "refs/tags/play-candidate-${BUILD_N}" >/dev/null; then
+            echo "play-candidate-${BUILD_N} already exists. Choose a new build number."
+            exit 1
+          fi
+          echo "BUILD_N=${BUILD_N}" >> "$GITHUB_ENV"
+          echo "Preparing play-candidate-${BUILD_N} from ${GITHUB_SHA}."
+
+      - name: Fail closed if EXPO_TOKEN is not configured
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo 'EXPO_TOKEN secret is missing. The Play candidate job stops before dependency or build work.'
+            exit 1
+          fi
+
+      - name: Set up Expo and EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install exact locked dependencies
+        run: npm ci
+
+      - name: Run the source gate
+        run: npm test
+
+      - name: Stamp this named Play candidate
+        env:
+          BUILD_N: ${{ env.BUILD_N }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const buildNumber = Number(process.env.BUILD_N);
+          if (!Number.isSafeInteger(buildNumber) || buildNumber < 12) {
+            throw new Error('Validated BUILD_N is missing or invalid.');
+          }
+          const app = JSON.parse(fs.readFileSync('app.json', 'utf8'));
+          app.expo ??= {};
+          app.expo.extra ??= {};
+          app.expo.extra.buildNumber = buildNumber;
+          fs.writeFileSync('app.json', `${JSON.stringify(app, null, 2)}\n`);
+          NODE
+
+      - name: Restore Gradle cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-play-aab-gradle-${{ hashFiles('package-lock.json', 'app.json', 'eas.json', 'plugins/**') }}
+          restore-keys: |
+            ${{ runner.os }}-play-aab-gradle-
+
+      - name: Configure Gradle for the runner
+        run: |
+          mkdir -p ~/.gradle
+          cat > ~/.gradle/gradle.properties <<'EOF'
+          org.gradle.caching=true
+          org.gradle.parallel=true
+          org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8
+          EOF
+
+      - name: Build Play candidate AAB on this GitHub runner
+        run: eas build --platform android --profile production --local --non-interactive --output zero-lag.aab
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Verify local AAB output
+        run: |
+          test -s zero-lag.aab
+          unzip -t zero-lag.aab
+          jarsigner -verify -certs zero-lag.aab
+          sha256sum zero-lag.aab
+
+      - name: Upload AAB workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: zero-lag-play-candidate-aab-${{ env.BUILD_N }}
+          path: zero-lag.aab
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Publish Play candidate release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: play-candidate-${{ env.BUILD_N }}
+          target_commitish: ${{ github.sha }}
+          name: Zero-Lag Play candidate ${{ env.BUILD_N }}
+          prerelease: true
+          generate_release_notes: false
+          body: Android App Bundle for closed-testing review. It has not been submitted to Google Play.
+          files: zero-lag.aab
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
