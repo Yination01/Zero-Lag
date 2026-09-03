@@ -677,3 +677,37 @@ user-named Build 12 candidate workflow and artifact inspection remain.
 Check: GitHub Actions run `33731736686`, the candidate release asset if green,
 AAB archive and signature inspection, built-manifest API inspection, and the
 blocked external gates in `docs/play/RELEASE_READINESS.md`.
+
+## 2026-09-03: Build 12 technical AAB candidate succeeded
+
+- [GitHub Actions run `33731736686`](https://github.com/Yination01/Zero-Lag/actions/runs/33731736686)
+  completed successfully at `2026-09-03T08:16:47Z`, eight minutes and
+  thirty-one seconds after its manual dispatch. Every required workflow step
+  succeeded: exact-source checkout, candidate and tag guards, Expo secret
+  gate, locked dependencies, source gate, local EAS production bundle, ZIP and
+  JAR signature checks, Actions artifact upload, and prerelease publication.
+  The source remains the pre-dispatch API 36 cut
+  `df205cf58f061cea4a608d6a53a84413f3b8fd7e`; later evidence commits do not
+  alter that output.
+- GitHub published the [`play-candidate-12` prerelease](https://github.com/Yination01/Zero-Lag/releases/tag/play-candidate-12)
+  with [`zero-lag.aab`](https://github.com/Yination01/Zero-Lag/releases/download/play-candidate-12/zero-lag.aab).
+  The asset is 39,137,186 bytes and SHA-256
+  `dee12bc6a4adcfd6bc172a93d0afae724e80ce045fbd26dfc8df72896350448e`.
+  Its Actions artifact is `zero-lag-play-candidate-aab-12`, ID `9884377528`.
+- Independent post-publication checks downloaded the release asset and passed
+  ZIP integrity and Bundletool validation. The decoded built manifest names
+  package `com.yination01.zerolag`, version `0.1.0` code `1`, minimum SDK 24,
+  target SDK 36, and compile SDK 36. Ordinary `jarsigner` verification passed
+  and verified a SHA-256/RSA 2048-bit signature. Strict JAR verification warns
+  correctly that the certificate is self-signed, lacks a trusted PKIX chain,
+  and has no timestamp. That is a signing-identity fact, not proof of Play App
+  Signing enrollment; Console setup remains external work.
+- This milestone establishes a technically built API 36 candidate only. It did
+  not create a Play Console app, upload an AAB, enroll Play App Signing, deploy
+  the blocked placeholder policy, establish a real support contact, create
+  screenshots, install the AAB, or perform a real-device test. It must never
+  be described as Play approval or public-release readiness.
+
+Check: `docs/play/BUILD_12_EVIDENCE.md`, `.build-state.json`, the GitHub run,
+the prerelease asset checksum, and the external hard-stop gates in
+`docs/play/RELEASE_READINESS.md`.

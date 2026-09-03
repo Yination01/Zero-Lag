@@ -1,5 +1,5 @@
 {
-  "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
+  "_comment": "The commit each dispatched Android artifact was cut from. Updated by hand at dispatch and terminal evidence.",
   "lastBuild": {
     "number": "build-12",
     "versionName": "0.1.0",
@@ -10,13 +10,29 @@
     "channel": "GitHub Actions local EAS",
     "dispatchMethod": "github_workflow_dispatch",
     "dispatchedAt": "2026-09-03T08:08:15Z",
+    "completedAt": "2026-09-03T08:16:47Z",
     "githubWorkflowId": "349139383",
     "githubRunId": "33731736686",
     "githubRunUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33731736686",
+    "githubRunConclusion": "success",
     "githubReleaseTag": "play-candidate-12",
+    "githubReleaseUrl": "https://github.com/Yination01/Zero-Lag/releases/tag/play-candidate-12",
     "githubReleaseAsset": "zero-lag.aab",
-    "status": "github_actions_in_progress",
-    "deviceInstallStatus": "not_installable_directly",
-    "note": "The maintainer explicitly named Build 12 for one production Android App Bundle candidate. GitHub Actions run 33731736686 was accepted from df205cf58f061cea4a608d6a53a84413f3b8fd7e after the API 36 source gate, Expo Doctor, config resolution, export, and targeted mutation checks. The new manual workflow was observed in progress. It uses the GitHub-local EAS executor, verifies the AAB ZIP and JAR signature, preserves an artifact, and publishes play-candidate-12 only after all gates pass. It deliberately does not submit to Google Play. No AAB, Console upload, public policy URL, screenshot set, installation, or real-device evidence exists yet."
+    "githubReleaseAssetUrl": "https://github.com/Yination01/Zero-Lag/releases/download/play-candidate-12/zero-lag.aab",
+    "githubActionsArtifactName": "zero-lag-play-candidate-aab-12",
+    "githubActionsArtifactId": "9884377528",
+    "githubActionsArtifactExpiresAt": "2026-09-17T08:16:25Z",
+    "assetBytes": 39137186,
+    "assetSha256": "dee12bc6a4adcfd6bc172a93d0afae724e80ce045fbd26dfc8df72896350448e",
+    "archiveIntegrity": "pass",
+    "bundletoolValidation": "pass",
+    "jarSignature": "verified_with_self_signed_signer_warning",
+    "packageName": "com.yination01.zerolag",
+    "minSdkVersion": 24,
+    "targetSdkVersion": 36,
+    "compileSdkVersion": 36,
+    "status": "github_actions_completed_success",
+    "deviceInstallStatus": "not_installable_directly_and_not_device_tested",
+    "note": "The maintainer explicitly named Build 12 for one production Android App Bundle candidate. GitHub Actions run 33731736686 completed successfully from df205cf58f061cea4a608d6a53a84413f3b8fd7e. Its source, local EAS build, ZIP, JAR-signature, artifact, and prerelease steps all passed without submitting to Google Play. Independent release-asset inspection found 39,137,186 bytes with the recorded SHA-256, ZIP integrity pass, Bundletool validation pass, package com.yination01.zerolag version 0.1.0 code 1, and built target and compile SDK 36. Standard JAR verification passed, while strict verification correctly warned that the signing certificate is self-signed and has no trusted PKIX chain or timestamp; Play App Signing setup remains a Console task. The AAB is not directly installable and no Console upload, public policy URL, real support contact, screenshots, or real-device evidence exists."
   }
 }

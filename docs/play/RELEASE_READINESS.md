@@ -1,6 +1,6 @@
 # Zero-Lag Google Play closed-testing readiness
 
-**Status: Build 12 candidate is in progress. Public release blocked.**
+**Status: Build 12 technical candidate completed successfully. Public release blocked.**
 
 This record separates work that can be completed in source control from work
 that needs a real public identity, real-device evidence, and access to the
@@ -22,13 +22,20 @@ Google Play Console. It is not legal advice and does not claim Play approval.
 
 | Gate | Current source contract | Required before Play Console upload |
 |---|---|---|
-| Android target | Expo SDK 54, React Native 0.81, compile and target SDK 36 are explicit | Verify the built AAB manifest after Build 12 finishes |
-| Artifact type | `production` EAS profile creates an `app-bundle` | Download and archive-check the Build 12 AAB |
-| Candidate build route | Manual GitHub-local EAS workflow, numbered tag guard, Expo secret gate, source gate, bundle check, signature check, artifact, prerelease candidate | Run only the user-named Build 12 workflow |
+| Android target | The completed Build 12 AAB manifest reports compile SDK 36 and target SDK 36. See `BUILD_12_EVIDENCE.md`. | Preserve built-manifest evidence for the Console upload |
+| Artifact type | The production EAS route published a 39,137,186-byte `zero-lag.aab`, SHA-256 recorded in `BUILD_12_EVIDENCE.md`. | Upload only after the external gates below are complete |
+| Candidate build route | The user-named GitHub-local workflow completed every source, local build, ZIP, signature, artifact, and prerelease gate successfully. It did not submit to Play. | Do not create another numbered candidate unless a later source change needs one |
 | Store icon | `assets/play-store/zero-lag-play-icon.png`, 512 by 512 RGB PNG | Upload in Play Console |
 | Feature graphic | `assets/play-store/zero-lag-feature-graphic.png`, 1024 by 500 RGB PNG | Upload if selected for listing surfaces |
 | Listing copy | `docs/play/STORE_LISTING.md` | Review and paste into Play Console |
 | Data disclosures | Existing local-only draft plus Console handoff | Validate against the exact built app and all SDK behavior |
+
+## Build 12 technical evidence
+
+[Build 12 evidence](BUILD_12_EVIDENCE.md) records the completed workflow,
+prerelease AAB, SHA-256, archive, bundle structure, signature, and built
+manifest checks. The AAB is a technical candidate only. It has not been
+uploaded to the Google Play Console or installed on a real device.
 
 ## External gates that remain blocked
 

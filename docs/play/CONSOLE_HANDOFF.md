@@ -5,7 +5,7 @@ complete. This is a handoff guide, not evidence that an action was performed.
 
 ## Inputs to have ready
 
-- The Build 12 `zero-lag.aab` artifact and its SHA-256.
+- The verified Build 12 [`zero-lag.aab`](https://github.com/Yination01/Zero-Lag/releases/download/play-candidate-12/zero-lag.aab) and SHA-256 `dee12bc6a4adcfd6bc172a93d0afae724e80ce045fbd26dfc8df72896350448e`. See `BUILD_12_EVIDENCE.md` before upload.
 - A verified developer or business name, support email, and privacy email.
 - A live, public, non-editable privacy-policy URL with the same publisher name.
 - The app icon, feature graphic, and authentic screenshots.
