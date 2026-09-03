@@ -645,3 +645,35 @@ seven source audits. Expo Doctor passed 18 of 18 checks, the resolved Expo
 configuration returned compile SDK 36, target SDK 36, and build tools 36.0.0,
 and Android export bundled successfully. Source commit and push, then the
 user-named Build 12 candidate workflow and artifact inspection remain.
+
+## 2026-09-03: Build 12 API 36 Play candidate dispatched
+
+- The maintainer explicitly named Build 12 for the approved production Android
+  App Bundle candidate route. The source cut is
+  `df205cf58f061cea4a608d6a53a84413f3b8fd7e`, containing the Expo 54,
+  React Native 0.81, explicit Android API 36, store-artwork, documentation,
+  source-gate, and no-submit workflow preparation.
+- Before dispatch, a fresh Node 22 source gate passed all 123 tests, including
+  the 18-check candidate workflow gate. Expo Doctor passed 18 of 18 checks;
+  resolved Expo configuration confirmed compile SDK 36, target SDK 36, and
+  build tools 36.0.0; Android export bundled successfully. The source cut was
+  pushed to `main` before dispatch, and `play-candidate-12` was confirmed
+  unused.
+- GitHub accepted manual workflow `349139383`, **Build Zero-Lag Play candidate
+  AAB**, on `main` with numeric input `12` at `2026-09-03T08:08:15Z`. It
+  registered [run `33731736686`](https://github.com/Yination01/Zero-Lag/actions/runs/33731736686),
+  run number 1, from the exact source cut. The run was then observed in
+  progress.
+- The workflow will build a `zero-lag.aab` locally through EAS on GitHub and
+  only publish a `play-candidate-12` prerelease asset after its secret,
+  dependency, source, Android build, ZIP, and signature gates pass. It does
+  not submit to Google Play.
+- No AAB, Console upload, policy URL, real support contact, screenshots,
+  installation, launcher or splash rendering, permission result, or device
+  test is available at this record point. Build 11 remains the last successful
+  installable preview APK and predates this source cut. This dispatch evidence
+  is post-dispatch only, not part of the Build 12 source cut.
+
+Check: GitHub Actions run `33731736686`, the candidate release asset if green,
+AAB archive and signature inspection, built-manifest API inspection, and the
+blocked external gates in `docs/play/RELEASE_READINESS.md`.

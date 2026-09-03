@@ -1,6 +1,6 @@
 # Zero-Lag Google Play closed-testing readiness
 
-**Status: technical candidate source is ready for the named Build 12. Public release blocked.**
+**Status: Build 12 candidate is in progress. Public release blocked.**
 
 This record separates work that can be completed in source control from work
 that needs a real public identity, real-device evidence, and access to the

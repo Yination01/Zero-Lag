@@ -1,35 +1,22 @@
 {
   "_comment": "The commit each dispatched APK was cut from. Updated by hand at dispatch.",
   "lastBuild": {
-    "number": "build-11",
+    "number": "build-12",
     "versionName": "0.1.0",
     "versionCode": 1,
-    "profile": "preview",
-    "artifact": "APK",
-    "dispatchedFromCommit": "e77c13ea7927d6fb3fee4f0af00002de023969f8",
+    "profile": "production",
+    "artifact": "AAB",
+    "dispatchedFromCommit": "df205cf58f061cea4a608d6a53a84413f3b8fd7e",
     "channel": "GitHub Actions local EAS",
     "dispatchMethod": "github_workflow_dispatch",
-    "dispatchedAt": "2026-09-02T23:17:28Z",
-    "githubWorkflowId": "345554094",
-    "githubRunId": "33694402846",
-    "githubRunUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33694402846",
-    "githubReleaseTag": "preview-11",
-    "githubReleaseAsset": "zero-lag.apk",
-    "status": "github_actions_finished",
-    "deviceInstallStatus": "not_installed_or_tested",
-    "note": "Build 11 completed successfully in GitHub Actions run 33694402846 from e77c13ea7927d6fb3fee4f0af00002de023969f8. The job passed Expo authentication, locked dependency installation, the full source gate, build stamp, GitHub-local EAS Android build, APK output verification, workflow artifact upload, and preview-11 prerelease publication. The release APK is 62,737,907 bytes, SHA-256 d3df918c71ed6b4114880145b87c6cc74df210272240c9b2ebfbeddb18f184db. A fresh archive check passed and found AndroidManifest.xml, resources.arsc, classes.dex, ic_launcher, ic_launcher_foreground, splashscreen_image, splashscreen_background, and arm64-v8a, armeabi-v7a, x86, and x86_64 native libraries. No real Android installation, launcher rendering, adaptive mask rendering, splash cold-start, or device behavior test has occurred.",
-    "githubReleaseUrl": "https://github.com/Yination01/Zero-Lag/releases/tag/preview-11",
-    "artifactUrl": "https://github.com/Yination01/Zero-Lag/releases/download/preview-11/zero-lag.apk",
-    "artifactBytes": 62737907,
-    "artifactSha256": "d3df918c71ed6b4114880145b87c6cc74df210272240c9b2ebfbeddb18f184db",
-    "archiveIntegrity": "zip_test_passed",
-    "nativeAbis": [
-      "arm64-v8a",
-      "armeabi-v7a",
-      "x86",
-      "x86_64"
-    ],
-    "terminalAt": "2026-09-02T23:22:26Z",
-    "terminalConclusion": "success"
+    "dispatchedAt": "2026-09-03T08:08:15Z",
+    "githubWorkflowId": "349139383",
+    "githubRunId": "33731736686",
+    "githubRunUrl": "https://github.com/Yination01/Zero-Lag/actions/runs/33731736686",
+    "githubReleaseTag": "play-candidate-12",
+    "githubReleaseAsset": "zero-lag.aab",
+    "status": "github_actions_in_progress",
+    "deviceInstallStatus": "not_installable_directly",
+    "note": "The maintainer explicitly named Build 12 for one production Android App Bundle candidate. GitHub Actions run 33731736686 was accepted from df205cf58f061cea4a608d6a53a84413f3b8fd7e after the API 36 source gate, Expo Doctor, config resolution, export, and targeted mutation checks. The new manual workflow was observed in progress. It uses the GitHub-local EAS executor, verifies the AAB ZIP and JAR signature, preserves an artifact, and publishes play-candidate-12 only after all gates pass. It deliberately does not submit to Google Play. No AAB, Console upload, public policy URL, screenshot set, installation, or real-device evidence exists yet."
   }
 }
